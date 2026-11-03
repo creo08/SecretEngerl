@@ -91,9 +91,12 @@ export function parseHouseholds(raw: unknown, path: string): Result<string[][]> 
  * a blank line separates households.
  */
 export function parseNameList(text: string): Result<string[][]> {
-  const groups = text.split(/\r?\n[ \t]*\r?\n/).map((block) =>
-    block.split(/\r?\n/).filter((line) => cleanText(line) !== ''),
-  );
+  const groups: string[][] = [[]];
+  for (const line of text.split(/\r?\n/)) {
+    // A line that is empty after cleaning (also invisible spaces) separates households.
+    if (cleanText(line) === '') groups.push([]);
+    else groups[groups.length - 1]!.push(line);
+  }
   return parseHouseholds(groups, 'names');
 }
 

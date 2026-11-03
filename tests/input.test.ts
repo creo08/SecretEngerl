@@ -17,6 +17,7 @@ describe('input validation', () => {
 
   it('reads households from lines and blank lines, rejecting duplicates', () => {
     expect(parseNameList('Anna\nBernd\n\nClara\n  \nDavid\n')).toEqual({ ok: true, value: [['Anna', 'Bernd'], ['Clara'], ['David']] });
+    expect(parseNameList('Anna\n\u00A0\nBernd\n\u200B\nClara')).toEqual({ ok: true, value: [['Anna'], ['Bernd'], ['Clara']] });
     const dup = parseNameList('Anna\n\nanna');
     expect(dup.ok).toBe(false);
     if (!dup.ok) expect(dup.errors[0]!.code).toBe('name.duplicate');
