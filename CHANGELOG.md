@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Pages for each form the app supports, at readable addresses: /engerl-bengerl/, /wichteln/, /schrottwichteln/, /familien-wichteln/ and /buero-wichteln/, each with steps and the description in the original language.
+- Pre-fill link `/neu#v=1&f=…&n=…&b=…&d=…`: a ready invitation fills in the setup after a confirmation page; nothing is drawn by opening it.
+- `llms.txt`, `sitemap.xml`, canonical URLs and structured data, so search engines and AI assistants can find and describe the app.
+
+### Changed
+
+- The template pages moved from /vorlagen/… to the form pages; the old addresses forward there.
+
 ## [0.2.0] - 2026-11-03
 
 ### Added

@@ -12,7 +12,7 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 |---|---|
 | `src/random/` | Randomness from `crypto.getRandomValues` only, unbiased integers and `BigInt`s |
 | `src/config/` | Configuration model for categories A to K, templates as JSON, validation |
-| `src/input/` | Validation of names, amounts and dates from URL, file and form |
+| `src/input/` | Validation of names, amounts and dates from URL, file and form, and the pre-fill link parser |
 | `src/losfee/` | Matching engine: rules, feasibility (Hopcroft-Karp, Hall), uniform draw, drop-out repair. No DOM. Gets its RNG from outside |
 | `src/link/` | Link format v1: AES-GCM, 256-byte padding, expiry |
 | `src/store/` | IndexedDB storage of a round on the organizer's device |
@@ -22,7 +22,8 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 | `src/ui/` | DOM code |
 | `src/sw/` | Service worker with a versioned precache, filled by `scripts/vite-site.ts` |
 | `src/styles/` | Design tokens (Hallmark theme Coral), self-hosted OFL fonts, the stylesheet |
-| `docs/guide/` | Help pages shown in the app, rendered to static HTML at build time |
+| `docs/guide/` | Help and form pages shown in the app, rendered to static HTML at build time (`form-*` pages carry HowTo data from their first ordered list) |
+| `src/site/` | `llms.txt` source; `{{app}}` becomes the app URL at build time |
 | `public/` | Manifest and icons |
 | `scripts/` | Repository checks and build helpers |
 | `tests/` | Vitest tests; `tests/e2e/` holds Playwright tests |
