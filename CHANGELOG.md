@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-11-03
+
 ### Added
 
 - Template "Advent-Engerl" with its page /advent-engerl/: a theme per Advent week in the draw, and "Add to calendar" creates an event for each Sunday of Advent and the reveal.
