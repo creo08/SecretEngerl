@@ -17,6 +17,7 @@ Beim Wichteln zieht jede Person heimlich einen Namen und beschenkt diese Person 
 - [Schrottwichteln](app:schrottwichteln/): nichts kaufen, nur verschenken, was man schon hat.
 - [Familien-Wichteln](app:familien-wichteln/): mit Hinweisen und ohne die Paarungen vom letzten Jahr.
 - [Büro-Wichteln](app:buero-wichteln/): kleines Budget, auf Wunsch mit Motto.
+- [Post-Wichteln](app:post-wichteln/): Geschenke per Post, die Adresse steht nur im Los des Engerls.
 
 ## In der Originalsprache
 
