@@ -123,7 +123,7 @@ function stepWho(state: WizardState): void {
   date.value = state.date;
   const budget = h('input', { type: 'text', name: 'budget', inputmode: 'decimal', autocomplete: 'off' });
   budget.value = state.budget;
-  const preview = h('ul', { class: 'households', 'aria-live': 'polite' });
+  const preview = h('ul', { class: 'households' });
   const errors = errorBox();
   const updatePreview = () => {
     state.namesText = names.value;
