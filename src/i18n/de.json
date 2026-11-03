@@ -14,7 +14,6 @@
   "household.two": "Haushalt {a} und {b}",
   "household.more": { "one": "Haushalt {a}, {b} und 1 weitere Person", "other": "Haushalt {a}, {b} und {count} weitere" },
   "people.summary": { "one": "1 Person", "other": "{count} Personen" },
-  "households.summary": { "one": "1 Haushalt", "other": "{count} Haushalte" },
 
   "wizard.step": "Schritt {step} von 3",
   "wizard.back": "Zurück",

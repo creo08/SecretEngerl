@@ -49,11 +49,6 @@ export function fill(el: Element, ...children: Child[]): void {
   el.replaceChildren(...children.filter((c): c is Node | string => Boolean(c)));
 }
 
-/** A live status line for screen readers and sighted users alike. */
-export function announce(el: Element, text: string): void {
-  el.textContent = text;
-}
-
 /** Asks for confirmation in a modal dialog; resolves true on confirm. */
 export function confirmDialog(text: string, confirmLabel: string, cancelLabel: string): Promise<boolean> {
   return new Promise((resolve) => {

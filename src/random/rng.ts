@@ -49,12 +49,3 @@ export function randBigInt(rng: Rng, n: bigint): bigint {
   } while (x >= limit);
   return x % n;
 }
-
-/** Shuffles in place with Fisher-Yates. */
-export function shuffle<T>(rng: Rng, items: T[]): T[] {
-  for (let i = items.length - 1; i > 0; i--) {
-    const j = randInt(rng, i + 1);
-    [items[i], items[j]] = [items[j]!, items[i]!];
-  }
-  return items;
-}

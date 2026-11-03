@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createCryptoRng, randBigInt, randInt, shuffle, type Rng } from '../src/random/rng.ts';
+import { createCryptoRng, randBigInt, randInt, type Rng } from '../src/random/rng.ts';
 import { chiSquared, chiSquaredPValue } from './helpers/stats.ts';
 
 /** Replays a fixed list of words. */
@@ -27,17 +27,6 @@ describe('random numbers', () => {
     const counts = new Array(7).fill(0);
     for (let i = 0; i < 70_000; i++) counts[randInt(rng, 7)]++;
     expect(chiSquaredPValue(chiSquared(counts, new Array(7).fill(10_000)), 6)).toBeGreaterThan(0.001);
-  });
-
-  it('shuffles uniformly over all orders', () => {
-    const rng = createCryptoRng();
-    const counts = new Map<string, number>();
-    for (let i = 0; i < 24_000; i++) {
-      const key = shuffle(rng, [0, 1, 2, 3]).join('');
-      counts.set(key, (counts.get(key) ?? 0) + 1);
-    }
-    expect(counts.size).toBe(24);
-    expect(chiSquaredPValue(chiSquared([...counts.values()], new Array(24).fill(1000)), 23)).toBeGreaterThan(0.001);
   });
 
   it('computes chi-squared p-values', () => {
