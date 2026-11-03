@@ -1,0 +1,14 @@
+# Dependabot commits do not pass the hygiene check (wrong author). Treat its
+# pull requests as notices: apply updates in the private repository as own
+# commits, and close the pull requests. Never merge them on GitHub.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    versioning-strategy: increase
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
