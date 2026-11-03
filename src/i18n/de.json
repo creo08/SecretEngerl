@@ -143,6 +143,17 @@
   "rounds.itemTitled": "{title}, Übergabe am {date}, {people}",
   "rounds.sent": "{sent} von {count} gesendet",
 
+  "prefill.title": "Neue Runde aus einem Link",
+  "prefill.intro": "Jemand hat dir eine fertige Einladung geschickt. Prüf die Angaben; gezogen wird erst, wenn du es sagst.",
+  "prefill.template": "Vorlage",
+  "prefill.people": "Wer spielt mit",
+  "prefill.budget": "Budget",
+  "prefill.date": "Übergabetag",
+  "prefill.accept": "Übernehmen und weiter",
+  "prefill.discard": "Verwerfen",
+  "prefill.failed": "Mit diesem Link lässt sich keine Runde vorbereiten.",
+  "prefill.home": "Selbst eine Runde starten",
+
   "los.reveal": "Antippen zum Aufdecken",
   "los.title": "Dein Los",
   "los.youAre": "Du bist das Engerl von",
@@ -183,6 +194,10 @@
   "error.rule.unknownName": "{name} spielt nicht mit.",
   "error.rule.mustEmpty": "Eine Muss-Regel braucht mindestens eine Person.",
   "error.rule.mustTwice": "Für {name} gibt es schon eine Muss-Regel.",
+  "error.prefill.empty": "Der Link enthält keine Angaben.",
+  "error.prefill.version": "Diese Version des Links kennt die App nicht.",
+  "error.prefill.invalid": "Der Link ist beschädigt.",
+  "error.prefill.noNames": "Im Link stehen keine Namen.",
   "error.unexpected": "Da ist etwas schiefgegangen. Lade die Seite neu und versuch es noch einmal.",
 
   "number.2": "zwei",

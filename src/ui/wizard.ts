@@ -46,8 +46,8 @@ export function appBase(): string {
   return new URL(import.meta.env.BASE_URL, location.origin).href;
 }
 
-/** Starts the wizard with a template. */
-export function startWizard(template: TemplateId): void {
+/** Starts the wizard with a template, optionally pre-filled (from a pre-fill link). */
+export function startWizard(template: TemplateId, initial: Partial<Pick<WizardState, 'namesText' | 'budget' | 'date'>> = {}): void {
   const t0 = getTemplate(template);
   const state: WizardState = {
     template,
@@ -62,6 +62,7 @@ export function startWizard(template: TemplateId): void {
     must: [],
     noMutual: t0.defaults.structure.noMutual,
     oneChain: t0.defaults.structure.oneChain,
+    ...initial,
   };
   stepWho(state);
   showView('wizard');
