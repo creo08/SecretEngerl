@@ -15,5 +15,6 @@ export function withoutPerson(config: RoundConfig, name: string): RoundConfig {
     .map((m) => ({ ...m, choices: m.choices.filter(keep) }))
     .filter((m) => m.choices.length > 0);
   next.gifts.hints = Object.fromEntries(Object.entries(next.gifts.hints).filter(([n]) => keep(n)));
+  next.addresses = Object.fromEntries(Object.entries(next.addresses).filter(([n]) => keep(n)));
   return next;
 }

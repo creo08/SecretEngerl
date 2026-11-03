@@ -40,6 +40,21 @@ describe('configuration model', () => {
     expect(result.ok && result.value.gifts.hints).toEqual({ Anna: 'keine Nüsse' });
   });
 
+  it('checks postal addresses and accepts rounds stored before they existed', () => {
+    const base = configFromTemplate('post-wichteln', households, '2026-12-20');
+    const codes = (raw: unknown) => {
+      const r = validateConfig(raw);
+      return r.ok ? [] : r.errors.map((e) => e.code);
+    };
+    expect(codes({ ...base, addresses: { anna: 'Hauptplatz 1' } })).toEqual([]);
+    const ok = validateConfig({ ...base, addresses: { anna: 'Hauptplatz 1' } });
+    expect(ok.ok && ok.value.addresses).toEqual({ Anna: 'Hauptplatz 1' });
+    expect(codes({ ...base, addresses: { Zoe: 'x' } })).toContain('rule.unknownName');
+    expect(codes({ ...base, addresses: { Anna: 'x'.repeat(101) } })).toContain('text.tooLong');
+    const { addresses: _, ...old } = base;
+    expect(validateConfig(old).ok).toBe(true);
+  });
+
   it('ignores unknown keys', () => {
     const raw = { ...configFromTemplate('engerl-bengerl', households, '2026-12-20'), evil: '<script>' };
     const result = validateConfig(raw);

@@ -1,0 +1,38 @@
+{
+  "id": "post-wichteln",
+  "family": "drawn",
+  "defaults": {
+    "structure": {
+      "noMutual": true,
+      "oneChain": false,
+      "giftsPerPerson": 1
+    },
+    "rules": {
+      "exclusions": [],
+      "must": [],
+      "lastYear": []
+    },
+    "gifts": {
+      "budget": {
+        "amount": 15,
+        "currency": "EUR"
+      },
+      "kind": "bought",
+      "theme": "",
+      "hints": {}
+    },
+    "exchange": "post",
+    "communication": "none",
+    "reveal": "never",
+    "context": "friends",
+    "organizerPlays": true,
+    "place": ""
+  },
+  "fields": {
+    "budget": true,
+    "theme": false,
+    "hints": false,
+    "lastYear": false,
+    "address": true
+  }
+}

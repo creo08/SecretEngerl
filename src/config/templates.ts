@@ -5,6 +5,7 @@ import engerlBengerl from './templates/engerl-bengerl.json';
 import schrottwichteln from './templates/schrottwichteln.json';
 import familienWichteln from './templates/familien-wichteln.json';
 import bueroWichteln from './templates/buero-wichteln.json';
+import postWichteln from './templates/post-wichteln.json';
 
 function load(raw: unknown): Template {
   const result = validateTemplate(raw);
@@ -13,7 +14,7 @@ function load(raw: unknown): Template {
 }
 
 /** All templates in the order the app offers them. */
-export const TEMPLATES: readonly Template[] = [engerlBengerl, schrottwichteln, familienWichteln, bueroWichteln].map(load);
+export const TEMPLATES: readonly Template[] = [engerlBengerl, schrottwichteln, familienWichteln, bueroWichteln, postWichteln].map(load);
 
 /** Returns the template with this id. */
 export function getTemplate(id: TemplateId): Template {
@@ -30,5 +31,6 @@ export function configFromTemplate(id: TemplateId, households: string[][], excha
     occasion: { exchangeDate },
     participants: { households },
     ...structuredClone(t.defaults),
+    addresses: {},
   };
 }

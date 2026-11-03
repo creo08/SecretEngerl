@@ -17,6 +17,7 @@ export function round(households: string[][], options: Partial<Rules> & { noMutu
     context: 'family',
     organizerPlays: true,
     place: '',
+    addresses: {},
   };
 }
 

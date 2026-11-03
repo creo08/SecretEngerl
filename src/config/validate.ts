@@ -35,6 +35,8 @@ import {
 export const MAX_THEME_BYTES = 80;
 export const MAX_HINT_BYTES = 200;
 export const MAX_PLACE_BYTES = 80;
+/** A postal address in the draw; the concept allows at most 100 bytes. */
+export const MAX_ADDRESS_BYTES = 100;
 
 const EXCHANGE: readonly ExchangeMode[] = ['in-person', 'hidden', 'post', 'digital'];
 const REVEAL: readonly Reveal[] = ['in-person', 'guessing', 'chain', 'stage', 'never'];
@@ -150,6 +152,18 @@ function readDefaults(r: Reader, o: Obj, path: string): Template['defaults'] {
   };
 }
 
+/** Reads postal addresses per name; rounds stored before postal rounds existed have none. */
+function readAddresses(r: Reader, raw: unknown): Record<string, string> {
+  if (raw === undefined) return {};
+  const out: Record<string, string> = {};
+  for (const [name, text] of Object.entries(r.obj(raw, 'addresses'))) {
+    const key = r.take(parseName(name, 'addresses'), '');
+    const value = r.take(parseFreeText(text, `addresses.${key}`, MAX_ADDRESS_BYTES), '');
+    if (key && value) out[key] = value;
+  }
+  return out;
+}
+
 /** Checks that every name a rule mentions is a participant, and that rules do not refer to oneself. */
 function checkRuleNames(config: RoundConfig, errors: ValidationError[]): void {
   const people = new Set(config.participants.households.flat().map(nameKey));
@@ -161,6 +175,7 @@ function checkRuleNames(config: RoundConfig, errors: ValidationError[]): void {
   must.forEach((m, i) => [m.giver, ...m.choices].forEach((n) => known(n, `rules.must[${i}]`)));
   lastYear.forEach((p, i) => [p.giver, p.receiver].forEach((n) => known(n, `rules.lastYear[${i}]`)));
   Object.keys(config.gifts.hints).forEach((n) => known(n, 'gifts.hints'));
+  Object.keys(config.addresses).forEach((n) => known(n, 'addresses'));
   const givers = new Set<string>();
   must.forEach((m, i) => {
     if (givers.has(nameKey(m.giver))) errors.push({ code: 'rule.mustTwice', path: `rules.must[${i}]`, params: { name: m.giver } });
@@ -184,6 +199,7 @@ export function validateConfig(raw: unknown): Result<RoundConfig> {
     occasion: { exchangeDate: r.take(parseIsoDate(occasion.exchangeDate, 'occasion.exchangeDate'), '') },
     participants: { households },
     ...readDefaults(r, o, ''),
+    addresses: readAddresses(r, o.addresses),
   };
   if (occasion.revealDate !== undefined) {
     config.occasion.revealDate = r.take(parseIsoDate(occasion.revealDate, 'occasion.revealDate'), '');
@@ -193,6 +209,7 @@ export function validateConfig(raw: unknown): Result<RoundConfig> {
   // Hints are looked up by exact name later; use each participant's own spelling.
   const spelling = new Map(households.flat().map((n) => [nameKey(n), n]));
   config.gifts.hints = Object.fromEntries(Object.entries(config.gifts.hints).map(([n, h]) => [spelling.get(nameKey(n)) ?? n, h]));
+  config.addresses = Object.fromEntries(Object.entries(config.addresses).map(([n, a]) => [spelling.get(nameKey(n)) ?? n, a]));
   return r.errors.length ? { ok: false, errors: r.errors } : { ok: true, value: config };
 }
 
@@ -207,6 +224,7 @@ export function validateTemplate(raw: unknown): Result<Template> {
     theme: r.bool(f.theme, 'fields.theme'),
     hints: r.bool(f.hints, 'fields.hints'),
     lastYear: r.bool(f.lastYear, 'fields.lastYear'),
+    address: f.address === true,
   };
   const template: Template = {
     id: o.id,

@@ -43,6 +43,7 @@ export function randomRound(rng: Rng, o: RandomRoundOptions): RoundConfig {
     context: 'family',
     organizerPlays: true,
     place: '',
+    addresses: {},
   };
   if (o.lastYear) {
     const previous = structuredClone(config);

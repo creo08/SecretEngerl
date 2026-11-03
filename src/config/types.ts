@@ -6,7 +6,7 @@
  */
 
 /** Fixed list of templates. The ids also appear in links and pre-fill links. */
-export const TEMPLATE_IDS = ['engerl-bengerl', 'schrottwichteln', 'familien-wichteln', 'buero-wichteln'] as const;
+export const TEMPLATE_IDS = ['engerl-bengerl', 'schrottwichteln', 'familien-wichteln', 'buero-wichteln', 'post-wichteln'] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
 /** The two families of the custom. */
@@ -101,6 +101,8 @@ export interface RoundConfig {
   organizerPlays: boolean;
   /** Place of the exchange, optional free text. */
   place: string;
+  /** G, postal rounds: postal address per person; it goes only into the draw of that person's Engerl. */
+  addresses: Record<string, string>;
 }
 
 /** Which optional fields the setup wizard shows in the main flow; the rest sits under "Mehr Optionen". */
@@ -109,12 +111,14 @@ export interface TemplateFields {
   theme: boolean;
   hints: boolean;
   lastYear: boolean;
+  /** Postal address per person (Post-Wichteln). */
+  address: boolean;
 }
 
 /** A template: defaults for a round plus which fields the wizard shows. */
 export interface Template {
   id: TemplateId;
   family: Family;
-  defaults: Omit<RoundConfig, 'version' | 'template' | 'family' | 'occasion' | 'participants'>;
+  defaults: Omit<RoundConfig, 'version' | 'template' | 'family' | 'occasion' | 'participants' | 'addresses'>;
   fields: TemplateFields;
 }
