@@ -128,6 +128,8 @@ describe('emergency view', () => {
     expect(receiver).toBe('C');
     expect((await store.get(round.id))!.views).toEqual([{ name: 'B', at: 1234 }]);
     expect(next.views).toHaveLength(1);
+    await expect(viewAssignment(store, round.id, 'Zoe', 1)).rejects.toThrow();
+    expect((await store.get(round.id))!.views).toHaveLength(1);
   });
 
   it('checks an optional PIN', async () => {

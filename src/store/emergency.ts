@@ -43,6 +43,7 @@ export async function checkPin(round: StoredRound, pin: string): Promise<boolean
  */
 export async function viewAssignment(store: RoundStore, id: string, giver: string, now: number): Promise<{ round: StoredRound; receiver: string }> {
   const round = await loadRound(store, id);
+  if (!round.links.some((l) => l.name === giver)) throw new Error('unknown giver');
   const next = { ...round, views: [...round.views, { name: giver, at: now }] };
   await store.put(next);
   const receiver = (await readAssignment(round)).get(giver);
