@@ -7,13 +7,11 @@ import { h } from './dom.ts';
 
 let reloadRequested = false;
 
-function offerReload(worker: ServiceWorker): void {
+/** Shows the "Neue Version – Neu laden" banner; the button runs `onReload`. */
+function offerReload(onReload: () => void): void {
   if (document.getElementById('update')) return;
   const button = h('button', { type: 'button', class: 'btn btn--ink' }, t('update.reload'));
-  button.addEventListener('click', () => {
-    reloadRequested = true;
-    worker.postMessage({ type: 'activate' });
-  });
+  button.addEventListener('click', onReload);
   document.body.append(h('div', { id: 'update', class: 'update stock', role: 'status' }, h('span', {}, t('update.available')), button));
 }
 
@@ -23,15 +21,26 @@ export async function registerServiceWorker(): Promise<void> {
   const base = import.meta.env.BASE_URL;
   const registration = await navigator.serviceWorker.register(`${base}sw.js`, { scope: base }).catch(() => undefined);
   if (!registration) return;
-  // Reload only after the user asked for the new version; never on a first install.
+  const activate = (worker: ServiceWorker) => () => {
+    reloadRequested = true;
+    worker.postMessage({ type: 'activate' });
+  };
+  const hadController = navigator.serviceWorker.controller !== null;
+  // Reload only after the user asked for the new version; never on a first install. Other open
+  // tabs still run the old code (which cannot open the upgraded database), so they offer a reload too.
   navigator.serviceWorker.addEventListener('controllerchange', () => {
     if (reloadRequested) location.reload();
+    else if (hadController) {
+      // A banner shown earlier would ask the old worker to activate, which no longer does anything.
+      document.getElementById('update')?.remove();
+      offerReload(() => location.reload());
+    }
   });
-  if (registration.waiting && navigator.serviceWorker.controller) offerReload(registration.waiting);
+  if (registration.waiting && navigator.serviceWorker.controller) offerReload(activate(registration.waiting));
   registration.addEventListener('updatefound', () => {
     const installing = registration.installing;
     installing?.addEventListener('statechange', () => {
-      if (installing.state === 'installed' && navigator.serviceWorker.controller) offerReload(installing);
+      if (installing.state === 'installed' && navigator.serviceWorker.controller) offerReload(activate(installing));
     });
   });
 }
