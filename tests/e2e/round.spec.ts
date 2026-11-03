@@ -83,6 +83,10 @@ test('a broken, an empty and a tampered link show friendly messages', async ({ p
   await page.goto('./#');
   await page.getByRole('button', { name: 'Antippen zum Aufdecken' }).click();
   await expect(page.getByRole('heading', { name: 'Hinterm # ist nix.' })).toBeVisible();
+  // The skip link's anchor is not a draw.
+  await page.goto('about:blank');
+  await page.goto('./#main');
+  await expect(page.getByRole('heading', { name: /Engerl-Bengerl auslosen/ })).toBeVisible();
 });
 
 test('the built pages have no inline scripts and start with the policy', async ({ page }) => {

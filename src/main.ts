@@ -2,8 +2,10 @@
 import './styles/app.css';
 import { takeFragment } from './link/link.ts';
 
-const hadHash = location.href.includes('#');
-const fragment = takeFragment();
+// Draw links start with the format version, a digit; "#main" from the skip link is an in-page anchor.
+const isAnchor = /^#[A-Za-z]/.test(location.hash);
+const hadHash = !isAnchor && location.href.includes('#');
+const fragment = hadHash ? takeFragment() : '';
 if (hadHash && !fragment) history.replaceState(null, '', location.pathname + location.search);
 
 const { t } = await import('./i18n/i18n.ts');
