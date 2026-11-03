@@ -133,7 +133,15 @@ export async function planDropout(store: RoundStore, id: string, name: string, b
   };
 }
 
-/** Deletes every round whose end has passed. `now` in milliseconds. */
-export async function purgeExpired(store: RoundStore, now: number): Promise<void> {
-  for (const round of await store.list()) if (now > round.expiresAt * 1000) await store.delete(round.id);
+/**
+ * Deletes every round whose end has passed. `now` in milliseconds. With
+ * `remember`, each round is first handed over to be kept as last year's round;
+ * if that fails, the round is still deleted, because its end has passed.
+ */
+export async function purgeExpired(store: RoundStore, now: number, remember?: (round: StoredRound) => Promise<void>): Promise<void> {
+  for (const round of await store.list()) {
+    if (now <= round.expiresAt * 1000) continue;
+    await remember?.(round).catch(() => undefined);
+    await store.delete(round.id);
+  }
 }

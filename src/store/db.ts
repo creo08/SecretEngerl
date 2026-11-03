@@ -1,26 +1,31 @@
-/** IndexedDB storage of rounds. Names start with "secretengerl-" because the origin is shared. */
+/** IndexedDB storage of rounds and of last year's rounds. Names start with "secretengerl-" because the origin is shared. */
 import { validateConfig } from '../config/validate.ts';
-import type { RoundStore, StoredRound } from './types.ts';
+import { validateYear } from '../files/year.ts';
+import type { RoundStore, StoredRound, YearStore } from './types.ts';
 import { MAX_TITLE_CHARS } from './rounds.ts';
 
 const DB_NAME = 'secretengerl-rounds';
-const STORE = 'rounds';
+const ROUNDS = 'rounds';
+const YEARS = 'years';
 
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
-    request.onupgradeneeded = () => request.result.createObjectStore(STORE, { keyPath: 'id' });
+    // Version 2 adds last year's rounds; existing rounds stay untouched.
+    const request = indexedDB.open(DB_NAME, 2);
+    request.onupgradeneeded = () => {
+      for (const name of [ROUNDS, YEARS]) if (!request.result.objectStoreNames.contains(name)) request.result.createObjectStore(name, { keyPath: 'id' });
+    };
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
 }
 
-async function run<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
+async function run<T>(storeName: string, mode: IDBTransactionMode, action: (store: IDBObjectStore) => IDBRequest<T>): Promise<T> {
   const db = await openDb();
   try {
     return await new Promise<T>((resolve, reject) => {
-      const tx = db.transaction(STORE, mode);
-      const request = action(tx.objectStore(STORE));
+      const tx = db.transaction(storeName, mode);
+      const request = action(tx.objectStore(storeName));
       // Resolve only after the transaction committed, so a write is durable when the promise resolves.
       tx.oncomplete = () => resolve(request.result);
       tx.onerror = () => reject(tx.error);
@@ -59,19 +64,37 @@ const appBase = () => new URL(import.meta.env.BASE_URL, location.origin).href;
 /** Round storage in IndexedDB. */
 export const indexedDbStore: RoundStore = {
   async get(id) {
-    const raw: unknown = await run('readonly', (s) => s.get(id));
+    const raw: unknown = await run(ROUNDS, 'readonly', (s) => s.get(id));
     return isStoredRound(raw, appBase()) ? raw : undefined;
   },
   async put(round) {
-    await run('readwrite', (s) => s.put(round));
+    await run(ROUNDS, 'readwrite', (s) => s.put(round));
   },
   async delete(id) {
-    await run('readwrite', (s) => s.delete(id));
+    await run(ROUNDS, 'readwrite', (s) => s.delete(id));
   },
   async list() {
-    const all: unknown[] = await run('readonly', (s) => s.getAll());
+    const all: unknown[] = await run(ROUNDS, 'readonly', (s) => s.getAll());
     const base = appBase();
     return all.filter((r): r is StoredRound => isStoredRound(r, base));
+  },
+};
+
+/** Last year's rounds in IndexedDB, validated on every read like any other input. */
+export const indexedDbYears: YearStore = {
+  async list() {
+    const all: unknown[] = await run(YEARS, 'readonly', (s) => s.getAll());
+    return all.flatMap((r) => {
+      const id = (r as { id?: unknown } | null)?.id;
+      const data = validateYear((r as { data?: unknown } | null)?.data);
+      return typeof id === 'string' && data.ok ? [{ id, data: data.value }] : [];
+    });
+  },
+  async put(id, data) {
+    await run(YEARS, 'readwrite', (s) => s.put({ id, data }));
+  },
+  async delete(id) {
+    await run(YEARS, 'readwrite', (s) => s.delete(id));
   },
 };
 
