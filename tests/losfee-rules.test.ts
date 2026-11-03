@@ -121,6 +121,15 @@ describe('drop-out repair', () => {
     expect(repairDropout(problem, [2, 3, 1, 0], 2)).toMatchObject({ kind: 'repaired', engerl: 0, receiver: 1, broken: [{ kind: 'household' }] });
   });
 
+  it('ignores rules of people who left earlier, and refuses someone already gone', () => {
+    // A → B → C → D → E → A with "B gives to C". B leaves (A takes C), then A leaves (E takes C).
+    const { problem } = compileRound(round(people('ABCDE'), { must: [{ giver: 'B', choices: ['C'] }] }));
+    const first = repairDropout(problem, [1, 2, 3, 4, 0], 1);
+    if (first.kind !== 'repaired') throw new Error('expected a repair');
+    expect(repairDropout(problem, first.assignment, 0)).toMatchObject({ kind: 'repaired', engerl: 4, receiver: 2, broken: [] });
+    expect(() => repairDropout(problem, first.assignment, 1)).toThrow();
+  });
+
   it('drops the must rule of the person who left', () => {
     const { problem } = compileRound(round(people('ABCD'), { must: [{ giver: 'B', choices: ['C'] }] }));
     expect(repairDropout(problem, [1, 2, 3, 0], 1)).toMatchObject({ broken: [] });

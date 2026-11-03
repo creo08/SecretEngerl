@@ -15,15 +15,19 @@ export type DropoutRepair =
    */
   | { kind: 'repaired'; engerl: number; receiver: number; assignment: number[]; broken: RuleRef[] };
 
-/** Repairs `assignment` after person `left` drops out. */
+/**
+ * Repairs `assignment` after person `left` drops out. People who left earlier
+ * are marked -1 in `assignment`; their rules no longer apply.
+ */
 export function repairDropout(p: Problem, assignment: readonly number[], left: number): DropoutRepair {
   const engerl = assignment.indexOf(left);
+  if (engerl === -1 || assignment[left] === -1) throw new Error(`person ${left} is not in the round`);
   const receiver = assignment[left]!;
   if (engerl === receiver) return { kind: 'selfDraw', engerl };
 
   const broken: RuleRef[] = [];
-  // Rules of the person who left no longer apply.
-  const remaining: Problem = { ...p, mustFixed: p.mustFixed.map((r, g) => (g === left ? -1 : r)) };
+  // Rules of everyone who left no longer apply.
+  const remaining: Problem = { ...p, mustFixed: p.mustFixed.map((r, g) => (g === left || assignment[g] === -1 ? -1 : r)) };
   const pair = pairViolation(remaining, engerl, receiver);
   // A fixed must rule "engerl gives to left" can no longer hold; pairViolation reports it as must.
   if (pair) broken.push(pair);
