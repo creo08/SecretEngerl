@@ -1,0 +1,36 @@
+# SecretEngerl
+
+> Engerl-Bengerl, the Austrian Secret Santa: Wichteln and Secret Santa without a server. SecretEngerl draws names fairly in the browser and gives every person their draw as a private, encrypted link. No account, no server, no tracking. The app is in German.
+
+SecretEngerl runs entirely in the browser. The organizer enters the names, optionally separated into groups (household, couple, family, team) who never draw each other, and taps "Ziehen". Every valid draw is exactly equally likely. Each person then gets one link, sent in a one-to-one chat; the draw is encrypted with AES-GCM and the key sits after the `#`, which browsers never send to a server. Up to 50 people can take part.
+
+## Forms of the custom
+
+- [Engerl-Bengerl]({{app}}engerl-bengerl/): the Austrian name; one gift within a budget, exchanged at the party.
+- [Wichteln]({{app}}wichteln/): the German name of the same custom.
+- [Schrottwichteln]({{app}}schrottwichteln/): buy nothing, give something you already own.
+- [Familien-Wichteln]({{app}}familien-wichteln/): family rounds with hints per person and without last year's pairings.
+- [Büro-Wichteln]({{app}}buero-wichteln/): office rounds with a small budget and an optional theme.
+
+## Pre-fill link
+
+An assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can build a link that fills in the setup. The organizer sees a confirmation page and draws only after tapping; nothing is drawn by opening the link.
+
+```
+{{app}}neu#v=1&f=engerl-bengerl&n=Anna,Bernd;Clara,David;Eva&b=20&d=2026-12-20
+```
+
+- `v`: format version, always `1`.
+- `f`: template, one of `engerl-bengerl`, `schrottwichteln`, `familien-wichteln`, `buero-wichteln`.
+- `n`: names, `,` between people of one group and `;` between groups. People in the same group never draw each other. At most 50 names of 1 to 40 characters, no duplicates. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, e.g. `%2C`.
+- `b`: budget in euros, a number from 0 to 9999 (optional; ignored for Schrottwichteln).
+- `d`: exchange date as `YYYY-MM-DD` (optional).
+
+Everything sits after the `#`, so the names do not reach the server that hosts the app. Names you give to an AI assistant do reach that assistant's provider.
+
+## Help
+
+- [How it works (German)]({{app}}so-funktionierts/)
+- [Privacy and threat model (German)]({{app}}sicherheit/)
+- [FAQ (German)]({{app}}faq/)
+- [Source code](https://github.com/creo08/SecretEngerl)
