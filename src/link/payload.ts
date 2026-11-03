@@ -3,7 +3,7 @@
  * 256 bytes so every link of every round has the same length.
  */
 import type { RoundConfig, TemplateId } from '../config/types.ts';
-import { isTemplateId } from '../config/validate.ts';
+import { isTemplateId, MAX_ADDRESS_BYTES } from '../config/validate.ts';
 import { parseFreeText, parseIsoDate, parseName, utf8Length } from '../input/validate.ts';
 import { formatBudget } from '../i18n/format.ts';
 
@@ -22,6 +22,8 @@ export interface Payload {
   d: string;
   /** Hint for the Engerl. */
   h: string;
+  /** Postal address of the Bengerl, only in postal rounds. */
+  a?: string;
   /** Template. */
   t: TemplateId;
   /** Draw number, from 1. */
@@ -45,6 +47,7 @@ export function payloadFor(config: RoundConfig, receiver: string, drawNumber: nu
     m: gifts.theme,
     d: config.occasion.exchangeDate,
     h: gifts.hints[receiver] ?? '',
+    ...(config.addresses[receiver] ? { a: config.addresses[receiver] } : {}),
     t: config.template,
     n: drawNumber,
     x: expiryFor(config.occasion.exchangeDate),
@@ -102,5 +105,7 @@ export function decodePayload(bytes: Uint8Array): Payload | null {
   if (!r.ok || !d.ok || texts.some((t) => !t.ok) || !isTemplateId(o.t)) return null;
   if (!Number.isSafeInteger(o.n) || (o.n as number) < 1 || !Number.isSafeInteger(o.x)) return null;
   const [b, m, h] = texts.map((t) => (t.ok ? t.value : ''));
-  return { r: r.value, b: b!, m: m!, d: d.value, h: h!, t: o.t, n: o.n as number, x: o.x as number };
+  const a = o.a === undefined ? undefined : parseFreeText(o.a, 'a', MAX_ADDRESS_BYTES);
+  if (a && !a.ok) return null;
+  return { r: r.value, b: b!, m: m!, d: d.value, h: h!, ...(a?.ok && a.value ? { a: a.value } : {}), t: o.t, n: o.n as number, x: o.x as number };
 }

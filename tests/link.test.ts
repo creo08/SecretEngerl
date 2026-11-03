@@ -34,6 +34,17 @@ describe('link format v1', () => {
     expect(new Set(lengths).size).toBe(1);
   });
 
+  it('carries a postal address only in postal rounds, with the same link length', async () => {
+    const post = configFromTemplate('post-wichteln', [['Anna'], ['Bernd'], ['Clara']], '2026-12-20');
+    post.addresses = { Bernd: 'Bernd Beispiel\nHauptplatz 1\n8010 Graz' };
+    const withAddress = payloadFor(post, 'Bernd', 1);
+    expect(withAddress.a).toBe('Bernd Beispiel\nHauptplatz 1\n8010 Graz');
+    expect(payloadFor(post, 'Clara', 1)).not.toHaveProperty('a');
+    const [a, b] = await Promise.all([buildLink(BASE, withAddress), buildLink(BASE, payloadFor(config, 'Bernd', 1))]);
+    expect(a.length).toBe(b.length);
+    expect(await readFragment(fragmentOf(a), NOW)).toEqual({ status: 'ok', payload: withAddress });
+  });
+
   it('never two equal links for the same draw', async () => {
     const payload = payloadFor(config, 'Bernd', 1);
     expect(await buildLink(BASE, payload)).not.toBe(await buildLink(BASE, payload));
