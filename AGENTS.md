@@ -15,7 +15,8 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 | `src/input/` | Validation of names, amounts and dates from URL, file and form, and the pre-fill link parser |
 | `src/losfee/` | Matching engine: rules, feasibility (Hopcroft-Karp, Hall), uniform draw, drop-out repair. No DOM. Gets its RNG from outside |
 | `src/link/` | Link format v1: AES-GCM, 256-byte padding, expiry |
-| `src/store/` | IndexedDB storage of a round on the organizer's device |
+| `src/store/` | IndexedDB storage of rounds and of last year's rounds on the organizer's device |
+| `src/files/` | File envelope (plain or password-encrypted) and last year's data for the yearly file |
 | `src/worker/` | Web Worker that runs `losfee` |
 | `src/i18n/` | Language files and `Intl` formatting; no user-facing text in code |
 | `src/share/`, `src/ics/` | Share sheet with clipboard fallback; calendar file without names |

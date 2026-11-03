@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- "Remember for next year": a yearly file with names, groups, pairings, budget and hints, optionally protected by a password. "Open file" on the start page starts next year's round from it, excludes last year's pairings and asks who is who when names changed.
+- An ended round stays on the device as last year's round until a new round starts from it or "Forget last year" removes it.
+- A reminder a week before a round deletes itself.
+
+### Security
+
+- Yearly files with a password are encrypted with AES-256-GCM under a key from PBKDF2-HMAC-SHA256 (600,000 iterations), with the file header authenticated. Without a password the app warns that anyone with the file can read the assignment and the hints.
+
 ### Changed
 
 - Sections that open on a tap ("Mehr Optionen", "Während der Runde", "PIN festlegen") now look like it: a chevron, a frame and a line saying what is inside.

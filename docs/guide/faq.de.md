@@ -24,6 +24,10 @@ Jede gültige Ziehung ist genau gleich wahrscheinlich, mit allen euren Regeln. G
 
 Meist nicht. Das Engerl dieser Person übernimmt deren Bengerl, und nur diese eine Person bekommt einen neuen Link. Bricht das eine Regel, sagt die App es und bietet eine neue Ziehung an.
 
+## Wie vermeiden wir die Paare vom letzten Jahr?
+
+In der Runde speichert „Fürs nächste Jahr merken“ eine Datei mit Namen, Gruppen, Paarungen, Budget und Hinweisen. Im nächsten Jahr öffnest du sie auf der Startseite mit „Datei öffnen“: Die App füllt alles aus und schließt die Paarungen vom letzten Jahr aus. Auf demselben Gerät hebt die App die beendete Runde außerdem unter „Vom letzten Jahr“ für dich auf. Ohne Passwort kann jede Person mit der Datei lesen, wer wen beschenkt hat, und die Hinweise; gib ihr also eines, wenn sie weitergeht.
+
 ## Kann ich die Links in die Gruppe schicken?
 
 Bitte nicht. Jeder Link enthält das Los einer Person. Schick ihn im Einzelchat.

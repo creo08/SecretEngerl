@@ -24,6 +24,10 @@ Open the round on your device and tap "Send" next to their name again.
 
 Usually not. Their Engerl takes over their Bengerl, and only that one person gets a new link. If that breaks a rule, the app says so and offers a new draw.
 
+## How do we avoid last year's pairs?
+
+In the round, "Remember for next year" saves a file with names, groups, pairings, budget and hints. Next year, open it with "Open file" on the start page: the app fills in everything and excludes last year's pairings. On the same device the app also keeps the ended round for you under "From last year". Without a password, anyone with the file can read who gave to whom and the hints, so give it one if it travels.
+
 ## Can I send the links in the group chat?
 
 Please do not. Each link holds one person's draw. Send it in a one-to-one chat.
