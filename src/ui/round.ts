@@ -234,12 +234,11 @@ function emergencySection(round: StoredRound): HTMLElement {
   show.addEventListener('click', () => reveal(isPeekPhrase(phrase.value)));
   const newPin = h('input', { type: 'password', id: uid('f'), inputmode: 'numeric', autocomplete: 'new-password' });
   const savePin = h('button', { type: 'button', class: 'btn btn--card' }, t('emergency.setPin'));
-  const pinStatus = h('p', { class: 'help', 'aria-live': 'polite' });
   savePin.addEventListener('click', async () => {
     if (!newPin.value) return;
     await setPin(store, round.id, newPin.value);
-    newPin.value = '';
-    pinStatus.textContent = t('emergency.pinSet');
+    // Redraw so the emergency view shows the PIN field from now on.
+    await showRound(round.id, { message: t('emergency.pinSet') });
   });
   const label = (input: HTMLElement, text: string) => h('div', { class: 'field' }, h('label', { for: input.id }, text), input);
   return section(
@@ -252,7 +251,7 @@ function emergencySection(round: StoredRound): HTMLElement {
     result,
     h('h3', {}, t('emergency.log')),
     log,
-    h('details', {}, h('summary', {}, t('emergency.setPin')), h('div', { class: 'stack' }, label(newPin, t('emergency.newPin')), h('p', { class: 'help' }, t('emergency.pinNote')), h('div', { class: 'actions' }, savePin), pinStatus)),
+    h('details', {}, h('summary', {}, t('emergency.setPin')), h('div', { class: 'stack' }, label(newPin, t('emergency.newPin')), h('p', { class: 'help' }, t('emergency.pinNote')), h('div', { class: 'actions' }, savePin))),
   );
 }
 
