@@ -22,6 +22,15 @@ import { showHome } from './home.ts';
 const HINT_SEEN = 'secretengerl-hint-seen';
 const HOLD_MS = 2000;
 
+/** Runs an async handler and shows a friendly message if it fails, never a stack trace. */
+function safely(handler: () => Promise<unknown>): () => void {
+  return () =>
+    void handler().catch(() => {
+      const status = document.querySelector('#round .status');
+      if (status) status.textContent = t('error.unexpected');
+    });
+}
+
 /** True when the app runs inside a frame; a meta CSP cannot forbid framing. */
 export function inFrame(): boolean {
   return window.top !== window.self;
@@ -95,7 +104,7 @@ function sendList(round: StoredRound, status: HTMLElement): HTMLElement {
     const mark = h('span', { class: 'sent-mark' }, icon('check'), t('round.sent'));
     mark.hidden = !entry.sent;
     const button = h('button', { type: 'button', class: 'btn btn--card', 'aria-label': t('round.sendTo', { name: entry.name }) }, icon('send'), t('round.send'));
-    button.addEventListener('click', async () => {
+    button.addEventListener('click', safely(async () => {
       // Read the link fresh: a drop-out or new draw may have changed it.
       const current = (await loadRound(store, round.id)).links.find((l) => l.name === entry.name);
       if (!current) return;
@@ -108,7 +117,7 @@ function sendList(round: StoredRound, status: HTMLElement): HTMLElement {
       const next = await markSent(store, round.id, entry.name);
       mark.hidden = false;
       status.textContent = outcome === 'copied' ? t('round.copied', { name: entry.name }) : next.links.every((l) => l.sent) ? t('round.allSent') : '';
-    });
+    }));
     list.append(h('li', {}, h('span', { class: 'send-name' }, entry.name), mark, button));
   }
   return list;
@@ -146,13 +155,13 @@ function removeSection(round: StoredRound): HTMLElement {
   const select = h('select', { id: uid('f') }, ...round.links.map((l) => h('option', { value: l.name }, l.name)));
   const check = h('button', { type: 'button', class: 'btn btn--card' }, t('round.removeCheck'));
   const result = h('div', { class: 'stack', 'aria-live': 'polite' });
-  check.addEventListener('click', async () => {
+  check.addEventListener('click', safely(async () => {
     const name = select.value;
     if (round.links.length <= 2) return fill(result, h('p', {}, t('round.tooFewLeft')));
     const plan = await planDropout(store, round.id, name, appBase());
     const errors = h('p', { class: 'error', role: 'alert' });
     const redrawButton = h('button', { type: 'button', class: 'btn btn--ink' }, t('round.redraw'));
-    redrawButton.addEventListener('click', () => redraw(round, withoutPerson(round.config, name), errors));
+    redrawButton.addEventListener('click', safely(() => redraw(round, withoutPerson(round.config, name), errors)));
     if (plan.kind === 'selfDraw') return fill(result, h('p', {}, t('round.removeSelf', { engerl: plan.engerl })), h('div', { class: 'actions' }, redrawButton), errors);
     const apply = h('button', { type: 'button', class: plan.rulesBroken ? 'btn btn--card' : 'btn btn--ink' }, t(plan.rulesBroken ? 'round.removeAnyway' : 'round.removeApply'));
     apply.addEventListener('click', async () => {
@@ -170,16 +179,16 @@ function removeSection(round: StoredRound): HTMLElement {
       h('div', { class: 'actions' }, ...(plan.rulesBroken ? [redrawButton, apply] : [apply])),
       errors,
     );
-  });
+  }));
   return section(t('round.remove'), h('div', { class: 'field' }, h('label', { for: select.id }, t('round.removeWho')), select), h('div', { class: 'actions' }, check), result);
 }
 
 function redrawSection(round: StoredRound): HTMLElement {
   const button = h('button', { type: 'button', class: 'btn btn--card' }, t('round.redraw'));
   const errors = h('p', { class: 'error', role: 'alert' });
-  button.addEventListener('click', async () => {
+  button.addEventListener('click', safely(async () => {
     if (await confirmDialog(t('round.redrawWarning', { n: round.drawNumber + 1 }), t('round.redrawConfirm'), t('round.cancel'))) await redraw(round, round.config, errors);
-  });
+  }));
   return section(t('round.redraw'), h('div', { class: 'actions' }, button), errors);
 }
 
@@ -231,15 +240,15 @@ function emergencySection(round: StoredRound): HTMLElement {
     renderLog(next.views);
   };
   const show = h('button', { type: 'button', class: 'btn btn--card' }, t('emergency.show'));
-  show.addEventListener('click', () => reveal(isPeekPhrase(phrase.value)));
+  show.addEventListener('click', safely(() => reveal(isPeekPhrase(phrase.value))));
   const newPin = h('input', { type: 'password', id: uid('f'), inputmode: 'numeric', autocomplete: 'new-password' });
   const savePin = h('button', { type: 'button', class: 'btn btn--card' }, t('emergency.setPin'));
-  savePin.addEventListener('click', async () => {
+  savePin.addEventListener('click', safely(async () => {
     if (!newPin.value) return;
     await setPin(store, round.id, newPin.value);
     // Redraw so the emergency view shows the PIN field from now on.
     await showRound(round.id, { message: t('emergency.pinSet') });
-  });
+  }));
   const label = (input: HTMLElement, text: string) => h('div', { class: 'field' }, h('label', { for: input.id }, text), input);
   return section(
     t('emergency.title'),
@@ -247,7 +256,7 @@ function emergencySection(round: StoredRound): HTMLElement {
     label(who, t('emergency.who')),
     round.pin ? label(pin, t('emergency.pin')) : null,
     label(phrase, t('emergency.phraseLabel')),
-    h('div', { class: 'actions' }, show, holdButton(t('emergency.hold'), () => void reveal(true))),
+    h('div', { class: 'actions' }, show, holdButton(t('emergency.hold'), safely(() => reveal(true)))),
     result,
     h('h3', {}, t('emergency.log')),
     log,
@@ -258,20 +267,20 @@ function emergencySection(round: StoredRound): HTMLElement {
 /** "Seal and forget": an explicit choice while distributing, with a warning first. */
 function sealSection(round: StoredRound): HTMLElement {
   const seal = h('button', { type: 'button', class: 'btn btn--card' }, t('round.seal'));
-  seal.addEventListener('click', async () => {
+  seal.addEventListener('click', safely(async () => {
     if (!(await confirmDialog(t('round.sealWarning'), t('round.sealConfirm'), t('round.cancel')))) return;
     await store.delete(round.id);
     await showHome(t('round.sealed'));
-  });
+  }));
   return section(t('round.seal'), h('p', { class: 'help' }, t('round.sealWarning')), h('div', { class: 'actions' }, seal));
 }
 
 function deleteSection(round: StoredRound): HTMLElement {
   const remove = h('button', { type: 'button', class: 'btn btn--card' }, t('round.delete'));
-  remove.addEventListener('click', async () => {
+  remove.addEventListener('click', safely(async () => {
     if (!(await confirmDialog(t('round.deleteWarning'), t('round.deleteConfirm'), t('round.cancel')))) return;
     await store.delete(round.id);
     await showHome(t('round.deleted'));
-  });
+  }));
   return section(t('round.delete'), h('p', { class: 'help' }, t('round.deleteWarning')), h('div', { class: 'actions' }, remove));
 }
