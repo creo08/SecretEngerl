@@ -1,0 +1,74 @@
+# Pushes a checked branch of the private repository as main of the public one,
+# and optionally a release tag on its tip. Triggered by hand only.
+name: Promote
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch of this repository to push as main of creo08/SecretEngerl
+        required: true
+        type: string
+      tag:
+        description: Optional release tag (vX.Y.Z) to push on the tip of that branch afterwards
+        required: false
+        type: string
+
+permissions: {}
+
+concurrency:
+  group: promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    if: github.repository == 'creo08/SecretEngerl-dev'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      # Checks out the default branch, so the hygiene script itself comes from there.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Check all commits from the root to the tip of the branch
+        env:
+          BRANCH: ${{ inputs.branch }}
+        run: |
+          [[ $BRANCH =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "invalid branch name"; exit 1; }
+          git rev-parse --verify "refs/remotes/origin/$BRANCH^{commit}"
+          scripts/check-hygiene.sh "refs/remotes/origin/$BRANCH"
+      - name: Push the branch as main without force
+        env:
+          BRANCH: ${{ inputs.branch }}
+          TOKEN: ${{ secrets.PUBLIC_PUSH_TOKEN }}
+        run: |
+          git push "https://x-access-token:${TOKEN}@github.com/creo08/SecretEngerl.git" \
+            "refs/remotes/origin/$BRANCH:refs/heads/main"
+
+  tag:
+    needs: promote
+    if: inputs.tag != ''
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Push the tag on the tip of the promoted branch
+        env:
+          BRANCH: ${{ inputs.branch }}
+          TAG: ${{ inputs.tag }}
+          TOKEN: ${{ secrets.PUBLIC_PUSH_TOKEN }}
+        run: |
+          [[ $BRANCH =~ ^[A-Za-z0-9._/-]+$ ]] || { echo "invalid branch name"; exit 1; }
+          [[ $TAG =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "tag must look like v1.2.3"; exit 1; }
+          sha=$(git rev-parse --verify "refs/remotes/origin/$BRANCH^{commit}")
+          git show "$sha:CHANGELOG.md" | grep -qF "## [${TAG#v}]" \
+            || { echo "CHANGELOG.md has no section for ${TAG#v}"; exit 1; }
+          # A plain push never moves an existing tag.
+          git push "https://x-access-token:${TOKEN}@github.com/creo08/SecretEngerl.git" \
+            "$sha:refs/tags/$TAG"

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Rejects commits whose identity, message or staged changes break the hygiene rules.
+set -euo pipefail
+exec "$(git rev-parse --show-toplevel)/scripts/check-hygiene.sh" --commit-msg "$1"

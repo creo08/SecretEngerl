@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+# Checks every commit that a push would add to the remote.
+set -euo pipefail
+check="$(git rev-parse --show-toplevel)/scripts/check-hygiene.sh"
+while read -r _local_ref local_sha _remote_ref remote_sha; do
+  [[ $local_sha =~ ^0+$ ]] && continue # branch deletion
+  if [[ $remote_sha =~ ^0+$ ]]; then
+    "$check" "$local_sha" --not --remotes
+  else
+    "$check" "$remote_sha..$local_sha"
+  fi
+done
