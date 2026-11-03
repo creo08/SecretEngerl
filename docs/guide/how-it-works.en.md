@@ -4,7 +4,7 @@ SecretEngerl draws names for Engerl-Bengerl, the Austrian Secret Santa, for Wich
 
 ## 1. Pick a template
 
-Choose how your group plays: [Engerl-Bengerl classic](app:vorlagen/engerl-bengerl/), [Schrottwichteln](app:vorlagen/schrottwichteln/), [Family Wichteln](app:vorlagen/familien-wichteln/) or [Office Wichteln](app:vorlagen/buero-wichteln/). Each one fills in sensible defaults.
+Choose how your group plays: [Engerl-Bengerl classic](app:engerl-bengerl/), [Schrottwichteln](app:schrottwichteln/), [Family Wichteln](app:familien-wichteln/) or [Office Wichteln](app:buero-wichteln/). Each one fills in sensible defaults.
 
 ## 2. Who plays
 

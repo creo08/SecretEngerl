@@ -4,7 +4,7 @@ SecretEngerl lost Engerl-Bengerl, Wichteln und Secret Santa aus. Alles passiert 
 
 ## 1. Vorlage wählen
 
-Such aus, wie eure Gruppe spielt: [Engerl-Bengerl klassisch](app:vorlagen/engerl-bengerl/), [Schrottwichteln](app:vorlagen/schrottwichteln/), [Familien-Wichteln](app:vorlagen/familien-wichteln/) oder [Büro-Wichteln](app:vorlagen/buero-wichteln/). Jede Vorlage füllt passende Voreinstellungen aus.
+Such aus, wie eure Gruppe spielt: [Engerl-Bengerl klassisch](app:engerl-bengerl/), [Schrottwichteln](app:schrottwichteln/), [Familien-Wichteln](app:familien-wichteln/) oder [Büro-Wichteln](app:buero-wichteln/). Jede Vorlage füllt passende Voreinstellungen aus.
 
 ## 2. Wer spielt mit
 
