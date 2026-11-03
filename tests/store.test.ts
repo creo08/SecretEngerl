@@ -4,7 +4,8 @@ import { readFragment } from '../src/link/link.ts';
 import { compileRound } from '../src/losfee/index.ts';
 import { isStoredRound } from '../src/store/db.ts';
 import { checkPin, isPeekPhrase, setPin, viewAssignment } from '../src/store/emergency.ts';
-import { markSent, planDropout, purgeExpired, readAssignment, saveDraw } from '../src/store/rounds.ts';
+import { DrawTooLongError, markSent, planDropout, purgeExpired, readAssignment, saveDraw } from '../src/store/rounds.ts';
+import { freeHintBytes } from '../src/link/payload.ts';
 import { memoryStore } from './helpers/memory-store.ts';
 import { round as makeConfig } from './helpers/round.ts';
 
@@ -58,6 +59,17 @@ describe('stored round', () => {
     const plan = await planDropout(store, round.id, 'B', BASE);
     await saveDraw(store, { config: round.config, names, assignment: [2, 3, 4, 0, 1], base: BASE, previousId: round.id });
     if (plan.kind === 'repair') await expect(plan.apply()).rejects.toThrow(/changed/);
+  });
+
+  it('refuses a new draw that no longer fits, and stores nothing', async () => {
+    const { store, round, names } = await stored(people('ABC'), [1, 2, 0]);
+    const config = structuredClone(round.config);
+    config.gifts.hints = { B: 'x'.repeat(freeHintBytes(config, 'B', 1)) };
+    // Fits for draw 1 to 9, but draw 10 has one more digit.
+    const stored9 = { ...(await store.get(round.id))!, drawNumber: 9, config };
+    await store.put(stored9);
+    await expect(saveDraw(store, { config, names, assignment: [2, 0, 1], base: BASE, previousId: round.id })).rejects.toBeInstanceOf(DrawTooLongError);
+    expect((await store.get(round.id))!.drawNumber).toBe(9);
   });
 
   it('marks a link as sent', async () => {
