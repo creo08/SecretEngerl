@@ -25,6 +25,7 @@ interface WizardState {
   budget: string;
   theme: string;
   hints: Record<string, string>;
+  addresses: Record<string, string>;
   lastYear: Record<string, string>;
   exclusions: Exclusion[];
   must: MustRule[];
@@ -67,6 +68,7 @@ export function startWizard(
     budget: t0.defaults.gifts.budget ? String(t0.defaults.gifts.budget.amount) : '',
     theme: '',
     hints: {},
+    addresses: {},
     lastYear: {},
     exclusions: [],
     must: [],
@@ -123,6 +125,7 @@ function buildConfig(state: WizardState): Result<RoundConfig> {
   const people = new Set(names.value.flat());
   // Hints of people removed in step 1 stay in the state; only current people count.
   config.gifts.hints = Object.fromEntries(Object.entries(state.hints).filter(([n, v]) => people.has(n) && v.trim() !== ''));
+  config.addresses = Object.fromEntries(Object.entries(state.addresses).filter(([n, v]) => people.has(n) && v.trim() !== ''));
   config.structure = { ...config.structure, noMutual: state.noMutual, oneChain: state.oneChain };
   config.rules = {
     exclusions: state.exclusions.filter((e) => people.has(e.from) && people.has(e.to)),
@@ -281,14 +284,18 @@ function personSelect(people: string[], value: string, empty?: string): HTMLSele
   return select;
 }
 
-function hintsBlock(state: WizardState, people: string[]): HTMLElement {
-  const block = h('fieldset', { class: 'stack' }, h('legend', {}, t('wizard.rules.hints')), h('p', { class: 'help' }, t('wizard.rules.hintNote')));
+/**
+ * One text field per person whose text goes into the draw of that person's
+ * Engerl (hints, postal addresses), each with the space left in the draw.
+ */
+function perPersonBlock(state: WizardState, people: string[], texts: Record<string, string>, legend: string, note: string, label: (name: string) => string, rows = '2'): HTMLElement {
+  const block = h('fieldset', { class: 'stack' }, h('legend', {}, legend), h('p', { class: 'help' }, note));
   for (const name of people) {
-    const area = h('textarea', { rows: '2', autocomplete: 'off' });
-    area.value = state.hints[name] ?? '';
+    const area = h('textarea', { rows, autocomplete: 'off' });
+    area.value = texts[name] ?? '';
     const counter = h('p', { class: 'help', 'aria-live': 'polite' });
     const update = () => {
-      state.hints[name] = area.value;
+      texts[name] = area.value;
       const built = buildConfig(state);
       if (!built.ok) return fill(counter);
       const free = freeHintBytes(built.value, name, 1);
@@ -297,10 +304,18 @@ function hintsBlock(state: WizardState, people: string[]): HTMLElement {
       counter.textContent = free >= 0 ? t('wizard.rules.free', { count: free }) : t('wizard.rules.over', { count: -free });
     };
     area.addEventListener('input', update);
-    block.append(field(t('wizard.rules.hintFor', { name }), area), counter);
+    block.append(field(label(name), area), counter);
     update();
   }
   return block;
+}
+
+function hintsBlock(state: WizardState, people: string[]): HTMLElement {
+  return perPersonBlock(state, people, state.hints, t('wizard.rules.hints'), t('wizard.rules.hintNote'), (name) => t('wizard.rules.hintFor', { name }));
+}
+
+function addressesBlock(state: WizardState, people: string[]): HTMLElement {
+  return perPersonBlock(state, people, state.addresses, t('wizard.rules.addresses'), t('wizard.rules.addressesHelp'), (name) => t('wizard.rules.addressFor', { name }), '3');
 }
 
 function lastYearBlock(state: WizardState, people: string[]): HTMLElement {
@@ -409,6 +424,7 @@ function stepRules(state: WizardState): void {
   (template.fields.theme ? main : more).push(themeField);
   (template.fields.hints ? main : more).push(hintsBlock(state, people));
   (template.fields.lastYear ? main : more).push(lastYearBlock(state, people));
+  if (template.fields.address) main.push(addressesBlock(state, people));
   const excluded = previousPairings(state, people);
   if (state.previous && excluded.length) main.unshift(previousBlock(state.previous.year, excluded));
 

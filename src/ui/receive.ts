@@ -39,6 +39,7 @@ function revealed(p: Payload): HTMLElement {
   ];
   if (p.m) rows.push([t('los.theme'), p.m]);
   if (p.t === 'schrottwichteln') rows.push([t('los.rule'), t('rule.schrottwichteln')]);
+  if (p.a) rows.push([t('los.address'), p.a]);
   if (p.h) rows.push([t('los.hint'), p.h]);
   const calendar = h('button', { type: 'button', class: 'btn btn--card' }, icon('calendarPlus'), t('los.calendar'));
   calendar.addEventListener('click', () => downloadEvent(p.d));
