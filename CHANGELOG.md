@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- Link format v1 gains the optional key `a` (postal address, at most 100 bytes) for postal rounds, and in Advent rounds the theme `m` may hold one theme per week, separated by `|`. Every draw is still padded to 256 bytes, so all links keep the same length; app versions before 0.5.0 show postal draws as invalid until they update.
+- Link format v1 gains the optional key `a` (postal address, at most 100 bytes) for postal rounds, and in Advent rounds the theme `m` may hold one theme per week, separated by `|`. Every draw is still padded to 256 bytes, so all links keep the same length; app versions before 0.5.0 show postal and Advent draws as invalid until they update.
 
 ## [0.4.0] - 2026-11-03
 
