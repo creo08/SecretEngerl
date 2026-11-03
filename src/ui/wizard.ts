@@ -26,6 +26,8 @@ interface WizardState {
   theme: string;
   hints: Record<string, string>;
   addresses: Record<string, string>;
+  /** One theme per Advent week (Advent-Engerl). */
+  weekThemes: string[];
   lastYear: Record<string, string>;
   exclusions: Exclusion[];
   must: MustRule[];
@@ -69,6 +71,7 @@ export function startWizard(
     theme: '',
     hints: {},
     addresses: {},
+    weekThemes: ['', '', '', ''],
     lastYear: {},
     exclusions: [],
     must: [],
@@ -121,7 +124,10 @@ function buildConfig(state: WizardState): Result<RoundConfig> {
     if (!amount.ok) return amount;
     config.gifts.budget = { amount: amount.value, currency: 'EUR' };
   }
-  config.gifts.theme = state.theme;
+  // Advent themes travel as one theme per week, separated by "|" (link format v1, key m).
+  config.gifts.theme = template.fields.weeklyThemes
+    ? state.weekThemes.some((w) => cleanText(w)) ? state.weekThemes.map((w) => cleanText(w).replaceAll('|', '/')).join('|') : ''
+    : state.theme;
   const people = new Set(names.value.flat());
   // Hints of people removed in step 1 stay in the state; only current people count.
   config.gifts.hints = Object.fromEntries(Object.entries(state.hints).filter(([n, v]) => people.has(n) && v.trim() !== ''));
@@ -310,6 +316,16 @@ function perPersonBlock(state: WizardState, people: string[], texts: Record<stri
   return block;
 }
 
+function weekThemesBlock(state: WizardState): HTMLElement {
+  const inputs = state.weekThemes.map((value, i) => {
+    const input = h('input', { type: 'text', autocomplete: 'off', maxlength: '20' });
+    input.value = value;
+    input.addEventListener('input', () => (state.weekThemes[i] = input.value));
+    return field(t('wizard.rules.week', { n: i + 1 }), input);
+  });
+  return h('fieldset', { class: 'stack' }, h('legend', {}, t('wizard.rules.weekThemes')), h('p', { class: 'help' }, t('wizard.rules.weekThemesHelp')), ...inputs);
+}
+
 function hintsBlock(state: WizardState, people: string[]): HTMLElement {
   return perPersonBlock(state, people, state.hints, t('wizard.rules.hints'), t('wizard.rules.hintNote'), (name) => t('wizard.rules.hintFor', { name }));
 }
@@ -425,6 +441,7 @@ function stepRules(state: WizardState): void {
   (template.fields.hints ? main : more).push(hintsBlock(state, people));
   (template.fields.lastYear ? main : more).push(lastYearBlock(state, people));
   if (template.fields.address) main.push(addressesBlock(state, people));
+  if (template.fields.weeklyThemes) main.unshift(weekThemesBlock(state));
   const excluded = previousPairings(state, people);
   if (state.previous && excluded.length) main.unshift(previousBlock(state.previous.year, excluded));
 
