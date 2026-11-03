@@ -6,6 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Template "Post-Wichteln" with its page /post-wichteln/: everyone's postal address goes only into the draw of the Engerl who sends to that person.
+
+### Security
+
+- Link format v1 gains the optional key `a` (postal address, at most 100 bytes) for postal rounds. Every draw is still padded to 256 bytes, so all links keep the same length; app versions before 0.5.0 show postal draws as invalid until they update.
+
 ## [0.4.0] - 2026-11-03
 
 ### Added

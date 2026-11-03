@@ -13,6 +13,7 @@ const pages: [string, string][] = [
   ['schrottwichteln/', 'Schrottwichteln online auslosen'],
   ['familien-wichteln/', 'Familien-Wichteln online auslosen'],
   ['buero-wichteln/', 'Büro-Wichteln online auslosen'],
+  ['post-wichteln/', 'Post-Wichteln online auslosen'],
 ];
 
 test('the help pages are readable without JavaScript', async ({ page }) => {
