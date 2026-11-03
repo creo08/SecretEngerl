@@ -9,6 +9,7 @@ import { getTemplate } from '../config/templates.ts';
 import { byId, fill, h, showView } from './dom.ts';
 import { errorMessages, householdLabel } from './text.ts';
 import { startWizard } from './wizard.ts';
+import { wireTemplateLinks } from './home.ts';
 
 /** Shows what a pre-fill fragment would set up, or why it cannot be used. */
 export function showPrefill(fragment: string): void {
@@ -27,13 +28,16 @@ export function showPrefill(fragment: string): void {
     if (withBudget) rows.push([t('prefill.budget'), formatBudget(p.budget!)]);
     if (p.date) rows.push([t('prefill.date'), formatDate(p.date)]);
     const accept = h('button', { type: 'button', class: 'btn btn--ink' }, t('prefill.accept'));
-    accept.addEventListener('click', () =>
+    accept.addEventListener('click', () => {
+      // From here on this is the app at its own address: a reload shows the start page, not this link.
+      history.replaceState(null, '', import.meta.env.BASE_URL);
+      wireTemplateLinks();
       startWizard(p.template, {
         namesText: p.households.map((g) => g.join('\n')).join('\n\n'),
         ...(withBudget ? { budget: String(p.budget) } : {}),
         ...(p.date ? { date: p.date } : {}),
-      }),
-    );
+      });
+    });
     const discard = h('a', { href: import.meta.env.BASE_URL, class: 'btn btn--card' }, t('prefill.discard'));
     content.append(
       h('p', { class: 'lead' }, t('prefill.intro')),

@@ -28,17 +28,22 @@ export async function showHome(message = ''): Promise<void> {
   fill(box, h('h2', {}, t('rounds.title')), list);
 }
 
-/** Wires the template links: with JavaScript they start the wizard instead of opening the help page. */
-export async function startApp(): Promise<void> {
+/** With JavaScript, the template cards start the wizard instead of opening their help page. */
+export function wireTemplateLinks(): void {
   for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-template]')) {
     const id = link.dataset.template;
-    if (!isTemplateId(id)) continue;
+    if (!isTemplateId(id) || link.dataset.wired) continue;
+    link.dataset.wired = '1';
     link.addEventListener('click', (event) => {
       event.preventDefault();
       startWizard(id);
     });
   }
-  for (const el of document.querySelectorAll<HTMLElement>('[data-js-only]')) el.hidden = false;
+}
+
+/** Starts the app on the start page: template cards, expiry clean-up, a requested template or the overview. */
+export async function startApp(): Promise<void> {
+  wireTemplateLinks();
   await purgeExpired(store, Date.now()).catch(() => undefined);
   const requested = new URLSearchParams(location.search).get('vorlage');
   if (isTemplateId(requested)) {

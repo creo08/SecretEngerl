@@ -54,6 +54,10 @@ test('a pre-fill link shows a confirmation and fills the wizard, drawing nothing
   await expect(page.getByLabel('Namen, einer pro Zeile')).toHaveValue('Anna\nBernd\n\nClara\nDavid\n\nEva');
   await expect(page.getByLabel('Übergabetag')).toHaveValue('2099-12-20');
   await expect(page.getByLabel('Budget in Euro')).toHaveValue('25');
+  expect(page.url()).toMatch(/\/SecretEngerl\/$/);
+  await page.getByRole('button', { name: 'Zurück' }).click();
+  await page.getByRole('link', { name: /Büro-Wichteln/ }).click();
+  await expect(page.getByRole('heading', { name: 'Wer spielt mit?' })).toBeVisible();
   expect(requests.filter((u) => !u.startsWith('http://localhost:4173'))).toEqual([]);
 });
 
