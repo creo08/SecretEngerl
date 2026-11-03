@@ -71,9 +71,10 @@ function buildConfig(state: WizardState): Result<RoundConfig> {
     config.gifts.budget = { amount: amount.value, currency: 'EUR' };
   }
   config.gifts.theme = state.theme;
-  config.gifts.hints = Object.fromEntries(Object.entries(state.hints).filter(([, v]) => v.trim() !== ''));
-  config.structure = { ...config.structure, noMutual: state.noMutual, oneChain: state.oneChain };
   const people = new Set(names.value.flat());
+  // Hints of people removed in step 1 stay in the state; only current people count.
+  config.gifts.hints = Object.fromEntries(Object.entries(state.hints).filter(([n, v]) => people.has(n) && v.trim() !== ''));
+  config.structure = { ...config.structure, noMutual: state.noMutual, oneChain: state.oneChain };
   config.rules = {
     exclusions: state.exclusions.filter((e) => people.has(e.from) && people.has(e.to)),
     must: state.must.filter((m) => people.has(m.giver)).map((m) => ({ ...m, choices: m.choices.filter((c) => people.has(c)) })).filter((m) => m.choices.length),
