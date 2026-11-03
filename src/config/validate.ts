@@ -190,6 +190,9 @@ export function validateConfig(raw: unknown): Result<RoundConfig> {
   }
   if (households.flat().length < 2) r.errors.push({ code: 'people.tooFew', path: 'participants.households' });
   checkRuleNames(config, r.errors);
+  // Hints are looked up by exact name later; use each participant's own spelling.
+  const spelling = new Map(households.flat().map((n) => [nameKey(n), n]));
+  config.gifts.hints = Object.fromEntries(Object.entries(config.gifts.hints).map(([n, h]) => [spelling.get(nameKey(n)) ?? n, h]));
   return r.errors.length ? { ok: false, errors: r.errors } : { ok: true, value: config };
 }
 

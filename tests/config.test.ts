@@ -33,6 +33,13 @@ describe('configuration model', () => {
     }
   });
 
+  it('writes hint names the way the participant is spelled', () => {
+    const raw = configFromTemplate('engerl-bengerl', households, '2026-12-20');
+    raw.gifts.hints = { anna: 'keine Nüsse' };
+    const result = validateConfig(raw);
+    expect(result.ok && result.value.gifts.hints).toEqual({ Anna: 'keine Nüsse' });
+  });
+
   it('ignores unknown keys', () => {
     const raw = { ...configFromTemplate('engerl-bengerl', households, '2026-12-20'), evil: '<script>' };
     const result = validateConfig(raw);
