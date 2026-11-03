@@ -28,6 +28,10 @@ Meist nicht. Das Engerl dieser Person übernimmt deren Bengerl, und nur diese ei
 
 In der Runde speichert „Fürs nächste Jahr merken“ eine Datei mit Namen, Gruppen, Paarungen, Budget und Hinweisen. Im nächsten Jahr öffnest du sie auf der Startseite mit „Datei öffnen“: Die App füllt alles aus und schließt die Paarungen vom letzten Jahr aus. Auf demselben Gerät hebt die App die beendete Runde außerdem unter „Vom letzten Jahr“ für dich auf. Ohne Passwort kann jede Person mit der Datei lesen, wer wen beschenkt hat, und die Hinweise; gib ihr also eines, wenn sie weitergeht.
 
+## Kann ich eine Runde auf ein anderes Gerät mitnehmen?
+
+Ja. In der Runde speichert „Sicherung speichern“ eine Datei mit der ganzen Runde und allen Links. Auf dem anderen Gerät öffnest du sie auf der Startseite mit „Datei öffnen“. Gib ihr ein Passwort, wenn sie per Mail oder Cloud reist: Ohne Passwort kann jede Person mit der Datei lesen, wer wen gezogen hat.
+
 ## Kann ich die Links in die Gruppe schicken?
 
 Bitte nicht. Jeder Link enthält das Los einer Person. Schick ihn im Einzelchat.

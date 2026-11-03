@@ -28,6 +28,10 @@ Usually not. Their Engerl takes over their Bengerl, and only that one person get
 
 In the round, "Remember for next year" saves a file with names, groups, pairings, budget and hints. Next year, open it with "Open file" on the start page: the app fills in everything and excludes last year's pairings. On the same device the app also keeps the ended round for you under "From last year". Without a password, anyone with the file can read who gave to whom and the hints, so give it one if it travels.
 
+## Can I move a round to another device?
+
+Yes. In the round, "Save backup" saves a file with the whole round and all links. On the other device, open it with "Open file" on the start page. Give it a password if it travels by email or cloud: without one, anyone with the file can read who drew whom.
+
 ## Can I send the links in the group chat?
 
 Please do not. Each link holds one person's draw. Send it in a one-to-one chat.
