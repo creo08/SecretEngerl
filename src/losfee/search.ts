@@ -16,10 +16,14 @@ export interface SearchResult {
 /**
  * Searches valid assignments. With `countAll` it enumerates all of them,
  * otherwise it stops at the first. `nodeLimit` caps the number of steps.
+ * `allowed` may pass a matrix the caller already built from allowedMatrix.
  */
-export function searchAssignments(p: Problem, options: { countAll: boolean; nodeLimit: number }): SearchResult {
+export function searchAssignments(
+  p: Problem,
+  options: { countAll: boolean; nodeLimit: number; allowed?: readonly (readonly boolean[])[] },
+): SearchResult {
   const { n } = p;
-  const allowed = allowedMatrix(p);
+  const allowed = options.allowed ?? allowedMatrix(p);
   const order = [...Array(n).keys()].sort((a, b) => allowed[a]!.filter(Boolean).length - allowed[b]!.filter(Boolean).length);
   const candidates = order.map((g) => allowed[g]!.flatMap((ok, r) => (ok ? [r] : [])));
   const to = new Array<number>(n).fill(-1);

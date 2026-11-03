@@ -11,7 +11,7 @@
  * 5. Budget of 1,000,000 attempts or 2 seconds; then no draw, never a biased one.
  */
 import { randInt, type Rng } from '../random/rng.ts';
-import { allowedMatrix, pairViolation } from './check.ts';
+import { pairViolation } from './check.ts';
 import { HouseholdSampler } from './households.ts';
 import { checkFeasibility } from './matching.ts';
 import { searchAssignments } from './search.ts';
@@ -53,16 +53,18 @@ export function draw(p: Problem, rng: Rng, options: DrawOptions = {}): DrawResul
   const now = options.now ?? (() => performance.now());
   const start = now();
 
-  const feasibility = checkFeasibility(allowedMatrix(p));
-  if (!feasibility.ok) {
-    return { ok: false, reason: 'tooFewReceivers', givers: feasibility.givers, receivers: feasibility.receivers.length };
-  }
-  const search = searchAssignments(p, { countAll: false, nodeLimit: options.searchNodeLimit ?? 200_000 });
-  if (search.status === 'none') return { ok: false, reason: 'impossible', chain: p.oneChain };
-
   const { n } = p;
   const pairRule: (RuleRef | null)[] = [];
   for (let g = 0; g < n; g++) for (let r = 0; r < n; r++) pairRule.push(pairViolation(p, g, r));
+  const allowed = Array.from({ length: n }, (_, g) => Array.from({ length: n }, (_, r) => pairRule[g * n + r] === null));
+
+  const feasibility = checkFeasibility(allowed);
+  if (!feasibility.ok) {
+    return { ok: false, reason: 'tooFewReceivers', givers: feasibility.givers, receivers: feasibility.receivers.length };
+  }
+  const search = searchAssignments(p, { countAll: false, nodeLimit: options.searchNodeLimit ?? 200_000, allowed });
+  if (search.status === 'none') return { ok: false, reason: 'impossible', chain: p.oneChain };
+
   const violations = new Violations();
   const outOfBudget = (attempts: number) => attempts >= maxAttempts || (attempts % 256 === 0 && now() - start > maxMillis);
 
