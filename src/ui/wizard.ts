@@ -3,12 +3,14 @@
  * Everything beyond the essentials sits under "Mehr Optionen".
  */
 import { configFromTemplate, getTemplate } from '../config/templates.ts';
-import type { Exclusion, MustRule, RoundConfig, TemplateId } from '../config/types.ts';
+import type { Exclusion, MustRule, Pairing, RoundConfig, TemplateId } from '../config/types.ts';
+import type { YearData } from '../files/year.ts';
+import { isPeekPhrase } from '../store/emergency.ts';
 import { validateConfig } from '../config/validate.ts';
 import { t } from '../i18n/i18n.ts';
-import { cleanText, parseAmount, parseNameList, type Result } from '../input/validate.ts';
+import { cleanText, nameKey, parseAmount, parseNameList, type Result } from '../input/validate.ts';
 import { freeHintBytes, oversizedDraws } from '../link/payload.ts';
-import { indexedDbStore, requestPersistence } from '../store/db.ts';
+import { indexedDbStore, indexedDbYears, requestPersistence } from '../store/db.ts';
 import { MAX_TITLE_CHARS, saveDraw } from '../store/rounds.ts';
 import { askWorker } from '../worker/client.ts';
 import { byId, disclosure, fill, h, showView, uid } from './dom.ts';
@@ -28,6 +30,11 @@ interface WizardState {
   must: MustRule[];
   noMutual: boolean;
   oneChain: boolean;
+  /** Last year's round this one starts from; its pairings are excluded but never shown without "Ich spicke". */
+  previous?: { year: number; names: string[]; pairings: Pairing[]; yearId?: string };
+  /** Last year's names that are spelled differently now: old name → new name. */
+  renames: Record<string, string>;
+  mapped: boolean;
 }
 
 /** Today's date on this device as YYYY-MM-DD. */
@@ -47,7 +54,10 @@ export function appBase(): string {
 }
 
 /** Starts the wizard with a template, optionally pre-filled (from a pre-fill link). */
-export function startWizard(template: TemplateId, initial: Partial<Pick<WizardState, 'namesText' | 'budget' | 'date'>> = {}): void {
+export function startWizard(
+  template: TemplateId,
+  initial: Partial<Pick<WizardState, 'namesText' | 'budget' | 'date' | 'hints' | 'previous'>> = {},
+): void {
   const t0 = getTemplate(template);
   const state: WizardState = {
     template,
@@ -62,10 +72,35 @@ export function startWizard(template: TemplateId, initial: Partial<Pick<WizardSt
     must: [],
     noMutual: t0.defaults.structure.noMutual,
     oneChain: t0.defaults.structure.oneChain,
+    renames: {},
+    mapped: false,
     ...initial,
   };
   stepWho(state);
   showView('wizard');
+}
+
+/** Starts a new round from last year's round: names, groups, budget and hints filled in, pairings excluded. */
+export function startWizardFromYear(data: YearData, yearId?: string): void {
+  const withBudget = getTemplate(data.template).fields.budget && data.budget !== null;
+  startWizard(data.template, {
+    namesText: data.households.map((g) => g.join('\n')).join('\n\n'),
+    ...(withBudget ? { budget: String(data.budget) } : {}),
+    hints: { ...data.hints },
+    previous: { year: data.year, names: data.households.flat(), pairings: data.pairings, ...(yearId ? { yearId } : {}) },
+  });
+}
+
+/** Last year's pairings among this year's people, after renames; spelled as this year. */
+function previousPairings(state: WizardState, people: readonly string[]): Pairing[] {
+  if (!state.previous) return [];
+  const spelling = new Map(people.map((n) => [nameKey(n), n]));
+  const now = (old: string) => spelling.get(nameKey(state.renames[old] ?? old));
+  return state.previous.pairings.flatMap((p) => {
+    const giver = now(p.giver);
+    const receiver = now(p.receiver);
+    return giver && receiver && giver !== receiver ? [{ giver, receiver }] : [];
+  });
 }
 
 function households(state: WizardState): string[][] {
@@ -92,7 +127,10 @@ function buildConfig(state: WizardState): Result<RoundConfig> {
   config.rules = {
     exclusions: state.exclusions.filter((e) => people.has(e.from) && people.has(e.to)),
     must: state.must.filter((m) => people.has(m.giver)).map((m) => ({ ...m, choices: m.choices.filter((c) => people.has(c)) })).filter((m) => m.choices.length),
-    lastYear: Object.entries(state.lastYear).filter(([g, r]) => people.has(g) && people.has(r)).map(([giver, receiver]) => ({ giver, receiver })),
+    lastYear: [
+      ...Object.entries(state.lastYear).filter(([g, r]) => people.has(g) && people.has(r)).map(([giver, receiver]) => ({ giver, receiver })),
+      ...previousPairings(state, [...people]).filter((p) => state.lastYear[p.giver] !== p.receiver),
+    ],
   };
   return validateConfig(config);
 }
@@ -174,10 +212,54 @@ function stepWho(state: WizardState): void {
       showErrors(errors, errorMessages(result.errors));
       return;
     }
+    if (state.previous && !state.mapped && showMapping(state, result.value.participants.households.flat(), errors)) return;
     stepRules(state);
   });
   fill(byId('wizard'), frame(1, t('wizard.who.title'), h('p', { class: 'template-name' }, t(`template.${state.template}`)), form));
   showView('wizard');
+}
+
+/**
+ * Asks who is who when last year's names are missing from this year's list
+ * but new names appeared. Returns true while the question is on screen.
+ */
+function showMapping(state: WizardState, people: string[], before: HTMLElement): boolean {
+  const old = state.previous!;
+  const oldKeys = new Set(old.names.map(nameKey));
+  const nowKeys = new Set(people.map(nameKey));
+  const missing = old.names.filter((n) => !nowKeys.has(nameKey(n)));
+  const fresh = people.filter((n) => !oldKeys.has(nameKey(n)));
+  state.mapped = true;
+  if (!missing.length || !fresh.length) return false;
+  const block = h('fieldset', { class: 'stack' }, h('legend', {}, t('wizard.map.title')), h('p', { class: 'help' }, t('wizard.map.help', { year: old.year })));
+  for (const name of missing) {
+    const select = personSelect(fresh, '', t('wizard.map.gone'));
+    select.addEventListener('change', () => {
+      if (select.value) state.renames[name] = select.value;
+      else delete state.renames[name];
+    });
+    block.append(field(t('wizard.map.for', { name, year: old.year }), select));
+  }
+  before.before(block);
+  block.querySelector('select')?.focus();
+  return true;
+}
+
+/** "10 pairings from 2026 are excluded", and the pairings only after "Ich spicke". */
+function previousBlock(year: number, pairs: Pairing[]): HTMLElement {
+  const phrase = h('input', { type: 'text', id: uid('f'), autocomplete: 'off', spellcheck: 'false' });
+  const list = h('ul', { class: 'log' });
+  const show = h('button', { type: 'button', class: 'btn btn--card' }, t('wizard.year.show'));
+  show.addEventListener('click', () => {
+    if (!isPeekPhrase(phrase.value)) return fill(list, h('li', {}, t('emergency.wrongPhrase')));
+    fill(list, ...pairs.map((p) => h('li', {}, t('wizard.year.pair', { giver: p.giver, receiver: p.receiver }))));
+  });
+  return h(
+    'div',
+    { class: 'notice stack' },
+    h('p', {}, t('wizard.year.excluded', { count: pairs.length, year })),
+    disclosure(t('wizard.year.view'), t('wizard.year.viewHint'), h('div', { class: 'stack' }, field(t('emergency.phraseLabel'), phrase), h('div', { class: 'actions' }, show), list), 'more more--inner'),
+  );
 }
 
 function checkbox(label: string, help: string, checked: boolean, onChange: (v: boolean) => void): HTMLElement {
@@ -323,6 +405,8 @@ function stepRules(state: WizardState): void {
   (template.fields.theme ? main : more).push(themeField);
   (template.fields.hints ? main : more).push(hintsBlock(state, people));
   (template.fields.lastYear ? main : more).push(lastYearBlock(state, people));
+  const excluded = previousPairings(state, people);
+  if (state.previous && excluded.length) main.unshift(previousBlock(state.previous.year, excluded));
 
   const errors = errorBox();
   const status = h('p', { class: 'muted', 'aria-live': 'polite' });
@@ -357,6 +441,8 @@ function stepRules(state: WizardState): void {
       if (response.type === 'invalid') return showErrors(errors, errorMessages(response.errors));
       if (response.type !== 'draw') throw new Error('unexpected worker response');
       if (!response.result.ok) return showErrors(errors, [drawFailure(config, response.names, response.result)]);
+      // A round started from last year's round on this device uses it up.
+      if (state.previous?.yearId) await indexedDbYears.delete(state.previous.yearId).catch(() => undefined);
       const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase(), ...(state.title ? { title: state.title } : {}) });
       void requestPersistence();
       await showRound(round.id, { fresh: true });
