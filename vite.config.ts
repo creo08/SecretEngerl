@@ -2,13 +2,14 @@ import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 import { sitePlugin } from './scripts/vite-site.ts';
 
-/** The only place that names the GitHub Pages base path. Code reads import.meta.env.BASE_URL. */
+/** The only place that names where the site lives. Code reads import.meta.env.BASE_URL. */
+const ORIGIN = 'https://creo08.github.io';
 const BASE = '/SecretEngerl/';
 const root = fileURLToPath(new URL('.', import.meta.url));
 
 export default defineConfig({
   base: BASE,
-  plugins: [sitePlugin(root)],
+  plugins: [sitePlugin(root, ORIGIN)],
   build: {
     target: 'es2023',
     sourcemap: false,
