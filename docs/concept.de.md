@@ -243,9 +243,9 @@ Ein Link kann eine neue Runde vorbelegen, ebenfalls im Fragment:
 https://creo08.github.io/SecretEngerl/neu#v=1&f=engerl-bengerl&n=Anna,Bernd;Clara,David;Eva&b=20&d=2026-12-20
 ```
 
-`f` ist die Vorlage, `n` die Namen mit `,` innerhalb und `;` zwischen Haushalten, `b` das Budget und `d` der Übergabetag. Die App füllt damit den Wizard aus und zeigt eine Bestätigungsseite; gezogen wird erst nach einem Tipp der organisierenden Person. So kann jemand eine fertige Einladung zum Einrichten weitergeben, und ein KI-Assistent, den man um „mach Engerl-Bengerl für Anna, Bernd und Clara“ bittet, kann direkt einen passenden Link bauen. Die Namen gehen dabei nicht an den Hoster, Namen, die man einem KI-Assistenten nennt, aber an dessen Anbieter.
+`f` ist die Vorlage, `n` die Namen mit `,` innerhalb und `;` zwischen Gruppen, `b` das Budget und `d` der Übergabetag. Die App füllt damit den Wizard aus und zeigt eine Bestätigungsseite; gezogen wird erst nach einem Tipp der organisierenden Person. So kann jemand eine fertige Einladung zum Einrichten weitergeben, und ein KI-Assistent, den man um „mach Engerl-Bengerl für Anna, Bernd und Clara“ bittet, kann direkt einen passenden Link bauen. Die Namen gehen dabei nicht an den Hoster, Namen, die man einem KI-Assistenten nennt, aber an dessen Anbieter.
 
-Der Link ist nicht vertrauenswürdige Eingabe. Version 1 akzeptiert: `f` nur aus der Liste der Vorlagen; höchstens 50 Namen mit je 1 bis 40 Zeichen nach NFC-Normalisierung, ohne Steuer- und Bidi-Zeichen (Unicode Cc und Cf), Leerraum getrimmt, keine Dubletten; `b` als Dezimalzahl von 0 bis 9999; `d` als ISO-Datum. Unbekannte Schlüssel werden ignoriert. Fehler zeigen eine freundliche Meldung, nie einen Stacktrace. Der Vorbelegungs-Link kommt in Phase 5.
+Der Link ist nicht vertrauenswürdige Eingabe. Version 1 akzeptiert: `f` nur aus der Liste der Vorlagen; höchstens 50 Namen mit je 1 bis 40 Zeichen nach NFC-Normalisierung, ohne Steuer- und Bidi-Zeichen (Unicode Cc und Cf), Leerraum getrimmt, keine Dubletten; `b` als Dezimalzahl von 0 bis 9999; `d` als ISO-Datum. Unbekannte Schlüssel werden ignoriert. Ein Name, der `,`, `;`, `&`, `=` oder `%` enthält, wird prozent-kodiert, etwa `%2C`. Fehler zeigen eine freundliche Meldung, nie einen Stacktrace. Der Vorbelegungs-Link kommt in Phase 5.
 
 ## Doku in der App
 

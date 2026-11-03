@@ -243,9 +243,9 @@ A link can pre-fill a new round, again in the fragment:
 https://creo08.github.io/SecretEngerl/neu#v=1&f=engerl-bengerl&n=Anna,Bernd;Clara,David;Eva&b=20&d=2026-12-20
 ```
 
-`f` is the template, `n` the names with `,` within and `;` between households, `b` the budget and `d` the exchange date. The app fills in the wizard with it and shows a confirmation page; the draw happens only after the organizer taps. Someone can pass on a ready invitation to set up a round, and an AI assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can build a matching link directly. The names do not reach the host, but names given to an AI assistant do reach the assistant's provider.
+`f` is the template, `n` the names with `,` within and `;` between groups, `b` the budget and `d` the exchange date. The app fills in the wizard with it and shows a confirmation page; the draw happens only after the organizer taps. Someone can pass on a ready invitation to set up a round, and an AI assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can build a matching link directly. The names do not reach the host, but names given to an AI assistant do reach the assistant's provider.
 
-The link is untrusted input. Version 1 accepts: `f` only from the list of templates; at most 50 names, each 1 to 40 characters after NFC normalisation, with control and bidi characters (Unicode Cc and Cf) removed, whitespace trimmed and no duplicates; `b` as a decimal number from 0 to 9999; `d` as an ISO date. Unknown keys are ignored. Errors show a friendly message, never a stack trace. The pre-fill link comes in phase 5.
+The link is untrusted input. Version 1 accepts: `f` only from the list of templates; at most 50 names, each 1 to 40 characters after NFC normalisation, with control and bidi characters (Unicode Cc and Cf) removed, whitespace trimmed and no duplicates; `b` as a decimal number from 0 to 9999; `d` as an ISO date. Unknown keys are ignored. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, for example `%2C`. Errors show a friendly message, never a stack trace. The pre-fill link comes in phase 5.
 
 ## Documentation inside the app
 
