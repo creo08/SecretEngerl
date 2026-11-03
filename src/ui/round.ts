@@ -16,6 +16,7 @@ import { askWorker } from '../worker/client.ts';
 import { byId, disclosure, confirmDialog, downloadFile, fill, h, showView, uid } from './dom.ts';
 import { sealFile } from '../files/envelope.ts';
 import { yearFileName, yearFromRound } from '../files/year.ts';
+import { backupContent, backupFileName } from '../files/backup.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
 import { appBase } from './wizard.ts';
@@ -81,7 +82,7 @@ export async function showRound(id: string, options: { fresh?: boolean; message?
     if (Date.now() >= (round.expiresAt - 7 * 86_400) * 1000) {
       content.append(h('p', { class: 'notice' }, t('round.expiresSoon', { date: formatDate(new Date(round.expiresAt * 1000).toISOString().slice(0, 10)) })));
     }
-    content.append(sealSection(round), yearSection(round), duringRound(round));
+    content.append(sealSection(round), yearSection(round), backupSection(round), duringRound(round));
   }
   const back = h('button', { type: 'button', class: 'btn btn--text' }, t('round.back'));
   back.addEventListener('click', () => void showHome());
@@ -284,6 +285,28 @@ function yearSection(round: StoredRound): HTMLElement {
     t('year.title'),
     t('year.titleHint'),
     h('div', { class: 'stack' }, h('p', { class: 'help' }, t('year.help')), h('div', { class: 'field' }, h('label', { for: password.id }, t('year.password')), password), warning, h('div', { class: 'actions' }, save), status),
+  );
+}
+
+/** A backup of the whole round for another device or a second organizer. */
+function backupSection(round: StoredRound): HTMLElement {
+  const password = h('input', { type: 'password', id: uid('f'), autocomplete: 'new-password' });
+  const warning = h('p', { class: 'notice' }, t('backup.noPasswordWarning'));
+  password.addEventListener('input', () => (warning.hidden = password.value !== ''));
+  const status = h('p', { class: 'status', role: 'status' });
+  const save = h('button', { type: 'button', class: 'btn btn--card' }, t('backup.save'));
+  save.addEventListener(
+    'click',
+    safely(async () => {
+      const current = await loadRound(store, round.id);
+      downloadFile(backupFileName(current), await sealFile('secretengerl-backup', backupContent(current), password.value), 'application/json');
+      status.textContent = t('backup.saved');
+    }),
+  );
+  return disclosure(
+    t('backup.title'),
+    t('backup.titleHint'),
+    h('div', { class: 'stack' }, h('p', { class: 'help' }, t('backup.help')), h('div', { class: 'field' }, h('label', { for: password.id }, t('year.password')), password), warning, h('div', { class: 'actions' }, save), status),
   );
 }
 

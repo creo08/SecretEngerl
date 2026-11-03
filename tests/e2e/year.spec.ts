@@ -16,7 +16,7 @@ async function drawRound(page: Page, names: string, date = inDays(30)): Promise<
 async function saveYearFile(page: Page, password = ''): Promise<string> {
   await page.getByText('Fürs nächste Jahr merken', { exact: true }).click();
   await expect(page.getByText('Ohne Passwort kann jede Person mit der Datei die Zuordnung und die Hinweise lesen.')).toBeVisible();
-  if (password) await page.getByLabel('Passwort (optional)').fill(password);
+  if (password) await page.locator('details[open]').getByLabel('Passwort (optional)').fill(password);
   const download = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Datei speichern' }).click();
   const file = await download;

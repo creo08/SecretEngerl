@@ -1,11 +1,14 @@
 /** Opening files on the start page. Files are untrusted input and are checked like any other. */
 import { MAX_FILE_BYTES, openFile } from '../files/envelope.ts';
 import { validateYear } from '../files/year.ts';
+import { mergeForRestore, roundFromBackup } from '../files/backup.ts';
+import { indexedDbStore as store } from '../store/db.ts';
+import { showRound } from './round.ts';
 import { t } from '../i18n/i18n.ts';
-import { disclosure, fill, h, uid } from './dom.ts';
-import { startWizardFromYear } from './wizard.ts';
+import { confirmDialog, disclosure, fill, h, uid } from './dom.ts';
+import { appBase, startWizardFromYear } from './wizard.ts';
 
-/** "Datei öffnen": picks a .wichtel file, asks for its password if needed, and continues with its content. */
+/** "Datei öffnen": picks a .wichtel file (yearly file or backup), asks for its password if needed, and continues with its content. */
 export function fileOpener(): HTMLElement {
   const file = h('input', { type: 'file', id: uid('f'), accept: '.wichtel,application/json' });
   const password = h('input', { type: 'password', id: uid('f'), autocomplete: 'current-password' });
@@ -29,7 +32,13 @@ export function fileOpener(): HTMLElement {
       if (!year.ok) return void (status.textContent = t('file.invalid'));
       return startWizardFromYear(year.value);
     }
-    status.textContent = t('file.unsupported');
+    const round = roundFromBackup(opened.content, appBase());
+    if (!round) return void (status.textContent = t('file.invalid'));
+    if (Date.now() > round.expiresAt * 1000) return void (status.textContent = t('backup.expired'));
+    const existing = await store.get(round.id).catch(() => undefined);
+    if (existing && !(await confirmDialog(t('backup.replace', { here: existing.drawNumber, file: round.drawNumber }), t('backup.replaceConfirm'), t('round.cancel')))) return;
+    await store.put(mergeForRestore(round, existing));
+    await showRound(round.id, { message: t('backup.restored') });
   });
   return disclosure(
     t('file.title'),
