@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- An optional name for each round, such as "Familie Huber" or "Team Nord", so several rounds on one device are easy to tell apart. The overview shows how many links of each round are sent. The name stays on the organizer's device and never goes into a draw.
+
 ### Changed
 
 - People who must not draw each other are now called a group (household, couple, family or team) instead of a household: "Group Anna and Bernd".

@@ -8,7 +8,7 @@ Such aus, wie eure Gruppe spielt: [Engerl-Bengerl klassisch](app:vorlagen/engerl
 
 ## 2. Wer spielt mit
 
-Trag die Namen ein, einen pro Zeile. Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team: Wer in derselben Gruppe ist, zieht sich nie. Dazu kommen der Übergabetag und, wenn die Vorlage eins hat, das Budget. Mitspielen können bis zu 50 Personen.
+Trag die Namen ein, einen pro Zeile. Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team: Wer in derselben Gruppe ist, zieht sich nie. Dazu kommen der Übergabetag und, wenn die Vorlage eins hat, das Budget. Mitspielen können bis zu 50 Personen. Organisierst du mehrere Runden, gib jeder einen Namen; er dient nur deiner Übersicht und kommt in kein Los.
 
 ## 3. Regeln, wenn ihr wollt
 
