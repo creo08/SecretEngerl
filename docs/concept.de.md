@@ -99,7 +99,7 @@ Nur für dich, bitte nicht weiterleiten.
 https://creo08.github.io/SecretEngerl/#1.k3Fq…Zp.Qm9x…7aB
 ```
 
-Verschlüsselt im Link stehen der Name ihres Bengerls, Budget, Termin, falls gesetzt Motto und Hinweis, die Nummer der Ziehung und das Ablaufdatum. Nicht im Link stehen Annas eigener Name, die Liste der Teilnehmenden und wer sonst wen gezogen hat. Die Link-Vorschau im Chat ist für alle Lose gleich, und der Hoster sieht nur einen Seitenaufruf mit IP-Adresse.
+Verschlüsselt im Link stehen der Name ihres Bengerls, Budget, Termin, falls gesetzt Motto und Hinweis, die Vorlage, die Nummer der Ziehung und das Ablaufdatum. Nicht im Link stehen Annas eigener Name, die Liste der Teilnehmenden und wer sonst wen gezogen hat. Die Link-Vorschau im Chat ist für alle Lose gleich, und der Hoster sieht nur einen Seitenaufruf mit IP-Adresse.
 
 ### 4. Öffnen
 
@@ -146,10 +146,10 @@ Jeder Link hat einen eigenen Schlüssel, ein IV wird also nie unter demselben Sc
 Klartext vor der Verschlüsselung ist kompaktes JSON in UTF-8:
 
 ```json
-{"r":"Bernd","b":"20 €","m":"","d":"2026-12-20","h":"","n":1,"x":1799020799}
+{"r":"Bernd","b":"20 €","m":"","d":"2026-12-20","h":"","t":"engerl-bengerl","n":1,"x":1799020799}
 ```
 
-`r` ist das Bengerl, `b` das Budget, `m` das Motto, `d` der Übergabetag, `h` der Hinweis, `n` die Nummer der Ziehung und `x` das Ablaufdatum als Unix-Zeitstempel: das Ende des Tages 14 Tage nach dem Übergabetag, in UTC (hier 2027-01-03T23:59:59Z). Der Klartext wird mit `0x00`-Bytes auf genau 256 Byte aufgefüllt, damit alle Links aller Runden gleich lang sind. Beim Entschlüsseln werden die `0x00` am Ende entfernt; ein `0x00` im JSON ist ein Fehler. Passt ein Los nicht in 256 Byte, lässt die App das Ziehen nicht zu und zeigt beim Hinweis an, wie viele Zeichen noch frei sind.
+`r` ist das Bengerl, `b` das Budget, `m` das Motto, `d` der Übergabetag, `h` der Hinweis, `t` die Vorlage aus der festen Liste (die App zeigt die Regel der Vorlage aus der Sprachdatei, beim Schrottwichteln „Nichts kaufen, nur was du schon hast“), `n` die Nummer der Ziehung und `x` das Ablaufdatum als Unix-Zeitstempel: das Ende des Tages 14 Tage nach dem Übergabetag, in UTC (hier 2027-01-03T23:59:59Z). Der Klartext wird mit `0x00`-Bytes auf genau 256 Byte aufgefüllt, damit alle Links aller Runden gleich lang sind. Beim Entschlüsseln werden die `0x00` am Ende entfernt; ein `0x00` im JSON ist ein Fehler. Passt ein Los nicht in 256 Byte, lässt die App das Ziehen nicht zu und zeigt beim Hinweis an, wie viele Zeichen noch frei sind.
 
 Das Fragment hinter `#` schicken Browser nicht an Server ([RFC 3986](https://www.rfc-editor.org/info/rfc3986/)), und es fehlt auch im Referer-Header. Messenger erzeugen Vorschauen über einen gewöhnlichen HTTP-Abruf, der ebenfalls kein Fragment enthält.
 
@@ -171,7 +171,7 @@ Die App zeigt Links nie als Liste an, und es gibt kein „Alle kopieren“. Dire
 
 ## Ablage, Notfall und Sicherung
 
-Im Standard behält die App die Runde auf dem Gerät der organisierenden Person, in IndexedDB, und bittet den Browser um dauerhaften Speicher. Gespeichert werden nur die versendeten Links. Eine Zuordnungstabelle im Klartext gibt es nicht; auf dem Gerät liegt genau das, was ohnehin verschickt wurde. Damit funktioniert „Erneut senden“. Weil jeder Link seinen Schlüssel enthält, kann aber jede Person mit dem Gerät und den Entwicklerwerkzeugen die ganze Zuordnung lesen. Datenbank- und Cache-Namen beginnen mit `secretengerl-`. Am Übergabetag plus 14 Tage löscht sich die Runde selbst, „Runde jetzt löschen“ geht jederzeit.
+Im Standard behält die App die Runde auf dem Gerät der organisierenden Person, in IndexedDB, und bittet den Browser um dauerhaften Speicher. Gespeichert werden der versendete Link pro Person und was „Erneut senden“, eine Neuziehung und eine Absage brauchen: Namen, Haushalte, Regeln, Termine, das Notfall-Protokoll und die optionale PIN. Eine Zuordnungstabelle im Klartext gibt es nicht; die Zuordnung liegt auf dem Gerät nur in den Links, die ohnehin verschickt wurden, und eine Absage entschlüsselt sie nur im Speicher. Damit funktioniert „Erneut senden“. Weil jeder Link seinen Schlüssel enthält, kann aber jede Person mit dem Gerät und den Entwicklerwerkzeugen die ganze Zuordnung lesen. Datenbank- und Cache-Namen beginnen mit `secretengerl-`. Am Übergabetag plus 14 Tage löscht sich die Runde selbst, „Runde jetzt löschen“ geht jederzeit.
 
 Unter „Notfall“ gibt es „Zuordnung ansehen“. Die App zeigt immer nur eine Person auf einmal („Wen beschenkt Anna?“), nie die ganze Liste. Vorher bestätigt man mit den zwei Wörtern „Ich spicke“ oder hält den Knopf zwei Sekunden lang gedrückt. Eine PIN ist optional, falls auch andere das Gerät benutzen. Jedes Ansehen hinterlässt den Eintrag „Zuordnung von Anna angesehen am …“, der in der App bis zum Ende der Runde nicht löschbar ist. Die Hürde soll spürbar sein und setzt auf Fairness: PIN und Protokoll sind Hürden in der App, keine Verschlüsselung, und wer die Website-Daten löscht, entfernt beide. Die Doku sagt das. Die App erwartet hier Eigenverantwortung.
 
@@ -197,10 +197,10 @@ function randInt(n: number): number {
 Jede gültige Ziehung muss exakt gleich wahrscheinlich sein. Eine Zuweisung Person für Person mit Rücksprung bei Sackgassen wäre schneller, verzerrt aber die Wahrscheinlichkeiten. Alle Lösungen aufzuzählen geht nur bei kleinen Gruppen: Schon 20 Personen haben rund 9·10^17 Derangements. Die Engine arbeitet für bis zu 50 Personen so:
 
 1. Feste Muss-Regeln („Anna beschenkt Bernd“) werden zuerst gesetzt und aus dem Problem entfernt. Die übrigen Regeln teilen sich in Haushalte (niemand beschenkt sich selbst oder jemanden aus dem eigenen Haushalt; eine Einzelperson ist ein Haushalt der Größe 1) und Zusatzregeln: gerichtete und beidseitige Ausschlüsse, Vorjahrespaarungen, Muss-Regeln mit Auswahl, „Keine Gegenseitigkeit“ und „Eine große Kette“.
-2. Machbarkeit: ein bipartites Matching (Hopcroft-Karp) über alle Regeln, die sich als Matrix „wer darf wen“ schreiben lassen. Gibt es keins, liefert das Argument von König und Hall die zu kleine Gruppe, und die App nennt sie in Worten.
+2. Machbarkeit: ein bipartites Matching (Hopcroft-Karp) über alle Regeln, die sich als Matrix „wer darf wen“ schreiben lassen. Gibt es keins, liefert das Argument von König und Hall die zu kleine Gruppe, und die App nennt sie in Worten. Danach prüft eine begrenzte Tiefensuche über alle Regeln, ob es überhaupt eine gültige Ziehung gibt, damit unmögliche Regeln sofort benannt werden: „Mit diesen Regeln gibt es keine gültige Ziehung“, mit „Eine große Kette“ „Mit diesen Regeln gibt es keine große Kette“. Ihr Ergebnis wird verworfen und beeinflusst die Ziehung nicht.
 3. Standardziehung: zuerst exakt gleichverteilt aus allen Zuordnungen ziehen, die die Haushalte einhalten. Die verbotenen Felder der Haushalte sind Rechtecke, die sich weder Zeilen noch Spalten teilen; ihre Zahl ist Σ (−1)^k · r_k · (m−k)!, wobei r das Produkt der Rook-Polynome der Rechtecke ist (für ein a×b-Rechteck r_k = C(a,k) · C(b,k) · k!). Die Engine wählt eine schenkende Person nach der anderen, gewichtet mit der Zahl der Vervollständigungen; nach jedem Schritt bleiben die verbotenen Felder Rechtecke. Empfangende, die dieselbe Restform hinterlassen, bilden eine Klasse, und in der Klasse wird gleichverteilt gewählt. Alle Zahlen sind exakte `BigInt`. Verletzt das Ergebnis eine Zusatzregel, wird verworfen und neu gezogen. Damit ist jede gültige Ziehung exakt gleich wahrscheinlich.
 4. Mit „Eine große Kette“ legt die Engine alle Personen in zufälliger Reihenfolge in einen Kreis (Fisher-Yates) und verwirft bei jedem Regelverstoß. Das ist exakt gleichverteilt über alle gültigen Ketten.
-5. Budget: höchstens 1 000 000 Versuche oder 2 Sekunden. Reicht das nicht, gibt es keine faire Ziehung: Die App nennt die Zusatzregel, die am häufigsten verletzt war, und schlägt vor, sie zu lockern. Eine verzerrte Ziehung als Ausweg gibt es nie. Bei „Eine große Kette“ sucht danach eine begrenzte Tiefensuche eine einzige gültige Kette, damit die App „Mit diesen Regeln gibt es keine große Kette“ von „Die Regeln sind für eine faire Ziehung zu streng“ unterscheiden kann.
+5. Budget: höchstens 1 000 000 Versuche oder 2 Sekunden. Reicht das nicht, gibt es keine faire Ziehung: Die App nennt die Zusatzregel, die am häufigsten verletzt war, und schlägt vor, sie zu lockern. Eine verzerrte Ziehung als Ausweg gibt es nie. Hat die Suche aus Schritt 2 eine gültige Ziehung gefunden oder ihre eigene Grenze erreicht, sagt die App „Die Regeln sind für eine faire Ziehung zu streng“.
 
 Für eine Runde mit 10 Personen und drei Paaren ist die Haushaltszahl sofort berechnet, und typische Runden mit 50 Personen brauchen einige bis einige Dutzend Versuche.
 
@@ -284,9 +284,9 @@ Das Partyspiel-Modul läuft auf einem Gerät am Tisch, offline und ohne Links. E
 | 1 | Konfigurationsmodell für die Kategorien A bis K, Vorlagen als JSON | Schema und Vorlagen validiert |
 | 2 | Zuordnungs-Engine `losfee` mit Machbarkeitsprüfung, Erklärungen, Absage-Logik, Vorjahrespaarungen von Hand | Unit- und Property-Tests, Chi-Quadrat-Tests, 1 000 Zufallskonfigurationen stimmen mit Brute Force überein, Leistungstest mit 50 Personen |
 | 3 | Link-Format, Öffnen, Verteilen, Ablage, Notfall | Rundlauf-Tests, alle Links gleich lang, Ablauf greift, manipulierte Links werden abgewiesen |
-| 4 | Oberfläche auf Deutsch mit den Vorlagen „Engerl-Bengerl klassisch“, „Schrottwichteln“, „Familien-Wichteln“, „Büro-Wichteln“, „Post-Wichteln“; Doku in der App; `/datenschutz/`; PWA | Runde einrichten in unter zwei Minuten ohne Hilfe, getestet mit Personen ohne Technikbezug; keine Anfragen außer an die eigene Herkunft |
+| 4 | Oberfläche auf Deutsch mit den Vorlagen „Engerl-Bengerl klassisch“, „Schrottwichteln“, „Familien-Wichteln“, „Büro-Wichteln“; Doku in der App; `/datenschutz/`; PWA | Runde einrichten in unter zwei Minuten ohne Hilfe, getestet mit Personen ohne Technikbezug; keine Anfragen außer an die eigene Herkunft |
 | 5 | Auffindbarkeit: Seiten pro Form, `llms.txt`, JSON-LD, Sitemap, Vorbelegungs-Link | Seiten ohne JavaScript lesbar |
-| 6 | Vorjahr (Jahresdatei), Sicherungsdatei, Auflösung „Bühne“, Advent und Adventskalender | |
+| 6 | Vorjahr (Jahresdatei), Sicherungsdatei, Auflösung „Bühne“, Advent und Adventskalender, „Post-Wichteln“ mit Adresse im Los | |
 | 7 | Partyspiele | Spielbar auf einem Handy am Tisch |
 | 8 | Weitere Sprachen in der Reihenfolge Englisch, Schwedisch, Spanisch, Portugiesisch, Niederländisch, Polnisch, Ukrainisch, Filipino; alle als KI-Übersetzung gekennzeichnet | Keine fest verdrahteten Texte im Code |
 | 9 | Härtung, Barrierefreiheit, Release mit `SHA256SUMS` und Attestierung | Lighthouse 95 oder besser, externe Durchsicht der Kryptografie |

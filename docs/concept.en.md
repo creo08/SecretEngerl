@@ -99,7 +99,7 @@ Nur für dich, bitte nicht weiterleiten.
 https://creo08.github.io/SecretEngerl/#1.k3Fq…Zp.Qm9x…7aB
 ```
 
-The encrypted link contains the name of her Bengerl, the budget, the date, theme and hint if set, the draw number and the expiry date. It does not contain Anna's own name, the list of participants or who drew whom otherwise. The link preview in the chat is identical for every draw, and the host only sees a page request with an IP address.
+The encrypted link contains the name of her Bengerl, the budget, the date, theme and hint if set, the template, the draw number and the expiry date. It does not contain Anna's own name, the list of participants or who drew whom otherwise. The link preview in the chat is identical for every draw, and the host only sees a page request with an IP address.
 
 ### 4. Open
 
@@ -146,10 +146,10 @@ Every link has its own key, so an IV is never reused under the same key.
 Before encryption, the plaintext is compact JSON in UTF-8:
 
 ```json
-{"r":"Bernd","b":"20 €","m":"","d":"2026-12-20","h":"","n":1,"x":1799020799}
+{"r":"Bernd","b":"20 €","m":"","d":"2026-12-20","h":"","t":"engerl-bengerl","n":1,"x":1799020799}
 ```
 
-`r` is the Bengerl, `b` the budget, `m` the theme, `d` the exchange date, `h` the hint, `n` the draw number and `x` the expiry date as a Unix timestamp: the end of the day 14 days after the exchange date, in UTC (here 2027-01-03T23:59:59Z). The plaintext is padded with `0x00` bytes to exactly 256 bytes, so every link of every round has the same length. On decryption, the trailing `0x00` bytes are removed; a `0x00` inside the JSON is an error. If a draw does not fit into 256 bytes, the app does not allow the draw and shows how many characters are left in the hint field.
+`r` is the Bengerl, `b` the budget, `m` the theme, `d` the exchange date, `h` the hint, `t` the template from the fixed list (the app shows the template's rule from its language file, for Schrottwichteln "Buy nothing, only what you already have"), `n` the draw number and `x` the expiry date as a Unix timestamp: the end of the day 14 days after the exchange date, in UTC (here 2027-01-03T23:59:59Z). The plaintext is padded with `0x00` bytes to exactly 256 bytes, so every link of every round has the same length. On decryption, the trailing `0x00` bytes are removed; a `0x00` inside the JSON is an error. If a draw does not fit into 256 bytes, the app does not allow the draw and shows how many characters are left in the hint field.
 
 Browsers do not send the fragment after `#` to servers ([RFC 3986](https://www.rfc-editor.org/info/rfc3986/)), and it is stripped from the Referer header. Messengers build previews with an ordinary HTTP request, which carries no fragment either.
 
@@ -171,7 +171,7 @@ The app never shows links as a list, and there is no "copy all". Direct links su
 
 ## Storage, emergency access and backup
 
-By default, the app keeps the round on the organizer's device in IndexedDB and asks the browser for persistent storage. Only the sent links are stored. There is no plain-text assignment table; the device holds exactly what was sent anyway. That is what makes "Send again" work. Because each link carries its key, anyone with the device and developer tools can read the whole assignment. Database and cache names start with `secretengerl-`. Fourteen days after the exchange date the round deletes itself, and "Delete round now" works at any time.
+By default, the app keeps the round on the organizer's device in IndexedDB and asks the browser for persistent storage. Stored are the sent link per person and what "Send again", a new draw and a drop-out need: names, households, rules, dates, the emergency log and the optional PIN. There is no plain-text assignment table; the assignment exists on the device only inside the links that were sent anyway, and a drop-out repair decrypts them in memory only. That is what makes "Send again" work. Because each link carries its key, anyone with the device and developer tools can read the whole assignment. Database and cache names start with `secretengerl-`. Fourteen days after the exchange date the round deletes itself, and "Delete round now" works at any time.
 
 Under "Emergency" there is "View assignment". The app always shows one person at a time ("Who does Anna give to?"), never the whole list. Before that, the organizer confirms with the two words "Ich spicke" (I'm peeking) or holds the button for two seconds. A PIN is optional, for devices other people use too. Every view leaves an entry "Anna's assignment viewed on …" that cannot be deleted in the app until the round ends. The hurdle is meant to be felt, and it relies on people playing fair: PIN and log are barriers in the app, not encryption, and clearing the site data removes both. The documentation says so. The app expects personal responsibility here.
 
@@ -197,10 +197,10 @@ function randInt(n: number): number {
 Every valid draw must be exactly equally likely. Assigning person by person and backtracking at dead ends would be faster, but it skews the probabilities. Listing all solutions is impossible beyond small groups: 20 people already have about 9·10^17 derangements. The engine works for up to 50 people like this:
 
 1. Fixed must rules ("Anna gives to Bernd") are set first and removed from the problem. The remaining rules split into households (nobody gives to themselves or to someone in their own household; a single person is a household of one) and additional rules: directed and mutual exclusions, last year's pairings, must rules with a choice, "no mutual pairs" and "one big chain".
-2. Feasibility: a bipartite matching (Hopcroft-Karp) over all rules that fit into a "who may give to whom" matrix. If none exists, the König–Hall argument yields the group that is too small, and the app names it in words.
+2. Feasibility: a bipartite matching (Hopcroft-Karp) over all rules that fit into a "who may give to whom" matrix. If none exists, the König–Hall argument yields the group that is too small, and the app names it in words. A bounded depth-first search over all rules then checks whether any valid draw exists, so impossible rules are named at once: "With these rules there is no valid draw", or with "one big chain" "With these rules there is no big chain". Its result is discarded and does not influence the draw.
 3. Standard draw: first, a draw exactly uniform over all assignments that respect the households. The forbidden cells of the households are rectangles that share no row and no column, so their number is Σ (−1)^k · r_k · (m−k)!, where r is the product of the rook polynomials of the rectangles (for an a×b rectangle, r_k = C(a,k) · C(b,k) · k!). The engine picks one giver after another, weighted by the number of completions; after each step the forbidden cells are still rectangles. Recipients that leave the same remaining shape form one class, and within a class the choice is uniform. All counts are exact `BigInt`s. If the result breaks an additional rule, it is discarded and drawn again. Every valid draw is therefore exactly equally likely.
 4. With "one big chain", the engine puts everyone in a random order as one circle (Fisher-Yates) and discards it on any rule violation. That is exactly uniform over all valid chains.
-5. Budget: at most 1,000,000 attempts or 2 seconds. If that is not enough, there is no fair draw: the app names the additional rule that failed most often and suggests loosening it. A skewed draw is never used as a way out. For "one big chain", a bounded depth-first search then looks for a single valid chain, so the app can tell "with these rules there is no big chain" from "the rules are too strict for a fair draw".
+5. Budget: at most 1,000,000 attempts or 2 seconds. If that is not enough, there is no fair draw: the app names the additional rule that failed most often and suggests loosening it. A skewed draw is never used as a way out. If the search in step 2 found a valid draw or hit its own limit, the app says "The rules are too strict for a fair draw".
 
 For a round of 10 with three couples the household count is instant, and typical rounds of 50 need a few to a few dozen attempts.
 
@@ -284,9 +284,9 @@ The party game module runs on one device at the table, offline and without links
 | 1 | Configuration model for categories A to K, templates as JSON | schema and templates validated |
 | 2 | Matching engine `losfee` with feasibility check, explanations, drop-out logic, last year's pairings entered by hand | unit and property tests, chi-squared tests, 1,000 random configurations agree with brute force, 50-person speed test |
 | 3 | Link format, opening, distribution, storage, emergency access | round-trip tests, all links equally long, expiry works, tampered links rejected |
-| 4 | German UI with the templates "Engerl-Bengerl classic", "Schrottwichteln", "Family Wichteln", "Office Wichteln", "Postal Wichteln"; documentation in the app; `/datenschutz/`; PWA | setting up a round takes under two minutes without help, tested with non-technical people; no requests except to the app's own origin |
+| 4 | German UI with the templates "Engerl-Bengerl classic", "Schrottwichteln", "Family Wichteln", "Office Wichteln"; documentation in the app; `/datenschutz/`; PWA | setting up a round takes under two minutes without help, tested with non-technical people; no requests except to the app's own origin |
 | 5 | Findability: pages per form, `llms.txt`, JSON-LD, sitemap, pre-fill link | pages readable without JavaScript |
-| 6 | Last year's data (yearly file), backup file, stage reveal, Advent and Advent calendar | |
+| 6 | Last year's data (yearly file), backup file, stage reveal, Advent and Advent calendar, "Postal Wichteln" with the address in the draw | |
 | 7 | Party games | playable on one phone at the table |
 | 8 | Further languages in the order English, Swedish, Spanish, Portuguese, Dutch, Polish, Ukrainian, Filipino; all marked as AI translations | no hard-coded strings in the code |
 | 9 | Hardening, accessibility, release with `SHA256SUMS` and attestation | Lighthouse 95 or better, external review of the cryptography |
