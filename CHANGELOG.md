@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Remember for next year": a yearly file with names, groups, pairings, budget and hints, optionally protected by a password. "Open file" on the start page starts next year's round from it, excludes last year's pairings and asks who is who when names changed.
 - An ended round stays on the device as last year's round until a new round starts from it or "Forget last year" removes it.
 - A reminder a week before a round deletes itself.
+- Stage reveal: "Start reveal" shows one pair at a time on the organizer's device, following the chain. Before the exchange day it needs "Ich spicke" and is logged.
 - "Save backup": the whole round as a file for another device or a second organizer, optionally protected by a password; "Open file" restores it and asks before replacing a round already on the device.
 
 ### Security
