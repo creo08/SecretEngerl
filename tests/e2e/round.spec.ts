@@ -95,9 +95,10 @@ test('a broken, an empty and a tampered link show friendly messages', async ({ p
 });
 
 test('the built pages have no inline scripts and start with the policy', async ({ page }) => {
-  for (const path of ['./', 'faq/', 'sicherheit/', 'datenschutz/', 'so-funktionierts/', 'vorlagen/schrottwichteln/']) {
+  for (const path of ['./', 'neu/', 'faq/', 'sicherheit/', 'datenschutz/', 'so-funktionierts/', 'schrottwichteln/']) {
     await page.goto(path);
-    expect(await page.locator('script:not([src])').count()).toBe(0);
+    // JSON-LD is a data block that browsers never run; every other script must come from a file.
+    expect(await page.locator('script:not([src]):not([type="application/ld+json"])').count()).toBe(0);
     const first = await page.evaluate(() => document.head.firstElementChild?.getAttribute('http-equiv'));
     expect(first).toBe('Content-Security-Policy');
   }

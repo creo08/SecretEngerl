@@ -8,10 +8,11 @@ const pages: [string, string][] = [
   ['sicherheit/', 'Datenschutz und Bedrohungsmodell'],
   ['faq/', 'FAQ'],
   ['datenschutz/', 'Datenschutzhinweis'],
-  ['vorlagen/engerl-bengerl/', 'Engerl-Bengerl klassisch'],
-  ['vorlagen/schrottwichteln/', 'Schrottwichteln'],
-  ['vorlagen/familien-wichteln/', 'Familien-Wichteln'],
-  ['vorlagen/buero-wichteln/', 'Büro-Wichteln'],
+  ['engerl-bengerl/', 'Engerl-Bengerl online auslosen'],
+  ['wichteln/', 'Wichteln online auslosen'],
+  ['schrottwichteln/', 'Schrottwichteln online auslosen'],
+  ['familien-wichteln/', 'Familien-Wichteln online auslosen'],
+  ['buero-wichteln/', 'Büro-Wichteln online auslosen'],
 ];
 
 test('the help pages are readable without JavaScript', async ({ page }) => {
@@ -27,7 +28,7 @@ test('the help pages are readable without JavaScript', async ({ page }) => {
 test('without JavaScript the templates lead to their help pages', async ({ page }) => {
   await page.goto('./');
   await page.getByRole('link', { name: /Schrottwichteln/ }).click();
-  await expect(page.getByRole('heading', { level: 1, name: 'Schrottwichteln' })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'Schrottwichteln online auslosen' })).toBeVisible();
 });
 
 test('the start page says where data is stored', async ({ page }) => {
