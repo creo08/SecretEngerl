@@ -169,3 +169,10 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
   .slip--demo { max-width: 17rem; padding: var(--space-lg); }
   .section-title { margin-top: var(--space-xl); }
 }
+
+/* Stage reveal: one pair, set big, for a room to read */
+.stage { text-align: center; padding-block: var(--space-3xl); }
+.stage-pair { display: flex; flex-direction: column; align-items: center; gap: var(--space-xs); max-width: none; margin-block: var(--space-xl); }
+.stage-name { font-size: var(--text-display-s); overflow-wrap: anywhere; }
+.stage-verb { font-size: var(--text-title); font-weight: 500; color: var(--color-muted); letter-spacing: 0; }
+.stage-actions { justify-content: center; }

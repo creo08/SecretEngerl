@@ -38,7 +38,7 @@ interface WizardState {
 }
 
 /** Today's date on this device as YYYY-MM-DD. */
-function todayIso(): string {
+export function todayIso(): string {
   const d = new Date();
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }

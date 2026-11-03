@@ -37,6 +37,14 @@ export async function checkPin(round: StoredRound, pin: string): Promise<boolean
   return salt !== null && (await derive(pin, salt, round.pin.iterations)) === round.pin.hash;
 }
 
+/** Logs a use of the stage reveal before the exchange date. The entry has no name: it covers every pair. */
+export async function logStageView(store: RoundStore, id: string, now: number): Promise<StoredRound> {
+  const round = await loadRound(store, id);
+  const next = { ...round, views: [...round.views, { name: '', at: now }] };
+  await store.put(next);
+  return next;
+}
+
 /**
  * Shows whom `giver` gives to. The view is logged and stored before the name
  * is returned, so a view never goes unrecorded.

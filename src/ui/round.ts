@@ -9,7 +9,7 @@ import { t } from '../i18n/i18n.ts';
 import { MAX_PEOPLE_FOR_COUNT } from '../losfee/index.ts';
 import { shareDraw, shareMessage } from '../share/share.ts';
 import { indexedDbStore as store } from '../store/db.ts';
-import { checkPin, isPeekPhrase, setPin, viewAssignment } from '../store/emergency.ts';
+import { checkPin, isPeekPhrase, logStageView, setPin, viewAssignment } from '../store/emergency.ts';
 import { DrawTooLongError, loadRound, markSent, planDropout, saveDraw } from '../store/rounds.ts';
 import type { StoredRound } from '../store/types.ts';
 import { askWorker } from '../worker/client.ts';
@@ -19,7 +19,8 @@ import { yearFileName, yearFromRound } from '../files/year.ts';
 import { backupContent, backupFileName } from '../files/backup.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
-import { appBase } from './wizard.ts';
+import { appBase, todayIso } from './wizard.ts';
+import { showStage } from './stage.ts';
 import { showHome } from './home.ts';
 
 const HINT_SEEN = 'secretengerl-hint-seen';
@@ -82,7 +83,7 @@ export async function showRound(id: string, options: { fresh?: boolean; message?
     if (Date.now() >= (round.expiresAt - 7 * 86_400) * 1000) {
       content.append(h('p', { class: 'notice' }, t('round.expiresSoon', { date: formatDate(new Date(round.expiresAt * 1000).toISOString().slice(0, 10)) })));
     }
-    content.append(sealSection(round), yearSection(round), backupSection(round), duringRound(round));
+    content.append(sealSection(round), stageSection(round), yearSection(round), backupSection(round), duringRound(round));
   }
   const back = h('button', { type: 'button', class: 'btn btn--text' }, t('round.back'));
   back.addEventListener('click', () => void showHome());
@@ -224,6 +225,44 @@ function holdButton(label: string, onDone: () => void): HTMLElement {
   return button;
 }
 
+/**
+ * "Auflösung starten": from the exchange date on without a hurdle; before it,
+ * the same hurdle as the emergency view, and every use is logged.
+ */
+function stageSection(round: StoredRound): HTMLElement {
+  const start = () => showStage(round.id, () => void showRound(round.id));
+  if (todayIso() >= round.config.occasion.exchangeDate) {
+    const button = h('button', { type: 'button', class: 'btn btn--card' }, t('stage.start'));
+    button.addEventListener('click', safely(start));
+    return disclosure(t('stage.title'), t('stage.titleHint'), h('div', { class: 'stack' }, h('p', { class: 'help' }, t('stage.help')), h('div', { class: 'actions' }, button)));
+  }
+  const phrase = h('input', { type: 'text', id: uid('f'), autocomplete: 'off', spellcheck: 'false' });
+  const pin = h('input', { type: 'password', id: uid('f'), inputmode: 'numeric', autocomplete: 'off' });
+  const result = h('p', { class: 'result', 'aria-live': 'polite' });
+  const unlock = async (confirmed: boolean) => {
+    if (!confirmed) return void (result.textContent = t('emergency.wrongPhrase'));
+    if (!(await checkPin(await loadRound(store, round.id), pin.value))) return void (result.textContent = t('emergency.wrongPin'));
+    await logStageView(store, round.id, Date.now());
+    await start();
+  };
+  const show = h('button', { type: 'button', class: 'btn btn--card' }, t('stage.start'));
+  show.addEventListener('click', safely(() => unlock(isPeekPhrase(phrase.value))));
+  const label = (input: HTMLElement, text: string) => h('div', { class: 'field' }, h('label', { for: input.id }, text), input);
+  return disclosure(
+    t('stage.title'),
+    t('stage.titleHintEarly'),
+    h(
+      'div',
+      { class: 'stack' },
+      h('p', { class: 'help' }, t('stage.early')),
+      round.pin ? label(pin, t('emergency.pin')) : '',
+      label(phrase, t('emergency.phraseLabel')),
+      h('div', { class: 'actions' }, show, holdButton(t('emergency.hold'), safely(() => unlock(true)))),
+      result,
+    ),
+  );
+}
+
 function emergencySection(round: StoredRound): HTMLElement {
   const who = h('select', { id: uid('f') }, ...round.links.map((l) => h('option', { value: l.name }, l.name)));
   const phrase = h('input', { type: 'text', id: uid('f'), autocomplete: 'off', spellcheck: 'false' });
@@ -231,7 +270,7 @@ function emergencySection(round: StoredRound): HTMLElement {
   const result = h('p', { class: 'result', 'aria-live': 'polite' });
   const log = h('ul', { class: 'log' });
   const renderLog = (views: StoredRound['views']) =>
-    fill(log, ...(views.length ? views.map((v) => h('li', {}, t('emergency.logEntry', { name: v.name, date: formatDateTime(v.at) }))) : [h('li', {}, t('emergency.logEmpty'))]));
+    fill(log, ...(views.length ? views.map((v) => h('li', {}, v.name ? t('emergency.logEntry', { name: v.name, date: formatDateTime(v.at) }) : t('stage.logEntry', { date: formatDateTime(v.at) }))) : [h('li', {}, t('emergency.logEmpty'))]));
   renderLog(round.views);
   const reveal = async (confirmed: boolean) => {
     if (!confirmed) return void (result.textContent = t('emergency.wrongPhrase'));
