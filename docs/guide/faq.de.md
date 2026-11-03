@@ -14,7 +14,7 @@ Beim Ziehen und Verteilen nicht. Für echte Notfälle gibt es „Zuordnung anseh
 
 ## Warum ist das fair?
 
-Jede gültige Ziehung ist genau gleich wahrscheinlich, mit allen euren Regeln. Gleich wahrscheinliche Ziehungen heißen nicht gleich wahrscheinliche Personen: Mit Haushalten wird ein Mitglied eines anderen Paares etwas öfter gezogen als eine Einzelperson. Das folgt aus den Regeln.
+Jede gültige Ziehung ist genau gleich wahrscheinlich, mit allen euren Regeln. Gleich wahrscheinliche Ziehungen heißen nicht gleich wahrscheinliche Personen: Mit Gruppen wird ein Mitglied eines anderen Paares etwas öfter gezogen als eine Einzelperson. Das folgt aus den Regeln.
 
 ## Jemand hat den Link verloren. Was jetzt?
 

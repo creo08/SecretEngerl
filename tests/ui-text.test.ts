@@ -8,9 +8,9 @@ import { seededRng } from './helpers/seeded-rng.ts';
 describe('UI texts', () => {
   it('names households after their members', () => {
     expect(householdLabel(['Anna'])).toBe('Anna');
-    expect(householdLabel(['Anna', 'Bernd'])).toBe('Haushalt Anna und Bernd');
-    expect(householdLabel(['Anna', 'Bernd', 'Clara'])).toBe('Haushalt Anna, Bernd und 1 weitere Person');
-    expect(householdLabel(['Anna', 'Bernd', 'Clara', 'David'])).toBe('Haushalt Anna, Bernd und 2 weitere');
+    expect(householdLabel(['Anna', 'Bernd'])).toBe('Gruppe Anna und Bernd');
+    expect(householdLabel(['Anna', 'Bernd', 'Clara'])).toBe('Gruppe Anna, Bernd und 1 weitere Person');
+    expect(householdLabel(['Anna', 'Bernd', 'Clara', 'David'])).toBe('Gruppe Anna, Bernd und 2 weitere');
   });
 
   it('explains a group with too few people to give to, as in the concept', () => {

@@ -8,7 +8,7 @@ Nichts kaufen. Verschenkt wird nur, was man schon besitzt und selbst nicht mehr 
 
 - Es gibt kein Budget.
 - In jedem Los steht die Regel „Nichts kaufen, nur was du schon hast“.
-- Haushalte ziehen sich nicht, und niemand beschenkt sich gegenseitig.
+- Wer in derselben Gruppe ist, zieht sich nicht, und niemand beschenkt sich gegenseitig.
 - Ein Motto ist möglich.
 
 ## In der Originalsprache

@@ -6,7 +6,7 @@ Die klassische Runde: Alle ziehen einen Namen, schenken ein Geschenk im Budget, 
 
 ## Was eingestellt ist
 
-- Haushalte ziehen sich nicht.
+- Wer in derselben Gruppe ist, etwa Haushalt oder Paar, zieht sich nicht.
 - Keine Gegenseitigkeit: Zwei Personen beschenken sich nie gegenseitig.
 - Budget und Übergabetag stehen in jedem Los.
 - Aufgelöst wird persönlich bei der Feier.

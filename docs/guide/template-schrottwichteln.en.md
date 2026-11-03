@@ -8,7 +8,7 @@ Buy nothing. Everyone gives something they already own and no longer need: lefto
 
 - There is no budget.
 - Every draw carries the rule "Buy nothing, only what you already have".
-- Households do not draw each other, and there are no mutual pairs.
+- People in the same group do not draw each other, and there are no mutual pairs.
 - A theme is optional.
 
 ## In the original language

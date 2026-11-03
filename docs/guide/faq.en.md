@@ -14,7 +14,7 @@ Not while drawing and sending. For real emergencies there is "View assignment": 
 
 ## Why is it fair?
 
-Every valid draw is exactly equally likely, with all your rules. Equally likely draws do not mean equally likely people: with households, a member of another couple is drawn a little more often than a single person. That follows from the rules.
+Every valid draw is exactly equally likely, with all your rules. Equally likely draws do not mean equally likely people: with groups, a member of another couple is drawn a little more often than a single person. That follows from the rules.
 
 ## Someone lost their link. What now?
 

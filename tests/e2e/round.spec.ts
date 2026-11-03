@@ -21,7 +21,7 @@ test('a complete round makes no request outside the own origin', async ({ browse
   await page.getByRole('link', { name: /Engerl-Bengerl klassisch/ }).click();
   await expect(page.getByRole('heading', { name: 'Wer spielt mit?' })).toBeVisible();
   await page.getByLabel('Namen, einer pro Zeile').fill('Anna\nBernd\n\nClara\nDavid\n\nEva');
-  await expect(page.getByText('Haushalt Anna und Bernd')).toBeVisible();
+  await expect(page.getByText('Gruppe Anna und Bernd')).toBeVisible();
   await page.getByLabel('Übergabetag').fill(exchangeDate());
   await page.getByLabel('Budget in Euro').fill('20');
   await page.getByRole('button', { name: 'Weiter' }).click();
