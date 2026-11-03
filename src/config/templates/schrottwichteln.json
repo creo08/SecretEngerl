@@ -1,0 +1,34 @@
+{
+  "id": "schrottwichteln",
+  "family": "drawn",
+  "defaults": {
+    "structure": {
+      "noMutual": true,
+      "oneChain": false,
+      "giftsPerPerson": 1
+    },
+    "rules": {
+      "exclusions": [],
+      "must": [],
+      "lastYear": []
+    },
+    "gifts": {
+      "budget": null,
+      "kind": "own-only",
+      "theme": "",
+      "hints": {}
+    },
+    "exchange": "in-person",
+    "communication": "none",
+    "reveal": "in-person",
+    "context": "friends",
+    "place": "",
+    "organizerPlays": true
+  },
+  "fields": {
+    "budget": false,
+    "theme": true,
+    "hints": true,
+    "lastYear": false
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "id": "familien-wichteln",
+  "family": "drawn",
+  "defaults": {
+    "structure": {
+      "noMutual": true,
+      "oneChain": false,
+      "giftsPerPerson": 1
+    },
+    "rules": {
+      "exclusions": [],
+      "must": [],
+      "lastYear": []
+    },
+    "gifts": {
+      "budget": {
+        "amount": 20,
+        "currency": "EUR"
+      },
+      "kind": "bought",
+      "theme": "",
+      "hints": {}
+    },
+    "exchange": "in-person",
+    "communication": "none",
+    "reveal": "in-person",
+    "context": "family",
+    "place": "",
+    "organizerPlays": true
+  },
+  "fields": {
+    "budget": true,
+    "theme": false,
+    "hints": true,
+    "lastYear": true
+  }
+}
