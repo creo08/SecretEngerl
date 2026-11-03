@@ -36,6 +36,11 @@ function todayIso(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
+/** The suggested round name, e.g. "Familien-Wichteln 2026". */
+function defaultTitle(template: TemplateId, year: number): string {
+  return t('wizard.who.defaultTitle', { template: t(`template.${template}`), year });
+}
+
 /** The app's own URL, the base of every link. */
 export function appBase(): string {
   return new URL(import.meta.env.BASE_URL, location.origin).href;
@@ -46,7 +51,7 @@ export function startWizard(template: TemplateId): void {
   const t0 = getTemplate(template);
   const state: WizardState = {
     template,
-    title: t('wizard.who.defaultTitle', { template: t(`template.${template}`), year: new Date().getFullYear() }),
+    title: defaultTitle(template, new Date().getFullYear()),
     namesText: '',
     date: '',
     budget: t0.defaults.gifts.budget ? String(t0.defaults.gifts.budget.amount) : '',
@@ -155,6 +160,10 @@ function stepWho(state: WizardState): void {
     state.namesText = names.value;
     state.date = date.value;
     state.title = cleanText(title.value);
+    // An unchanged suggestion follows the year of the exchange, e.g. a round in early January.
+    if (state.title === defaultTitle(state.template, new Date().getFullYear()) && /^\d{4}-/.test(state.date)) {
+      state.title = defaultTitle(state.template, Number(state.date.slice(0, 4)));
+    }
     if ([...state.title].length > MAX_TITLE_CHARS) return showErrors(errors, [t('error.title.tooLong', { max: MAX_TITLE_CHARS })]);
     state.budget = budget.value;
     // A past exchange date would make every link expire at once.

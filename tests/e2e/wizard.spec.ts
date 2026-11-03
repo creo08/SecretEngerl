@@ -41,3 +41,13 @@ test('an exchange date in the past is refused', async ({ page }) => {
   await page.getByRole('button', { name: 'Weiter' }).click();
   await expect(page.getByText('Der Übergabetag liegt in der Vergangenheit.', { exact: false })).toBeVisible();
 });
+
+test('the suggested round name follows the year of the exchange', async ({ page }) => {
+  const next = new Date().getFullYear() + 1;
+  await page.goto('./?vorlage=buero-wichteln');
+  await page.getByLabel('Namen, einer pro Zeile').fill('Anna\n\nBernd\n\nClara');
+  await page.getByLabel('Übergabetag').fill(`${next}-01-06`);
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await page.getByRole('button', { name: 'Ziehen' }).click();
+  await expect(page.getByRole('heading', { name: `Büro-Wichteln ${next}` })).toBeVisible();
+});
