@@ -10,6 +10,13 @@ import { expiryFor, payloadFor } from '../link/payload.ts';
 import { compileRound, repairDropout } from '../losfee/index.ts';
 import type { RoundStore, StoredRound } from './types.ts';
 
+/** Loads the latest stored version of a round, so a change never overwrites a newer save. */
+export async function loadRound(store: RoundStore, id: string): Promise<StoredRound> {
+  const round = await store.get(id);
+  if (!round) throw new Error('round not found');
+  return round;
+}
+
 /** A new random round id. */
 export function newRoundId(): string {
   return toBase64Url(crypto.getRandomValues(new Uint8Array(16)));
@@ -22,15 +29,16 @@ async function linksFor(config: RoundConfig, names: string[], assignment: readon
 }
 
 /**
- * Encrypts one link per giver and stores the round. With `previous`, this is
+ * Encrypts one link per giver and stores the round. With `previousId`, this is
  * a new draw of that round: the draw number goes up, log and PIN stay.
  * Callers check oversizedDraws first; a draw that does not fit throws.
  */
 export async function saveDraw(
   store: RoundStore,
-  draw: { config: RoundConfig; names: string[]; assignment: readonly number[]; base: string; previous?: StoredRound },
+  draw: { config: RoundConfig; names: string[]; assignment: readonly number[]; base: string; previousId?: string },
 ): Promise<StoredRound> {
-  const { config, names, assignment, base, previous } = draw;
+  const { config, names, assignment, base, previousId } = draw;
+  const previous = previousId === undefined ? undefined : await loadRound(store, previousId);
   const drawNumber = previous ? previous.drawNumber + 1 : 1;
   const round: StoredRound = {
     id: previous?.id ?? newRoundId(),
@@ -46,7 +54,8 @@ export async function saveDraw(
 }
 
 /** Records that a target was chosen for this person's link. */
-export async function markSent(store: RoundStore, round: StoredRound, name: string): Promise<StoredRound> {
+export async function markSent(store: RoundStore, id: string, name: string): Promise<StoredRound> {
+  const round = await loadRound(store, id);
   const next = { ...round, links: round.links.map((l) => (l.name === name ? { ...l, sent: true } : l)) };
   await store.put(next);
   return next;
@@ -73,7 +82,8 @@ export type DropoutPlan =
   | { kind: 'repair'; engerl: string; rulesBroken: boolean; apply: () => Promise<StoredRound> };
 
 /** Plans the drop-out repair; `apply` stores it ("Keep it anyway" or no warning needed). */
-export async function planDropout(store: RoundStore, round: StoredRound, name: string, base: string): Promise<DropoutPlan> {
+export async function planDropout(store: RoundStore, id: string, name: string, base: string): Promise<DropoutPlan> {
+  const round = await loadRound(store, id);
   const { names, problem } = compileRound(round.config);
   const pairs = await readAssignment(round);
   const assignment = names.map((giver) => names.indexOf(pairs.get(giver)!));
@@ -86,12 +96,17 @@ export async function planDropout(store: RoundStore, round: StoredRound, name: s
     engerl,
     rulesBroken: repair.broken.length > 0,
     apply: async () => {
-      const config = withoutPerson(round.config, name);
-      const link = await buildLink(base, payloadFor(config, receiver, round.drawNumber));
+      const current = await loadRound(store, id);
+      const linkOf = (r: StoredRound, n: string) => r.links.find((l) => l.name === n)?.link;
+      if (current.drawNumber !== round.drawNumber || linkOf(current, engerl) !== linkOf(round, engerl) || !linkOf(current, name)) {
+        throw new Error('round changed since the drop-out was planned');
+      }
+      const config = withoutPerson(current.config, name);
+      const link = await buildLink(base, payloadFor(config, receiver, current.drawNumber));
       const next: StoredRound = {
-        ...round,
+        ...current,
         config,
-        links: round.links.filter((l) => l.name !== name).map((l) => (l.name === engerl ? { name: engerl, link, sent: false } : l)),
+        links: current.links.filter((l) => l.name !== name).map((l) => (l.name === engerl ? { name: engerl, link, sent: false } : l)),
       };
       await store.put(next);
       return next;

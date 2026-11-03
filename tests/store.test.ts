@@ -33,8 +33,8 @@ describe('stored round', () => {
 
   it('counts up the draw number on a new draw and keeps the log', async () => {
     const { store, round, names } = await stored(people('ABCD'), [1, 2, 3, 0]);
-    const viewed = (await viewAssignment(store, round, 'A', 1)).round;
-    const again = await saveDraw(store, { config: round.config, names, assignment: [2, 3, 0, 1], base: BASE, previous: viewed });
+    await viewAssignment(store, round.id, 'A', 1);
+    const again = await saveDraw(store, { config: round.config, names, assignment: [2, 3, 0, 1], base: BASE, previousId: round.id });
     expect(again.id).toBe(round.id);
     expect(again.drawNumber).toBe(2);
     expect(again.views).toEqual([{ name: 'A', at: 1 }]);
@@ -42,9 +42,27 @@ describe('stored round', () => {
     expect(first).toMatchObject({ status: 'ok', payload: { n: 2, r: 'C' } });
   });
 
+  it('never lets one change wipe another, such as a logged view', async () => {
+    const { store, round } = await stored(people('ABC'), [1, 2, 0]);
+    await viewAssignment(store, round.id, 'A', 5);
+    await markSent(store, round.id, 'B');
+    await setPin(store, round.id, '1', 1000);
+    const latest = (await store.get(round.id))!;
+    expect(latest.views).toEqual([{ name: 'A', at: 5 }]);
+    expect(latest.links[1]!.sent).toBe(true);
+    expect(latest.pin).not.toBeNull();
+  });
+
+  it('refuses a drop-out repair when the round changed in between', async () => {
+    const { store, round, names } = await stored(people('ABCDE'), [1, 2, 3, 4, 0]);
+    const plan = await planDropout(store, round.id, 'B', BASE);
+    await saveDraw(store, { config: round.config, names, assignment: [2, 3, 4, 0, 1], base: BASE, previousId: round.id });
+    if (plan.kind === 'repair') await expect(plan.apply()).rejects.toThrow(/changed/);
+  });
+
   it('marks a link as sent', async () => {
     const { store, round } = await stored(people('ABC'), [1, 2, 0]);
-    const next = await markSent(store, round, 'B');
+    const next = await markSent(store, round.id, 'B');
     expect(next.links.map((l) => l.sent)).toEqual([false, true, false]);
   });
 
@@ -65,7 +83,7 @@ describe('stored round', () => {
 describe('drop-out on a stored round', () => {
   it('changes exactly one link and names only the Engerl', async () => {
     const { store, round } = await stored(people('ABCDE'), [1, 2, 3, 4, 0]);
-    const plan = await planDropout(store, round, 'B', BASE);
+    const plan = await planDropout(store, round.id, 'B', BASE);
     expect(plan).toMatchObject({ kind: 'repair', engerl: 'A', rulesBroken: false });
     if (plan.kind !== 'repair') return;
     expect(JSON.stringify(plan)).not.toContain('"C"');
@@ -79,9 +97,9 @@ describe('drop-out on a stored round', () => {
 
   it('warns when the repair breaks a rule, and offers only a new draw for a self-draw', async () => {
     const three = await stored(people('ABCDE'), [1, 2, 0, 4, 3], { noMutual: false });
-    expect(await planDropout(three.store, three.round, 'D', BASE)).toEqual({ kind: 'selfDraw', engerl: 'E' });
+    expect(await planDropout(three.store, three.round.id, 'D', BASE)).toEqual({ kind: 'selfDraw', engerl: 'E' });
     const mutual = await stored(people('ABCDE'), [1, 2, 0, 4, 3], { noMutual: true });
-    expect(await planDropout(mutual.store, mutual.round, 'B', BASE)).toMatchObject({ kind: 'repair', engerl: 'A', rulesBroken: true });
+    expect(await planDropout(mutual.store, mutual.round.id, 'B', BASE)).toMatchObject({ kind: 'repair', engerl: 'A', rulesBroken: true });
   });
 
   it('removes the person from households, rules and hints', () => {
@@ -106,7 +124,7 @@ describe('emergency view', () => {
 
   it('logs every view before showing one person', async () => {
     const { store, round } = await stored(people('ABC'), [1, 2, 0]);
-    const { round: next, receiver } = await viewAssignment(store, round, 'B', 1234);
+    const { round: next, receiver } = await viewAssignment(store, round.id, 'B', 1234);
     expect(receiver).toBe('C');
     expect((await store.get(round.id))!.views).toEqual([{ name: 'B', at: 1234 }]);
     expect(next.views).toHaveLength(1);
@@ -115,7 +133,7 @@ describe('emergency view', () => {
   it('checks an optional PIN', async () => {
     const { store, round } = await stored(people('ABC'), [1, 2, 0]);
     expect(await checkPin(round, 'anything')).toBe(true);
-    const withPin = await setPin(store, round, '4711', 1000);
+    const withPin = await setPin(store, round.id, '4711', 1000);
     expect(await checkPin(withPin, '4711')).toBe(true);
     expect(await checkPin(withPin, '4712')).toBe(false);
     expect(JSON.stringify(withPin.pin)).not.toContain('4711');

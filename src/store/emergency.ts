@@ -5,7 +5,7 @@
  */
 import { t } from '../i18n/i18n.ts';
 import { fromBase64Url, toBase64Url } from '../link/base64url.ts';
-import { readAssignment } from './rounds.ts';
+import { loadRound, readAssignment } from './rounds.ts';
 import type { PinHash, RoundStore, StoredRound } from './types.ts';
 
 export const PIN_ITERATIONS = 600_000;
@@ -22,10 +22,10 @@ async function derive(pin: string, salt: Uint8Array<ArrayBuffer>, iterations: nu
 }
 
 /** Sets or replaces the PIN of a round. */
-export async function setPin(store: RoundStore, round: StoredRound, pin: string, iterations = PIN_ITERATIONS): Promise<StoredRound> {
+export async function setPin(store: RoundStore, id: string, pin: string, iterations = PIN_ITERATIONS): Promise<StoredRound> {
   const salt = crypto.getRandomValues(new Uint8Array(16));
   const hash: PinHash = { salt: toBase64Url(salt), iterations, hash: await derive(pin, salt, iterations) };
-  const next = { ...round, pin: hash };
+  const next = { ...(await loadRound(store, id)), pin: hash };
   await store.put(next);
   return next;
 }
@@ -41,7 +41,8 @@ export async function checkPin(round: StoredRound, pin: string): Promise<boolean
  * Shows whom `giver` gives to. The view is logged and stored before the name
  * is returned, so a view never goes unrecorded.
  */
-export async function viewAssignment(store: RoundStore, round: StoredRound, giver: string, now: number): Promise<{ round: StoredRound; receiver: string }> {
+export async function viewAssignment(store: RoundStore, id: string, giver: string, now: number): Promise<{ round: StoredRound; receiver: string }> {
+  const round = await loadRound(store, id);
   const next = { ...round, views: [...round.views, { name: giver, at: now }] };
   await store.put(next);
   const receiver = (await readAssignment(round)).get(giver);
