@@ -5,6 +5,11 @@ type Texts = Record<string, string | Partial<Record<Intl.LDMLPluralRule, string>
 const texts: Texts = de;
 const plural = new Intl.PluralRules('de-AT');
 
+/** True if the language file has `key`. */
+export function hasText(key: string): boolean {
+  return key in texts;
+}
+
 /**
  * Returns the text for `key` with `{name}` placeholders filled in. A text with
  * plural forms picks its form by the number in `params.count`.
