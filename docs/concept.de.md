@@ -77,9 +77,9 @@ Beispiel: 10 Personen, Übergabe am Familienabend.
 
 ### 1. Einrichten
 
-Die organisierende Person wählt die Vorlage „Engerl-Bengerl klassisch“ und gibt die Namen ein, einen pro Zeile. Eine Leerzeile trennt Haushalte; wer im selben Haushalt lebt, zieht sich nicht. Dazu kommen Budget und Übergabetag. Optional sind Ort, Motto, ein Hinweis pro Person (Wünsche, No-Gos), die Art der Auflösung und die Angabe, ob die organisierende Person mitspielt. Der Hinweis ist Freitext; darunter sagt die App, dass nur hineingehört, was das Engerl wissen muss, und dass keine Diagnosen nötig sind („keine Nüsse“ reicht).
+Die organisierende Person wählt die Vorlage „Engerl-Bengerl klassisch“ und gibt die Namen ein, einen pro Zeile. Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team; wer in derselben Gruppe ist, zieht sich nicht. Dazu kommen Budget und Übergabetag. Optional sind Ort, Motto, ein Hinweis pro Person (Wünsche, No-Gos), die Art der Auflösung und die Angabe, ob die organisierende Person mitspielt. Der Hinweis ist Freitext; darunter sagt die App, dass nur hineingehört, was das Engerl wissen muss, und dass keine Diagnosen nötig sind („keine Nüsse“ reicht).
 
-Haushalte heißen nach ihren Mitgliedern: „Haushalt Anna und Bernd“, bei größeren „Haushalt Anna, Bernd und 2 weitere“. Mitspielen können bis zu 50 Personen.
+Gruppen heißen nach ihren Mitgliedern: „Gruppe Anna und Bernd“, bei größeren „Gruppe Anna, Bernd und 2 weitere“. Mitspielen können bis zu 50 Personen.
 
 Telefonnummern, E-Mail-Adressen, Postadressen und Nachnamen fragt die App nie ab. Die einzige Ausnahme ist die Postadresse beim Post-Wichteln, und auch die steht nur im Los des jeweiligen Engerls.
 

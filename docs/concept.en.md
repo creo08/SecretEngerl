@@ -77,9 +77,9 @@ Example: 10 people, gifts exchanged at a family evening.
 
 ### 1. Set up
 
-The organizer picks the template "Engerl-Bengerl classic" and enters the names, one per line. A blank line separates households; people in the same household do not draw each other. Budget and exchange date follow. Optional: place, theme, a hint per person (wishes, no-gos), how the reveal works and whether the organizer takes part. The hint is free text; below it the app says that only what the Engerl needs to know belongs there, and that no diagnoses are needed ("no nuts" is enough).
+The organizer picks the template "Engerl-Bengerl classic" and enters the names, one per line. A blank line separates groups, such as a household, a couple, a family or a team; people in the same group do not draw each other. Budget and exchange date follow. Optional: place, theme, a hint per person (wishes, no-gos), how the reveal works and whether the organizer takes part. The hint is free text; below it the app says that only what the Engerl needs to know belongs there, and that no diagnoses are needed ("no nuts" is enough).
 
-Households are named after their members: "Household Anna and Bernd", or "Household Anna, Bernd and 2 more" for larger ones. Up to 50 people can take part.
+Groups are named after their members: "Group Anna and Bernd", or "Group Anna, Bernd and 2 more" for larger ones. Up to 50 people can take part.
 
 The app never asks for phone numbers, email addresses, postal addresses or surnames. The only exception is the postal address in postal rounds, and even that appears only in the draw of the respective Engerl.
 
