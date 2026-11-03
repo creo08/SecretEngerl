@@ -63,7 +63,7 @@ test('a complete round makes no request outside the own origin', async ({ browse
   // Emergency view of one person, logged.
   await page.getByText('Während der Runde').click();
   await page.getByLabel('Wen beschenkt …?').selectOption('Anna');
-  await page.getByLabel('Tippe „Ich spicke“').fill('ich spicke');
+  await page.getByLabel('Tippe „Ich spicke“').last().fill('ich spicke');
   await page.getByRole('button', { name: 'Ansehen' }).click();
   await expect(page.getByText(`Anna beschenkt ${bengerl}.`)).toBeVisible();
   await expect(page.getByText(/Zuordnung von Anna angesehen am/)).toBeVisible();
