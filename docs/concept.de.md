@@ -127,9 +127,11 @@ Für echte Notfälle gibt es „Zuordnung ansehen“ (siehe Ablage).
 | Bühne | Am Gerät der organisierenden Person „Auflösung starten“, Paar für Paar | ja, Runde gespeichert |
 | Nie | Bleibt geheim | nein |
 
+Die Bühne zeigt immer ein Paar auf einmal und folgt der Kette: Wer gerade beschenkt wurde, ist als Nächstes dran, bis sich ein Kreis schließt und die nächste offene Person beginnt. Sie steht auf dem Gerät der organisierenden Person immer zur Verfügung. Ab dem Übergabetag öffnet sie ohne Hürde; davor braucht sie dieselbe Hürde wie „Zuordnung ansehen“, und jede Nutzung kommt ins Protokoll.
+
 ### 7. Danach
 
-Am Übergabetag plus 14 Tage löscht die App die Runde, und alte Links zeigen „Runde abgelaufen“. Mit „Fürs nächste Jahr merken“ bleiben Namen, Haushalte und Paarungen erhalten, damit im Folgejahr niemand dieselbe Person zieht.
+Am Übergabetag plus 14 Tage löscht die App die Runde, und alte Links zeigen „Runde abgelaufen“. Mit „Fürs nächste Jahr merken“ bleiben Namen, Gruppen, Paarungen, Budget und Hinweise erhalten, damit im Folgejahr niemand dieselbe Person zieht (siehe Daten aus dem Vorjahr).
 
 ## Link-Format
 
@@ -150,6 +152,8 @@ Klartext vor der Verschlüsselung ist kompaktes JSON in UTF-8:
 ```
 
 `r` ist das Bengerl, `b` das Budget, `m` das Motto, `d` der Übergabetag, `h` der Hinweis, `t` die Vorlage aus der festen Liste (die App zeigt die Regel der Vorlage aus der Sprachdatei, beim Schrottwichteln „Nichts kaufen, nur was du schon hast“), `n` die Nummer der Ziehung und `x` das Ablaufdatum als Unix-Zeitstempel: das Ende des Tages 14 Tage nach dem Übergabetag, in UTC (hier 2027-01-03T23:59:59Z). Der Klartext wird mit `0x00`-Bytes auf genau 256 Byte aufgefüllt, damit alle Links aller Runden gleich lang sind. Beim Entschlüsseln werden die `0x00` am Ende entfernt; ein `0x00` im JSON ist ein Fehler. Passt ein Los nicht in 256 Byte, lässt die App das Ziehen nicht zu und zeigt beim Hinweis an, wie viele Zeichen noch frei sind.
+
+Zwei Vorlagen ergänzen das. Beim Post-Wichteln enthält `a` die Postadresse des Bengerls, höchstens 100 Byte, von der organisierenden Person pro Person eingetragen; sie steht nur im Los des jeweiligen Engerls. Beim Advent-Engerl kann `m` ein Motto pro Adventwoche enthalten, getrennt durch `|`, und „In den Kalender“ legt einen Termin pro Woche an. Beide Schlüssel zählen zu den 256 Byte, alle Links bleiben also gleich lang.
 
 Das Fragment hinter `#` schicken Browser nicht an Server ([RFC 3986](https://www.rfc-editor.org/info/rfc3986/)), und es fehlt auch im Referer-Header. Messenger erzeugen Vorschauen über einen gewöhnlichen HTTP-Abruf, der ebenfalls kein Fragment enthält.
 
@@ -177,7 +181,7 @@ Unter „Notfall“ gibt es „Zuordnung ansehen“. Die App zeigt immer nur ein
 
 „Versiegeln und vergessen“ ist eine ausdrückliche Wahl beim Verteilen. Danach liegt nichts mehr auf dem Gerät, und die App warnt vorher: Verlorene Links lassen sich nur durch eine Neuziehung ersetzen.
 
-Eine Sicherungsdatei lässt sich exportieren, etwa für einen Gerätewechsel oder eine zweite organisierende Person. Der Dateiname ist neutral, z. B. `runde-2026-12.wichtel`. Ein Passwort ist optional. Ohne Passwort ist die Datei Klartext-JSON mit demselben Schutz wie die Ablage auf dem Gerät, und die App sagt das vor dem Speichern. Mit Passwort wird sie zusätzlich verschlüsselt, was sich lohnt, wenn sie per Mail oder Cloud weitergeht: PBKDF2-HMAC-SHA256 mit 600 000 Iterationen und 16 Byte Zufalls-Salt leitet einen AES-256-GCM-Schlüssel ab, das IV sind 96 Bit Zufall, und ein versionierter Header (Format, Version, Salt, Iterationen) wird als Additional Authenticated Data mitgeprüft. Die Sicherungsdatei kommt in Phase 6, zusammen mit der Jahresdatei.
+Eine Sicherungsdatei lässt sich exportieren, etwa für einen Gerätewechsel oder eine zweite organisierende Person. Der Dateiname ist neutral, z. B. `runde-2026-12.wichtel`. Ein Passwort ist optional. Ohne Passwort ist die Datei Klartext-JSON mit demselben Schutz wie die Ablage auf dem Gerät, und die App sagt das vor dem Speichern. Mit Passwort wird sie zusätzlich verschlüsselt, was sich lohnt, wenn sie per Mail oder Cloud weitergeht: PBKDF2-HMAC-SHA256 mit 600 000 Iterationen und 16 Byte Zufalls-Salt leitet einen AES-256-GCM-Schlüssel ab, das IV sind 96 Bit Zufall, und ein versionierter Header (Format, Version, Salt, Iterationen) wird als Additional Authenticated Data mitgeprüft. Die Datei ist JSON-Text. Ohne Passwort lautet sie `{"format":"secretengerl-backup","version":1,"round":{…}}`. Mit Passwort lautet sie `{"header":{"format":"secretengerl-backup","version":1,"salt":"…","iterations":600000},"iv":"…","data":"…"}`, und die UTF-8-Bytes des Headers, mit den Schlüsseln in genau dieser Reihenfolge, sind die Additional Authenticated Data. Die Jahresdatei nutzt dieselbe Hülle mit `"format":"secretengerl-year"`. Wer eine Sicherung einer Runde öffnet, die schon auf dem Gerät liegt, wird vor dem Ersetzen gefragt und sieht, welche Ziehungsnummer neuer ist.
 
 ## Zufall und Ziehung
 
@@ -227,9 +231,9 @@ Die Engine bekommt den Zufallsgenerator von außen. Tests nutzen einen festen Ge
 
 ## Daten aus dem Vorjahr
 
-Der Hauptweg ist eine Jahresdatei (Phase 6; bis dahin werden Paarungen von Hand eingetragen). Beim Abschluss einer Runde speichert „Fürs nächste Jahr merken“ eine Datei wie `engerl-2026.wichtel` mit Namen, Haushalten und Paarungen, ohne Budget und ohne Hinweise. Das Passwort ist optional und verschlüsselt die Datei wie die Sicherungsdatei, der Ablageort ist frei. Im nächsten Jahr startet „Runde aus Datei starten“ mit dieser Vorbelegung und schließt die Paarungen aus.
+Der Hauptweg ist eine Jahresdatei (Phase 6; bis dahin werden Paarungen von Hand eingetragen). Während einer Runde speichert „Fürs nächste Jahr merken“ jederzeit eine Datei wie `engerl-2026.wichtel` mit Namen, Gruppen, Paarungen, Budget und Hinweisen. Eine Woche bevor sich die Runde löscht, erinnert die App daran. Das Passwort ist optional und verschlüsselt die Datei wie die Sicherungsdatei, der Ablageort ist frei. Im nächsten Jahr startet „Runde aus Datei starten“ mit dieser Vorbelegung und schließt die Paarungen aus.
 
-Auf demselben Gerät merkt sich die App die Runde zusätzlich, verlässlich ist das aber nicht. Safari löscht Daten einer Website nach sieben Tagen ohne Besuch, wenn sie nicht zum Home-Bildschirm hinzugefügt wurde; dazu kommen Gerätewechsel und gelöschter Verlauf. Die Datei wird deshalb immer angeboten.
+Auf demselben Gerät merkt sich die App die Runde zusätzlich: Wenn sie sich löscht, bleiben Namen, Gruppen, Paarungen, Budget und Hinweise als Vorjahresrunde erhalten, bis eine neue Runde daraus startet oder „Vorjahr vergessen“ sie entfernt. Wie die Datei enthält das die Zuordnung des Vorjahres im Klartext; die App zeigt sie nur über „Ich spicke“. Verlässlich ist aber auch das nicht. Safari löscht Daten einer Website nach sieben Tagen ohne Besuch, wenn sie nicht zum Home-Bildschirm hinzugefügt wurde; dazu kommen Gerätewechsel und gelöschter Verlauf. Die Datei wird deshalb immer angeboten.
 
 Wurde im Vorjahr per Zettel gezogen und öffentlich aufgelöst, lassen sich die Paarungen auch von Hand eintragen.
 
@@ -286,7 +290,7 @@ Das Partyspiel-Modul läuft auf einem Gerät am Tisch, offline und ohne Links. E
 | 3 | Link-Format, Öffnen, Verteilen, Ablage, Notfall | Rundlauf-Tests, alle Links gleich lang, Ablauf greift, manipulierte Links werden abgewiesen |
 | 4 | Oberfläche auf Deutsch mit den Vorlagen „Engerl-Bengerl klassisch“, „Schrottwichteln“, „Familien-Wichteln“, „Büro-Wichteln“; Doku in der App; `/datenschutz/`; PWA | Runde einrichten in unter zwei Minuten ohne Hilfe, getestet mit Personen ohne Technikbezug; keine Anfragen außer an die eigene Herkunft |
 | 5 | Auffindbarkeit: Seiten pro Form, `llms.txt`, JSON-LD, Sitemap, Vorbelegungs-Link | Seiten ohne JavaScript lesbar |
-| 6 | Vorjahr (Jahresdatei), Sicherungsdatei, Auflösung „Bühne“, Advent und Adventskalender, „Post-Wichteln“ mit Adresse im Los | |
+| 6 | Vorjahr (Jahresdatei und Gedächtnis auf dem Gerät), Sicherungsdatei, Auflösung „Bühne“, „Post-Wichteln“ mit Adresse im Los, Advent-Engerl; der Adventskalender folgt erst auf Wunsch | |
 | 7 | Partyspiele | Spielbar auf einem Handy am Tisch |
 | 8 | Weitere Sprachen in der Reihenfolge Englisch, Schwedisch, Spanisch, Portugiesisch, Niederländisch, Polnisch, Ukrainisch, Filipino; alle als KI-Übersetzung gekennzeichnet | Keine fest verdrahteten Texte im Code |
 | 9 | Härtung, Barrierefreiheit, Release mit `SHA256SUMS` und Attestierung | Lighthouse 95 oder besser, externe Durchsicht der Kryptografie |

@@ -127,9 +127,11 @@ For real emergencies there is "View assignment" (see storage).
 | Stage | On the organizer's device, "Start reveal", pair by pair | yes, round stored |
 | Never | Stays secret | no |
 
+The stage reveal shows one pair at a time and follows the chain: whoever was just given a gift is next, until a circle closes and the next open person starts. It is always available on the organizer's device. From the exchange date on it opens without a hurdle; before that it needs the same hurdle as "View assignment", and every use is logged.
+
 ### 7. Afterwards
 
-Fourteen days after the exchange date, the app deletes the round and old links show "Round expired". With "Remember for next year", names, households and pairings are kept so nobody draws the same person the following year.
+Fourteen days after the exchange date, the app deletes the round and old links show "Round expired". With "Remember for next year", names, groups, pairings, budget and hints are kept so nobody draws the same person the following year (see last year's data).
 
 ## Link format
 
@@ -150,6 +152,8 @@ Before encryption, the plaintext is compact JSON in UTF-8:
 ```
 
 `r` is the Bengerl, `b` the budget, `m` the theme, `d` the exchange date, `h` the hint, `t` the template from the fixed list (the app shows the template's rule from its language file, for Schrottwichteln "Buy nothing, only what you already have"), `n` the draw number and `x` the expiry date as a Unix timestamp: the end of the day 14 days after the exchange date, in UTC (here 2027-01-03T23:59:59Z). The plaintext is padded with `0x00` bytes to exactly 256 bytes, so every link of every round has the same length. On decryption, the trailing `0x00` bytes are removed; a `0x00` inside the JSON is an error. If a draw does not fit into 256 bytes, the app does not allow the draw and shows how many characters are left in the hint field.
+
+Two templates add to this. In Postal Wichteln, `a` holds the Bengerl's postal address, at most 100 bytes, entered by the organizer per person; it appears only in the draw of that person's Engerl. In the Advent-Engerl, `m` may hold one theme per Advent week, separated by `|`, and "Add to calendar" creates one event per week. Both keys count toward the 256 bytes, so every link still has the same length.
 
 Browsers do not send the fragment after `#` to servers ([RFC 3986](https://www.rfc-editor.org/info/rfc3986/)), and it is stripped from the Referer header. Messengers build previews with an ordinary HTTP request, which carries no fragment either.
 
@@ -177,7 +181,7 @@ Under "Emergency" there is "View assignment". The app always shows one person at
 
 "Seal and forget" is an explicit choice when distributing. Afterwards nothing remains on the device, and the app warns beforehand: lost links can only be replaced by a new draw.
 
-A backup file can be exported, for example for a new device or a second organizer. The file name is neutral, such as `runde-2026-12.wichtel`. A password is optional. Without one, the file is plain JSON with the same protection as the storage on the device, and the app says so before saving. With one, it is encrypted on top, which is worth it if the file travels by email or cloud: PBKDF2-HMAC-SHA256 with 600,000 iterations and a 16-byte random salt derives an AES-256-GCM key, the IV is 96 random bits, and a versioned header (format, version, salt, iterations) is authenticated as additional data. The backup file comes in phase 6, together with the yearly file.
+A backup file can be exported, for example for a new device or a second organizer. The file name is neutral, such as `runde-2026-12.wichtel`. A password is optional. Without one, the file is plain JSON with the same protection as the storage on the device, and the app says so before saving. With one, it is encrypted on top, which is worth it if the file travels by email or cloud: PBKDF2-HMAC-SHA256 with 600,000 iterations and a 16-byte random salt derives an AES-256-GCM key, the IV is 96 random bits, and a versioned header (format, version, salt, iterations) is authenticated as additional data. The file is JSON text. Without a password it reads `{"format":"secretengerl-backup","version":1,"round":{…}}`. With a password it reads `{"header":{"format":"secretengerl-backup","version":1,"salt":"…","iterations":600000},"iv":"…","data":"…"}`, and the UTF-8 bytes of the header, with the keys in exactly this order, are the additional authenticated data. The yearly file uses the same envelope with `"format":"secretengerl-year"`. Opening a backup of a round that already exists on the device asks before replacing it and shows which draw number is newer.
 
 ## Randomness and the draw
 
@@ -227,9 +231,9 @@ The engine receives its random number generator from outside. Tests use a fixed 
 
 ## Last year's data
 
-The main route is a yearly file (phase 6; until then, pairings are entered by hand). When a round ends, "Remember for next year" saves a file such as `engerl-2026.wichtel` with names, households and pairings, without budget or hints. The password is optional and encrypts the file like the backup file; the storage location is up to the user. Next year, "Start round from file" pre-fills everything and excludes last year's pairings.
+The main route is a yearly file (phase 6; until then, pairings are entered by hand). At any time during a round, "Remember for next year" saves a file such as `engerl-2026.wichtel` with names, groups, pairings, budget and hints. A week before the round deletes itself, the app reminds the organizer to save it. The password is optional and encrypts the file like the backup file; the storage location is up to the user. Next year, "Start round from file" pre-fills everything and excludes last year's pairings.
 
-On the same device, the app also remembers the round, but that is not reliable. Safari deletes a website's data after seven days without a visit unless it was added to the home screen; on top of that come new devices and cleared browsing data. The app therefore always offers the file.
+On the same device, the app also remembers the round: when it deletes itself, names, groups, pairings, budget and hints stay as last year's round until a new round starts from them or "Forget last year" removes them. Like the file, this holds last year's assignment in plain text; the app shows it only through "Ich spicke". It is not reliable either. Safari deletes a website's data after seven days without a visit unless it was added to the home screen; on top of that come new devices and cleared browsing data. The app therefore always offers the file.
 
 If last year's round was drawn on paper and revealed openly, the pairings can also be entered by hand.
 
@@ -286,7 +290,7 @@ The party game module runs on one device at the table, offline and without links
 | 3 | Link format, opening, distribution, storage, emergency access | round-trip tests, all links equally long, expiry works, tampered links rejected |
 | 4 | German UI with the templates "Engerl-Bengerl classic", "Schrottwichteln", "Family Wichteln", "Office Wichteln"; documentation in the app; `/datenschutz/`; PWA | setting up a round takes under two minutes without help, tested with non-technical people; no requests except to the app's own origin |
 | 5 | Findability: pages per form, `llms.txt`, JSON-LD, sitemap, pre-fill link | pages readable without JavaScript |
-| 6 | Last year's data (yearly file), backup file, stage reveal, Advent and Advent calendar, "Postal Wichteln" with the address in the draw | |
+| 6 | Last year's data (yearly file and memory on the device), backup file, stage reveal, "Postal Wichteln" with the address in the draw, Advent-Engerl; the Advent calendar follows only when requested | |
 | 7 | Party games | playable on one phone at the table |
 | 8 | Further languages in the order English, Swedish, Spanish, Portuguese, Dutch, Polish, Ukrainian, Filipino; all marked as AI translations | no hard-coded strings in the code |
 | 9 | Hardening, accessibility, release with `SHA256SUMS` and attestation | Lighthouse 95 or better, external review of the cryptography |
