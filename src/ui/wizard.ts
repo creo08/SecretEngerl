@@ -213,6 +213,10 @@ function stepWho(state: WizardState): void {
       return;
     }
     if (state.previous && !state.mapped && showMapping(state, result.value.participants.households.flat(), errors)) return;
+    // A renamed person keeps last year's hint under the new name.
+    for (const [old, now] of Object.entries(state.renames)) {
+      if (state.hints[old] !== undefined && !state.hints[now]) state.hints[now] = state.hints[old];
+    }
     stepRules(state);
   });
   fill(byId('wizard'), frame(1, t('wizard.who.title'), h('p', { class: 'template-name' }, t(`template.${state.template}`)), form));
@@ -441,9 +445,9 @@ function stepRules(state: WizardState): void {
       if (response.type === 'invalid') return showErrors(errors, errorMessages(response.errors));
       if (response.type !== 'draw') throw new Error('unexpected worker response');
       if (!response.result.ok) return showErrors(errors, [drawFailure(config, response.names, response.result)]);
-      // A round started from last year's round on this device uses it up.
-      if (state.previous?.yearId) await indexedDbYears.delete(state.previous.yearId).catch(() => undefined);
       const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase(), ...(state.title ? { title: state.title } : {}) });
+      // A round started from last year's round on this device uses it up, but only once the new round is safely stored.
+      if (state.previous?.yearId) await indexedDbYears.delete(state.previous.yearId).catch(() => undefined);
       void requestPersistence();
       await showRound(round.id, { fresh: true });
     } catch {

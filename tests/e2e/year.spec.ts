@@ -53,6 +53,8 @@ test('a yearly file starts next year without last year\'s pairings, with renamed
   await page.getByLabel('Tippe „Ich spicke“').fill('Ich spicke');
   await page.getByRole('button', { name: 'Ansehen' }).click();
   await expect(page.getByText(/^\p{L}+ hat \p{L}+ beschenkt$/u)).toHaveCount(5);
+  // Clara's hint follows her new name.
+  await expect(page.getByLabel('Hinweis zu Klara')).toHaveValue('keine Nüsse');
   await page.getByRole('button', { name: 'Ziehen' }).click();
   await expect(page.locator('#round h1')).toBeVisible();
 });
