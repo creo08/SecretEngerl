@@ -17,9 +17,13 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 | `src/link/` | Link format v1: AES-GCM, 256-byte padding, expiry |
 | `src/store/` | IndexedDB storage of a round on the organizer's device |
 | `src/worker/` | Web Worker that runs `losfee` |
-| `src/i18n/` | Language files; no user-facing text in code |
+| `src/i18n/` | Language files and `Intl` formatting; no user-facing text in code |
+| `src/share/`, `src/ics/` | Share sheet with clipboard fallback; calendar file without names |
 | `src/ui/` | DOM code |
-| `src/sw/` | Service worker |
+| `src/sw/` | Service worker with a versioned precache, filled by `scripts/vite-site.ts` |
+| `src/styles/` | Design tokens (Hallmark theme Coral), self-hosted OFL fonts, the stylesheet |
+| `docs/guide/` | Help pages shown in the app, rendered to static HTML at build time |
+| `public/` | Manifest and icons |
 | `scripts/` | Repository checks and build helpers |
 | `tests/` | Vitest tests; `tests/e2e/` holds Playwright tests |
 | `docs/` | Specification and in-app documentation, `*.en.md` reference, `*.de.md` German |
@@ -35,7 +39,10 @@ npm run build         # type check and static build into dist/
 npm run check:docs    # English/German docs have the same structure
 npm run check:hygiene # identity and content rules for all commits
 npm run test:e2e      # Playwright, against the built site
+npm run check:size    # app JavaScript stays under 100 KB gzip
 ```
+
+In a sandbox with a preinstalled Chromium, set `CHROMIUM_PATH` to its binary for `npm run test:e2e`.
 
 ## Conventions
 

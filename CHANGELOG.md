@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - "Add to calendar" for the exchange day, without the Bengerl's name.
 - The round stays on the organizer's device for "Send again" and deletes itself 14 days after the exchange.
 - Emergency view of one person at a time after typing "Ich spicke", with an optional PIN and a log of every view.
+- German interface: pick a template, enter who plays, set rules if wanted, draw and send.
+- "Tap to reveal" for the person who opens a draw, with "Add to calendar".
+- Help pages inside the app, readable without JavaScript: how it works, one page per template, privacy and threat model, FAQ and the privacy notice.
+- Installable app that works offline; a new version waits until you tap "Neu laden".
 
 ### Security
 
