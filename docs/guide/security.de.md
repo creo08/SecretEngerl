@@ -8,7 +8,7 @@ Das Los wird auf dem Gerät der organisierenden Person verschlüsselt und erst a
 
 ## Was in einem Link steht
 
-Jeder Link enthält ein verschlüsseltes Los: den Namen des Bengerls, Budget, Termin, falls gesetzt Motto und Hinweis, die Vorlage, die Nummer der Ziehung und das Ablaufdatum. Nicht darin stehen der eigene Name, die Liste der Teilnehmenden und wer sonst wen gezogen hat. Jedes Los wird auf dieselbe Länge aufgefüllt, damit alle Links gleich aussehen.
+Jeder Link enthält ein verschlüsseltes Los: den Namen des Bengerls, Budget, Termin, falls gesetzt Motto und Hinweis, beim Post-Wichteln die Postadresse des Bengerls, die Vorlage, die Nummer der Ziehung und das Ablaufdatum. Nicht darin stehen der eigene Name, die Liste der Teilnehmenden und wer sonst wen gezogen hat. Jedes Los wird auf dieselbe Länge aufgefüllt, damit alle Links gleich aussehen.
 
 Verschlüsselt wird mit AES-GCM und einem eigenen 128-Bit-Schlüssel pro Link. Schlüssel und Chiffrat stehen hinter dem `#`. Diesen Teil schicken Browser nie an einen Server, und Messenger lassen ihn bei Link-Vorschauen weg.
 

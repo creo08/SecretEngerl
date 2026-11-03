@@ -8,7 +8,7 @@ The draw is encrypted on the organizer's device and decrypted only on the device
 
 ## What a link contains
 
-Each link holds one encrypted draw: the name of the Bengerl, budget, date, theme and hint if set, the template, the draw number and the expiry date. It does not hold the recipient's own name, the list of participants or who drew whom otherwise. Every draw is padded to the same length, so all links look alike.
+Each link holds one encrypted draw: the name of the Bengerl, budget, date, theme and hint if set, in postal rounds the Bengerl's postal address, the template, the draw number and the expiry date. It does not hold the recipient's own name, the list of participants or who drew whom otherwise. Every draw is padded to the same length, so all links look alike.
 
 The encryption is AES-GCM with a fresh 128-bit key for every link. The key and the ciphertext sit after the `#`, which browsers never send to a server and messengers leave out when they build a link preview.
 

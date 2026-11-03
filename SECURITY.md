@@ -15,7 +15,7 @@ The threat model is deliberately modest. The app protects the draw from a passiv
 How it works:
 
 - Each link is `#1.<key>.<ciphertext>`: a 128-bit random key per link, AES-GCM with a 96-bit random IV and a 128-bit tag, and the format version as additional authenticated data. The fragment after `#` is never sent to servers.
-- The plaintext is padded to exactly 256 bytes, so all links look alike. It carries the Bengerl's name, budget, date, theme, hint, draw number and expiry date, but not the recipient's own name or the participant list.
+- The plaintext is padded to exactly 256 bytes, so all links look alike. It carries the Bengerl's name, budget, date, theme, hint, in postal rounds the Bengerl's postal address, the template, draw number and expiry date, but not the recipient's own name or the participant list.
 - Randomness comes only from `crypto.getRandomValues`, cryptography only from WebCrypto.
 - A strict Content Security Policy (meta tag), no inline scripts, no third-party requests, `no-referrer`.
 
