@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Stage reveal: "Start reveal" shows one pair at a time on the organizer's device, following the chain. Before the exchange day it needs "Ich spicke" and is logged.
 - "Save backup": the whole round as a file for another device or a second organizer, optionally protected by a password; "Open file" restores it and asks before replacing a round already on the device.
 
+### Changed
+
+- Sections that open on a tap ("Mehr Optionen", "Während der Runde", "PIN festlegen") now look like it: a chevron, a frame and a line saying what is inside.
+
 ### Fixed
 
 - After "Neu laden" in one tab, other open tabs now offer a reload too, instead of failing on the updated storage.
@@ -23,10 +27,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Security
 
 - Yearly files and backups with a password are encrypted with AES-256-GCM under a key from PBKDF2-HMAC-SHA256 (600,000 iterations), with the file header authenticated. Without a password the app warns that anyone with the file can read the assignment and the hints.
-
-### Changed
-
-- Sections that open on a tap ("Mehr Optionen", "Während der Runde", "PIN festlegen") now look like it: a chevron, a frame and a line saying what is inside.
 
 ## [0.3.0] - 2026-11-03
 
