@@ -17,6 +17,7 @@ In Wichteln, everyone secretly draws a name and gives that person a gift as thei
 - [Schrottwichteln](app:schrottwichteln/): buy nothing, give what you already have.
 - [Family Wichteln](app:familien-wichteln/): with hints and without last year's pairings.
 - [Office Wichteln](app:buero-wichteln/): small budget, a theme if you like.
+- [Advent-Engerl](app:advent-engerl/): a small secret joy every week of Advent.
 - [Postal Wichteln](app:post-wichteln/): gifts by post, the address only in the Engerl's draw.
 
 ## In the original language

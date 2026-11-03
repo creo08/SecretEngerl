@@ -14,6 +14,7 @@ const pages: [string, string][] = [
   ['familien-wichteln/', 'Familien-Wichteln online auslosen'],
   ['buero-wichteln/', 'Büro-Wichteln online auslosen'],
   ['post-wichteln/', 'Post-Wichteln online auslosen'],
+  ['advent-engerl/', 'Advent-Engerl online auslosen'],
 ];
 
 test('the help pages are readable without JavaScript', async ({ page }) => {

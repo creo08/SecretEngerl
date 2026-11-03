@@ -11,6 +11,7 @@ SecretEngerl runs entirely in the browser. The organizer enters the names, optio
 - [Schrottwichteln]({{app}}schrottwichteln/): buy nothing, give something you already own.
 - [Familien-Wichteln]({{app}}familien-wichteln/): family rounds with hints per person and without last year's pairings.
 - [Büro-Wichteln]({{app}}buero-wichteln/): office rounds with a small budget and an optional theme.
+- [Advent-Engerl]({{app}}advent-engerl/): small secret joys every week of Advent, with an optional theme per week; the reveal is at the party.
 - [Post-Wichteln]({{app}}post-wichteln/): gifts sent by post; each address appears only in the draw of the person sending to it.
 
 ## Pre-fill link
@@ -22,7 +23,7 @@ An assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can bui
 ```
 
 - `v`: format version, always `1`.
-- `f`: template, one of `engerl-bengerl`, `schrottwichteln`, `familien-wichteln`, `buero-wichteln`, `post-wichteln`. Addresses are never part of a pre-fill link; the organizer enters them in the app.
+- `f`: template, one of `engerl-bengerl`, `schrottwichteln`, `familien-wichteln`, `buero-wichteln`, `post-wichteln`, `advent-engerl`. Addresses are never part of a pre-fill link; the organizer enters them in the app.
 - `n`: names, `,` between people of one group and `;` between groups. People in the same group never draw each other. At most 50 names of 1 to 40 characters, no duplicates. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, e.g. `%2C`.
 - `b`: budget in euros, a number from 0 to 9999 (optional; ignored for Schrottwichteln).
 - `d`: exchange date as `YYYY-MM-DD` (optional).
