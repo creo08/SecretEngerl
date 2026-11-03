@@ -77,7 +77,7 @@
 .btn:focus-visible, .template:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
 .icon { flex: none; }
 .slip-reveal { font-size: var(--text-lg); min-height: 56px; }
-.hold { position: relative; overflow: hidden; }
+.hold { position: relative; overflow: hidden; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; touch-action: manipulation; }
 .hold-fill { position: absolute; inset: 0; background: var(--color-accent); opacity: 0.35; transform: scaleX(0); transform-origin: left; }
 .hold.holding .hold-fill { transform: scaleX(1); transition: transform 2s linear; }
 .hold > span:last-child { position: relative; }
