@@ -11,7 +11,7 @@ import { freeHintBytes, oversizedDraws } from '../link/payload.ts';
 import { indexedDbStore, requestPersistence } from '../store/db.ts';
 import { MAX_TITLE_CHARS, saveDraw } from '../store/rounds.ts';
 import { askWorker } from '../worker/client.ts';
-import { byId, fill, h, showView, uid } from './dom.ts';
+import { byId, disclosure, fill, h, showView, uid } from './dom.ts';
 import { showRound } from './round.ts';
 import { drawFailure, errorMessages, householdLabel } from './text.ts';
 
@@ -334,7 +334,7 @@ function stepRules(state: WizardState): void {
     { class: 'stack', novalidate: true },
     h('p', { class: 'lead' }, t('wizard.rules.intro')),
     ...main,
-    h('details', { class: 'more' }, h('summary', {}, t('wizard.rules.more')), h('div', { class: 'stack' }, ...more)),
+    disclosure(t('wizard.rules.more'), t('wizard.rules.moreHint'), h('div', { class: 'stack' }, ...more)),
     errors,
     status,
     h('div', { class: 'actions' }, drawButton, back),

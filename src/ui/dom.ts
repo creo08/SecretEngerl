@@ -49,6 +49,11 @@ export function fill(el: Element, ...children: Child[]): void {
   el.replaceChildren(...children.filter((c): c is Node | string => Boolean(c)));
 }
 
+/** A section that opens on click, with a title and a short line saying what it holds. */
+export function disclosure(title: string, hint: string, content: HTMLElement, cls = 'more'): HTMLDetailsElement {
+  return h('details', { class: cls }, h('summary', {}, h('span', { class: 'summary-title' }, title), h('span', { class: 'summary-hint' }, hint)), content);
+}
+
 /** Asks for confirmation in a modal dialog; resolves true on confirm. */
 export function confirmDialog(text: string, confirmLabel: string, cancelLabel: string): Promise<boolean> {
   return new Promise((resolve) => {

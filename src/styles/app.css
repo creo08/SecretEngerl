@@ -104,9 +104,18 @@ fieldset.choices { border-top: 0; padding-top: 0; display: flex; flex-wrap: wrap
 .errors ul { margin: 0; padding-left: var(--space-lg); }
 .rule-list { list-style: none; margin: 0; padding: 0; }
 .rule-list li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); }
-details.more { border-top: var(--rule-hair) solid var(--color-rule); padding-top: var(--space-md); }
-summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+details.more { margin-top: var(--space-sm); }
+details.more > .stack { padding-top: var(--space-md); }
+/* A disclosure looks like a card you can open: a chevron that turns, a frame and a line on what it holds. */
+summary { cursor: pointer; list-style: none; display: grid; grid-template-columns: auto 1fr; column-gap: var(--space-sm); align-items: center; min-height: 56px; padding: var(--space-sm) var(--space-md); border: 1px solid var(--color-rule-2); border-radius: var(--radius-card); background: var(--color-cotton); }
+summary::-webkit-details-marker { display: none; }
+summary::before { content: ""; grid-row: span 2; width: 9px; height: 9px; border-right: 2px solid currentColor; border-bottom: 2px solid currentColor; transform: rotate(-45deg); transition: transform var(--dur-short) var(--ease-out); }
+details[open] > summary::before { transform: rotate(45deg); }
+summary:hover { background: var(--color-paper-2); }
+summary:hover .summary-title { text-decoration: underline; text-decoration-color: var(--color-accent-2); }
 summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.summary-title { font-weight: 600; }
+.summary-hint { grid-column: 2; color: var(--color-muted); font-size: var(--text-sm); }
 
 /* Round view */
 .status:empty { display: none; }

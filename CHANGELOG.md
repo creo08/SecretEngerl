@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Sections that open on a tap ("Mehr Optionen", "Während der Runde", "PIN festlegen") now look like it: a chevron, a frame and a line saying what is inside.
+
 ## [0.3.0] - 2026-11-03
 
 ### Added

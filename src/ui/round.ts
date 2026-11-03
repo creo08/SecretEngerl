@@ -13,7 +13,7 @@ import { checkPin, isPeekPhrase, setPin, viewAssignment } from '../store/emergen
 import { DrawTooLongError, loadRound, markSent, planDropout, saveDraw } from '../store/rounds.ts';
 import type { StoredRound } from '../store/types.ts';
 import { askWorker } from '../worker/client.ts';
-import { byId, confirmDialog, fill, h, showView, uid } from './dom.ts';
+import { byId, disclosure, confirmDialog, fill, h, showView, uid } from './dom.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
 import { appBase } from './wizard.ts';
@@ -130,12 +130,7 @@ function section(title: string, ...children: (Node | null)[]): HTMLElement {
 }
 
 function duringRound(round: StoredRound): HTMLElement {
-  return h(
-    'details',
-    { class: 'more' },
-    h('summary', {}, t('round.during')),
-    h('div', { class: 'stack' }, removeSection(round), redrawSection(round), emergencySection(round), deleteSection(round)),
-  );
+  return disclosure(t('round.during'), t('round.duringHint'), h('div', { class: 'stack' }, removeSection(round), redrawSection(round), emergencySection(round), deleteSection(round)));
 }
 
 /** Draws again with `config` and stores it as the next draw of the round. */
@@ -261,7 +256,7 @@ function emergencySection(round: StoredRound): HTMLElement {
     result,
     h('h3', {}, t('emergency.log')),
     log,
-    h('details', {}, h('summary', {}, t('emergency.setPin')), h('div', { class: 'stack' }, label(newPin, t('emergency.newPin')), h('p', { class: 'help' }, t('emergency.pinNote')), h('div', { class: 'actions' }, savePin))),
+    disclosure(t('emergency.setPin'), t('emergency.setPinHint'), h('div', { class: 'stack' }, label(newPin, t('emergency.newPin')), h('p', { class: 'help' }, t('emergency.pinNote')), h('div', { class: 'actions' }, savePin)), 'more more--inner'),
   );
 }
 
