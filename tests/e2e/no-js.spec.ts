@@ -29,3 +29,9 @@ test('without JavaScript the templates lead to their help pages', async ({ page 
   await page.getByRole('link', { name: /Schrottwichteln/ }).click();
   await expect(page.getByRole('heading', { level: 1, name: 'Schrottwichteln' })).toBeVisible();
 });
+
+test('the start page says where data is stored', async ({ page }) => {
+  await page.goto('./');
+  await expect(page.getByRole('heading', { name: 'Wo was gespeichert wird' })).toBeVisible();
+  await expect(page.getByText('Auf einem Server', { exact: true })).toBeVisible();
+});

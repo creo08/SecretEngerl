@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- The start page says plainly where your data is stored: nowhere on a server, on the organizer's device, in the chats, and not when a draw is opened.
+
 ## [0.1.0] - 2026-11-03
 
 First release of SecretEngerl: Engerl-Bengerl, the Austrian Secret Santa, together with Wichteln and Secret Santa, without a server.
