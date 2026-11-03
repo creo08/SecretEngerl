@@ -28,6 +28,12 @@ describe('backup file', () => {
     expect(restored.views).toEqual([{ name: 'Anna', at: 1 }, { name: 'Bernd', at: 2 }, { name: 'Clara', at: 3 }]);
   });
 
+  it('keeps a PIN set on the device when the backup has none', () => {
+    const pin = { salt: 's', iterations: 600000, hash: 'h' };
+    const restored = mergeForRestore({ id: 'r', views: [], pin: null } as never, { id: 'r', views: [], pin } as never);
+    expect(restored.pin).toEqual(pin);
+  });
+
   it('refuses rounds with links to another site', async () => {
     const config = makeConfig([['Anna'], ['Bernd'], ['Clara']]);
     const { names } = compileRound(config);

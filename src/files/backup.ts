@@ -18,13 +18,13 @@ export function backupContent(round: StoredRound): Record<string, unknown> {
 
 /**
  * The round to store when a backup replaces a round already on the device:
- * the backup's round, keeping every view logged on either side, because the
- * log of the emergency view must not be deletable in the app.
+ * the backup's round, keeping every view logged on either side and a PIN set
+ * on the device, because log and PIN must not be removable through the app.
  */
 export function mergeForRestore(backup: StoredRound, existing: StoredRound | undefined): StoredRound {
   if (!existing) return backup;
   const views = [...existing.views, ...backup.views].filter((v, i, all) => all.findIndex((w) => w.name === v.name && w.at === v.at) === i);
-  return { ...backup, views: views.sort((a, b) => a.at - b.at) };
+  return { ...backup, views: views.sort((a, b) => a.at - b.at), pin: backup.pin ?? existing.pin };
 }
 
 /** Reads the round from a backup file's content; only rounds of this app (`base`) are accepted. */
