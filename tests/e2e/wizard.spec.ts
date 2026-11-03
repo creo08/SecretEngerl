@@ -33,3 +33,11 @@ test('after setting a PIN the emergency view asks for it', async ({ page }) => {
   await page.getByRole('button', { name: 'Ansehen' }).click();
   await expect(page.getByText(/^Anna beschenkt (Bernd|Clara)\.$/)).toBeVisible();
 });
+
+test('an exchange date in the past is refused', async ({ page }) => {
+  await page.goto('./?vorlage=schrottwichteln');
+  await page.getByLabel('Namen, einer pro Zeile').fill('Anna\n\nBernd\n\nClara');
+  await page.getByLabel('Übergabetag').fill('2020-12-20');
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await expect(page.getByText('Der Übergabetag liegt in der Vergangenheit.', { exact: false })).toBeVisible();
+});

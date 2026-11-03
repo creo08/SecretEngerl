@@ -29,6 +29,12 @@ interface WizardState {
   oneChain: boolean;
 }
 
+/** Today's date on this device as YYYY-MM-DD. */
+function todayIso(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 /** The app's own URL, the base of every link. */
 export function appBase(): string {
   return new URL(import.meta.env.BASE_URL, location.origin).href;
@@ -144,6 +150,8 @@ function stepWho(state: WizardState): void {
     state.namesText = names.value;
     state.date = date.value;
     state.budget = budget.value;
+    // A past exchange date would make every link expire at once.
+    if (state.date && state.date < todayIso()) return showErrors(errors, [t('error.date.past')]);
     const result = buildConfig(state);
     if (!result.ok) {
       showErrors(errors, errorMessages(result.errors));

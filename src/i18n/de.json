@@ -168,6 +168,7 @@
   "error.households.invalid": "Die Namensliste ist nicht lesbar.",
   "error.amount.invalid": "Das Budget muss eine Zahl zwischen 0 und {max} sein.",
   "error.date.invalid": "Bitte einen gültigen Übergabetag wählen.",
+  "error.date.past": "Der Übergabetag liegt in der Vergangenheit. Bitte einen Tag ab heute wählen.",
   "error.text.invalid": "Der Text ist nicht lesbar.",
   "error.text.tooLong": "Der Text ist zu lang.",
   "error.config.invalid": "Etwas an den Einstellungen stimmt nicht.",
