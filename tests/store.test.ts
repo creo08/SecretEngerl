@@ -29,7 +29,10 @@ describe('stored round', () => {
     const json = JSON.stringify(store.rounds.get(round.id));
     expect(json).not.toMatch(/"r":/);
     expect([...(await readAssignment(round))]).toEqual([['A', 'B'], ['B', 'C'], ['C', 'D'], ['D', 'A']]);
-    expect(isStoredRound(store.rounds.get(round.id))).toBe(true);
+    expect(isStoredRound(store.rounds.get(round.id), BASE)).toBe(true);
+    const foreign = structuredClone(store.rounds.get(round.id)!);
+    foreign.links[0]!.link = foreign.links[0]!.link.replace(BASE, 'https://evil.example/');
+    expect(isStoredRound(foreign, BASE)).toBe(false);
   });
 
   it('counts up the draw number on a new draw and keeps the log', async () => {
@@ -87,8 +90,8 @@ describe('stored round', () => {
   });
 
   it('rejects records that are not rounds', () => {
-    expect(isStoredRound({ id: 'x' })).toBe(false);
-    expect(isStoredRound(null)).toBe(false);
+    expect(isStoredRound({ id: 'x' }, BASE)).toBe(false);
+    expect(isStoredRound(null, BASE)).toBe(false);
   });
 });
 

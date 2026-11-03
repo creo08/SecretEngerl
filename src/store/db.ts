@@ -33,8 +33,10 @@ async function run<T>(mode: IDBTransactionMode, action: (store: IDBObjectStore) 
 /**
  * Checks a record read from storage. Another site on the same origin could
  * write here, so records are validated like any other input; bad ones are skipped.
+ * Every link must be a draw link of this app (`base`), so "Senden" never shares a foreign URL.
  */
-export function isStoredRound(raw: unknown): raw is StoredRound {
+export function isStoredRound(raw: unknown, base: string): raw is StoredRound {
+  const drawLink = new RegExp(`^${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}#1\\.[A-Za-z0-9_-]{22}\\.[A-Za-z0-9_-]{379}$`);
   if (raw === null || typeof raw !== 'object') return false;
   const r = raw as Partial<StoredRound>;
   return (
@@ -42,7 +44,7 @@ export function isStoredRound(raw: unknown): raw is StoredRound {
     Number.isSafeInteger(r.drawNumber) &&
     Number.isSafeInteger(r.expiresAt) &&
     Array.isArray(r.links) &&
-    r.links.every((l) => typeof l?.name === 'string' && typeof l.link === 'string' && typeof l.sent === 'boolean') &&
+    r.links.every((l) => typeof l?.name === 'string' && typeof l.link === 'string' && drawLink.test(l.link) && typeof l.sent === 'boolean') &&
     Array.isArray(r.views) &&
     r.views.every((v) => typeof v?.name === 'string' && typeof v.at === 'number') &&
     (r.pin === null || (typeof r.pin?.salt === 'string' && typeof r.pin.hash === 'string' && Number.isSafeInteger(r.pin.iterations))) &&
@@ -50,11 +52,13 @@ export function isStoredRound(raw: unknown): raw is StoredRound {
   );
 }
 
+const appBase = () => new URL(import.meta.env.BASE_URL, location.origin).href;
+
 /** Round storage in IndexedDB. */
 export const indexedDbStore: RoundStore = {
   async get(id) {
     const raw: unknown = await run('readonly', (s) => s.get(id));
-    return isStoredRound(raw) ? raw : undefined;
+    return isStoredRound(raw, appBase()) ? raw : undefined;
   },
   async put(round) {
     await run('readwrite', (s) => s.put(round));
@@ -64,7 +68,8 @@ export const indexedDbStore: RoundStore = {
   },
   async list() {
     const all: unknown[] = await run('readonly', (s) => s.getAll());
-    return all.filter(isStoredRound);
+    const base = appBase();
+    return all.filter((r): r is StoredRound => isStoredRound(r, base));
   },
 };
 
