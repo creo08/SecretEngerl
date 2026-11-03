@@ -17,6 +17,9 @@ export async function loadRound(store: RoundStore, id: string): Promise<StoredRo
   return round;
 }
 
+/** Longest round title in characters. */
+export const MAX_TITLE_CHARS = 60;
+
 /** Some draws would not fit into 256 bytes; their hints must get shorter. */
 export class DrawTooLongError extends Error {
   readonly people: { name: string; overBy: number }[];
@@ -40,22 +43,24 @@ async function linksFor(config: RoundConfig, names: string[], assignment: readon
 
 /**
  * Encrypts one link per giver and stores the round. With `previousId`, this is
- * a new draw of that round: the draw number goes up, log and PIN stay.
+ * a new draw of that round: the draw number goes up, title, log and PIN stay.
  * Callers check oversizedDraws first; a draw that does not fit throws a
  * DrawTooLongError naming the people, and nothing is stored.
  */
 export async function saveDraw(
   store: RoundStore,
-  draw: { config: RoundConfig; names: string[]; assignment: readonly number[]; base: string; previousId?: string },
+  draw: { config: RoundConfig; names: string[]; assignment: readonly number[]; base: string; previousId?: string; title?: string },
 ): Promise<StoredRound> {
   const { config, names, assignment, base, previousId } = draw;
   const previous = previousId === undefined ? undefined : await loadRound(store, previousId);
   const drawNumber = previous ? previous.drawNumber + 1 : 1;
+  const title = draw.title ?? previous?.title;
   // A higher draw number can be one digit longer than the one checked before.
   const tooLong = oversizedDraws(config, drawNumber);
   if (tooLong.length) throw new DrawTooLongError(tooLong);
   const round: StoredRound = {
     id: previous?.id ?? newRoundId(),
+    ...(title ? { title } : {}),
     config,
     drawNumber,
     expiresAt: expiryFor(config.occasion.exchangeDate),

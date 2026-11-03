@@ -10,6 +10,8 @@ export interface PinHash {
 
 export interface StoredRound {
   id: string;
+  /** Optional title for the organizer's own overview; never part of a link. Missing in rounds from v0.1.0. */
+  title?: string;
   config: RoundConfig;
   drawNumber: number;
   /** End of the round, Unix seconds; the round deletes itself afterwards. */

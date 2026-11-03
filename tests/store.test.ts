@@ -75,6 +75,20 @@ describe('stored round', () => {
     expect((await store.get(round.id))!.drawNumber).toBe(9);
   });
 
+  it('keeps an optional title, also on a new draw, and accepts rounds without one', async () => {
+    const store = memoryStore();
+    const config = makeConfig(people('ABC'));
+    const { names } = compileRound(config);
+    const round = await saveDraw(store, { config, names, assignment: [1, 2, 0], base: BASE, title: 'Familie Huber' });
+    expect(round.title).toBe('Familie Huber');
+    const again = await saveDraw(store, { config, names, assignment: [2, 0, 1], base: BASE, previousId: round.id });
+    expect(again.title).toBe('Familie Huber');
+    expect(isStoredRound(again, BASE)).toBe(true);
+    const { title: _, ...untitled } = again;
+    expect(isStoredRound(untitled, BASE)).toBe(true);
+    expect(isStoredRound({ ...again, title: 42 }, BASE)).toBe(false);
+  });
+
   it('marks a link as sent', async () => {
     const { store, round } = await stored(people('ABC'), [1, 2, 0]);
     const next = await markSent(store, round.id, 'B');

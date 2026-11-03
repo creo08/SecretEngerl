@@ -1,6 +1,7 @@
 /** IndexedDB storage of rounds. Names start with "secretengerl-" because the origin is shared. */
 import { validateConfig } from '../config/validate.ts';
 import type { RoundStore, StoredRound } from './types.ts';
+import { MAX_TITLE_CHARS } from './rounds.ts';
 
 const DB_NAME = 'secretengerl-rounds';
 const STORE = 'rounds';
@@ -41,6 +42,7 @@ export function isStoredRound(raw: unknown, base: string): raw is StoredRound {
   const r = raw as Partial<StoredRound>;
   return (
     typeof r.id === 'string' &&
+    (r.title === undefined || (typeof r.title === 'string' && r.title.length <= MAX_TITLE_CHARS * 2)) &&
     Number.isSafeInteger(r.drawNumber) &&
     Number.isSafeInteger(r.expiresAt) &&
     Array.isArray(r.links) &&
