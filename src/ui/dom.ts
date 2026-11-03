@@ -49,6 +49,16 @@ export function fill(el: Element, ...children: Child[]): void {
   el.replaceChildren(...children.filter((c): c is Node | string => Boolean(c)));
 }
 
+/** Saves text as a file on the device, created locally. */
+export function downloadFile(fileName: string, text: string, type: string): void {
+  const url = URL.createObjectURL(new Blob([text], { type }));
+  const a = h('a', { href: url, download: fileName });
+  document.body.append(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
 /** A section that opens on click, with a title and a short line saying what it holds. */
 export function disclosure(title: string, hint: string, content: HTMLElement, cls = 'more'): HTMLDetailsElement {
   return h('details', { class: cls }, h('summary', {}, h('span', { class: 'summary-title' }, title), h('span', { class: 'summary-hint' }, hint)), content);

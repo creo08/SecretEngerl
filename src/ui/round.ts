@@ -13,7 +13,9 @@ import { checkPin, isPeekPhrase, setPin, viewAssignment } from '../store/emergen
 import { DrawTooLongError, loadRound, markSent, planDropout, saveDraw } from '../store/rounds.ts';
 import type { StoredRound } from '../store/types.ts';
 import { askWorker } from '../worker/client.ts';
-import { byId, disclosure, confirmDialog, fill, h, showView, uid } from './dom.ts';
+import { byId, disclosure, confirmDialog, downloadFile, fill, h, showView, uid } from './dom.ts';
+import { sealFile } from '../files/envelope.ts';
+import { yearFileName, yearFromRound } from '../files/year.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
 import { appBase } from './wizard.ts';
@@ -76,7 +78,10 @@ export async function showRound(id: string, options: { fresh?: boolean; message?
     if (!hintSeen()) content.append(firstTimeHint());
     content.append(sendList(round, status), status);
     if (needsSafariHint()) content.append(h('p', { class: 'notice' }, t('round.safari')));
-    content.append(sealSection(round), duringRound(round));
+    if (Date.now() >= (round.expiresAt - 7 * 86_400) * 1000) {
+      content.append(h('p', { class: 'notice' }, t('round.expiresSoon', { date: formatDate(new Date(round.expiresAt * 1000).toISOString().slice(0, 10)) })));
+    }
+    content.append(sealSection(round), yearSection(round), duringRound(round));
   }
   const back = h('button', { type: 'button', class: 'btn btn--text' }, t('round.back'));
   back.addEventListener('click', () => void showHome());
@@ -257,6 +262,28 @@ function emergencySection(round: StoredRound): HTMLElement {
     h('h3', {}, t('emergency.log')),
     log,
     disclosure(t('emergency.setPin'), t('emergency.setPinHint'), h('div', { class: 'stack' }, label(newPin, t('emergency.newPin')), h('p', { class: 'help' }, t('emergency.pinNote')), h('div', { class: 'actions' }, savePin)), 'more more--inner'),
+  );
+}
+
+/** "Remember for next year": a yearly file, encrypted if a password is given. */
+function yearSection(round: StoredRound): HTMLElement {
+  const password = h('input', { type: 'password', id: uid('f'), autocomplete: 'new-password' });
+  const warning = h('p', { class: 'notice' }, t('year.noPasswordWarning'));
+  password.addEventListener('input', () => (warning.hidden = password.value !== ''));
+  const status = h('p', { class: 'status', role: 'status' });
+  const save = h('button', { type: 'button', class: 'btn btn--card' }, t('year.save'));
+  save.addEventListener(
+    'click',
+    safely(async () => {
+      const data = await yearFromRound(await loadRound(store, round.id));
+      downloadFile(yearFileName(data.year), await sealFile('secretengerl-year', { ...data }, password.value), 'application/json');
+      status.textContent = t('year.saved');
+    }),
+  );
+  return disclosure(
+    t('year.title'),
+    t('year.titleHint'),
+    h('div', { class: 'stack' }, h('p', { class: 'help' }, t('year.help')), h('div', { class: 'field' }, h('label', { for: password.id }, t('year.password')), password), warning, h('div', { class: 'actions' }, save), status),
   );
 }
 

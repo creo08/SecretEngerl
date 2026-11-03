@@ -8,7 +8,7 @@ import { t } from '../i18n/i18n.ts';
 import { toBase64Url } from '../link/base64url.ts';
 import { readFragment } from '../link/link.ts';
 import type { Payload } from '../link/payload.ts';
-import { byId, fill, h, showView } from './dom.ts';
+import { byId, downloadFile, fill, h, showView } from './dom.ts';
 import { icon } from './icons.ts';
 
 /** Shows the receiving view for a fragment taken from the address bar. */
@@ -56,10 +56,5 @@ function revealed(p: Payload): HTMLElement {
 
 function downloadEvent(date: string): void {
   const uid = toBase64Url(crypto.getRandomValues(new Uint8Array(12)));
-  const url = URL.createObjectURL(new Blob([exchangeEvent(date, uid, new Date())], { type: 'text/calendar' }));
-  const a = h('a', { href: url, download: t('ics.fileName') });
-  document.body.append(a);
-  a.click();
-  a.remove();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  downloadFile(t('ics.fileName'), exchangeEvent(date, uid, new Date()), 'text/calendar');
 }
