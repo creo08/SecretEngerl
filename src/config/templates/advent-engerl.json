@@ -1,0 +1,39 @@
+{
+  "id": "advent-engerl",
+  "family": "drawn",
+  "defaults": {
+    "structure": {
+      "noMutual": true,
+      "oneChain": false,
+      "giftsPerPerson": 1
+    },
+    "rules": {
+      "exclusions": [],
+      "must": [],
+      "lastYear": []
+    },
+    "gifts": {
+      "budget": {
+        "amount": 5,
+        "currency": "EUR"
+      },
+      "kind": "bought",
+      "theme": "",
+      "hints": {}
+    },
+    "exchange": "hidden",
+    "communication": "none",
+    "reveal": "in-person",
+    "context": "family",
+    "organizerPlays": true,
+    "place": ""
+  },
+  "fields": {
+    "budget": true,
+    "theme": false,
+    "hints": true,
+    "lastYear": false,
+    "address": false,
+    "weeklyThemes": true
+  }
+}

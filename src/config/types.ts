@@ -6,7 +6,7 @@
  */
 
 /** Fixed list of templates. The ids also appear in links and pre-fill links. */
-export const TEMPLATE_IDS = ['engerl-bengerl', 'schrottwichteln', 'familien-wichteln', 'buero-wichteln', 'post-wichteln'] as const;
+export const TEMPLATE_IDS = ['engerl-bengerl', 'schrottwichteln', 'familien-wichteln', 'buero-wichteln', 'post-wichteln', 'advent-engerl'] as const;
 export type TemplateId = (typeof TEMPLATE_IDS)[number];
 
 /** The two families of the custom. */
@@ -113,6 +113,8 @@ export interface TemplateFields {
   lastYear: boolean;
   /** Postal address per person (Post-Wichteln). */
   address: boolean;
+  /** One theme per Advent week instead of one theme (Advent-Engerl). */
+  weeklyThemes: boolean;
 }
 
 /** A template: defaults for a round plus which fields the wizard shows. */

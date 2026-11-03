@@ -32,7 +32,8 @@ import {
 } from '../input/validate.ts';
 
 /** Byte limits for free-text fields; the link payload limit is checked separately. */
-export const MAX_THEME_BYTES = 80;
+// Room for four Advent week themes of 20 characters; the 256-byte draw limit is checked separately.
+export const MAX_THEME_BYTES = 170;
 export const MAX_HINT_BYTES = 200;
 export const MAX_PLACE_BYTES = 80;
 /** A postal address in the draw; the concept allows at most 100 bytes. */
@@ -225,6 +226,7 @@ export function validateTemplate(raw: unknown): Result<Template> {
     hints: r.bool(f.hints, 'fields.hints'),
     lastYear: r.bool(f.lastYear, 'fields.lastYear'),
     address: f.address === true,
+    weeklyThemes: f.weeklyThemes === true,
   };
   const template: Template = {
     id: o.id,
