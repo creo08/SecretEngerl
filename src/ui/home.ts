@@ -20,7 +20,10 @@ export async function showHome(message = ''): Promise<void> {
     const open = h('button', { type: 'button', class: 'btn btn--card' }, t('rounds.open'));
     open.addEventListener('click', () => void showRound(round.id));
     const people = t('people.summary', { count: round.links.length });
-    list.append(h('li', {}, h('span', {}, t('rounds.item', { template: t(`template.${round.config.template}`), date: formatDate(round.config.occasion.exchangeDate), people })), open));
+    const date = formatDate(round.config.occasion.exchangeDate);
+    const name = round.title ? t('rounds.itemTitled', { title: round.title, date, people }) : t('rounds.item', { template: t(`template.${round.config.template}`), date, people });
+    const sent = t('rounds.sent', { sent: round.links.filter((l) => l.sent).length, count: round.links.length });
+    list.append(h('li', {}, h('span', { class: 'round-item' }, h('span', {}, name), h('span', { class: 'muted small' }, sent)), open));
   }
   fill(box, h('h2', {}, t('rounds.title')), list);
 }

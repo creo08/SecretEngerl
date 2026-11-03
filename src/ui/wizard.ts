@@ -6,16 +6,17 @@ import { configFromTemplate, getTemplate } from '../config/templates.ts';
 import type { Exclusion, MustRule, RoundConfig, TemplateId } from '../config/types.ts';
 import { validateConfig } from '../config/validate.ts';
 import { t } from '../i18n/i18n.ts';
-import { parseAmount, parseNameList, type Result } from '../input/validate.ts';
+import { cleanText, parseAmount, parseNameList, type Result } from '../input/validate.ts';
 import { freeHintBytes, oversizedDraws } from '../link/payload.ts';
 import { indexedDbStore, requestPersistence } from '../store/db.ts';
-import { saveDraw } from '../store/rounds.ts';
+import { MAX_TITLE_CHARS, saveDraw } from '../store/rounds.ts';
 import { askWorker } from '../worker/client.ts';
 import { byId, fill, h, showView, uid } from './dom.ts';
 import { showRound } from './round.ts';
 import { drawFailure, errorMessages, householdLabel } from './text.ts';
 
 interface WizardState {
+  title: string;
   template: TemplateId;
   namesText: string;
   date: string;
@@ -45,6 +46,7 @@ export function startWizard(template: TemplateId): void {
   const t0 = getTemplate(template);
   const state: WizardState = {
     template,
+    title: t('wizard.who.defaultTitle', { template: t(`template.${template}`), year: new Date().getFullYear() }),
     namesText: '',
     date: '',
     budget: t0.defaults.gifts.budget ? String(t0.defaults.gifts.budget.amount) : '',
@@ -119,6 +121,8 @@ function stepWho(state: WizardState): void {
   const template = getTemplate(state.template);
   const names = h('textarea', { name: 'names', rows: '8', autocomplete: 'off', spellcheck: 'false', required: true });
   names.value = state.namesText;
+  const title = h('input', { type: 'text', name: 'title', autocomplete: 'off', maxlength: String(MAX_TITLE_CHARS) });
+  title.value = state.title;
   const date = h('input', { type: 'date', name: 'date', required: true });
   date.value = state.date;
   const budget = h('input', { type: 'text', name: 'budget', inputmode: 'decimal', autocomplete: 'off' });
@@ -138,6 +142,7 @@ function stepWho(state: WizardState): void {
   const form = h(
     'form',
     { class: 'stack', novalidate: true },
+    field(t('wizard.who.roundTitle'), title, t('wizard.who.roundTitleHelp')),
     field(t('wizard.who.names'), names, t('wizard.who.namesHelp')),
     preview,
     field(t('wizard.who.date'), date),
@@ -149,6 +154,8 @@ function stepWho(state: WizardState): void {
     event.preventDefault();
     state.namesText = names.value;
     state.date = date.value;
+    state.title = cleanText(title.value);
+    if ([...state.title].length > MAX_TITLE_CHARS) return showErrors(errors, [t('error.title.tooLong', { max: MAX_TITLE_CHARS })]);
     state.budget = budget.value;
     // A past exchange date would make every link expire at once.
     if (state.date && state.date < todayIso()) return showErrors(errors, [t('error.date.past')]);
@@ -340,7 +347,7 @@ function stepRules(state: WizardState): void {
       if (response.type === 'invalid') return showErrors(errors, errorMessages(response.errors));
       if (response.type !== 'draw') throw new Error('unexpected worker response');
       if (!response.result.ok) return showErrors(errors, [drawFailure(config, response.names, response.result)]);
-      const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase() });
+      const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase(), ...(state.title ? { title: state.title } : {}) });
       void requestPersistence();
       await showRound(round.id, { fresh: true });
     } catch {

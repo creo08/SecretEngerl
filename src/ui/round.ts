@@ -59,7 +59,8 @@ export async function showRound(id: string, options: { fresh?: boolean; message?
   const status = h('p', { class: 'status', role: 'status' }, options.message ?? '');
   const content = h('div', { class: 'container narrow stack' });
   content.append(
-    h('h1', {}, t('round.title', { date: formatDate(round.config.occasion.exchangeDate) })),
+    h('h1', {}, round.title ?? t('round.title', { date: formatDate(round.config.occasion.exchangeDate) })),
+    round.title ? h('p', { class: 'lead' }, t('round.date', { date: formatDate(round.config.occasion.exchangeDate) })) : '',
     h('p', { class: 'muted fig' }, t('round.drawNumber', { n: round.drawNumber })),
   );
   const count = h('p', { class: 'muted small' });

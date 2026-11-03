@@ -10,7 +10,7 @@ test('a hint of someone removed in step 1 does not block the draw', async ({ pag
   await page.getByLabel('Namen, einer pro Zeile').fill('Anna\n\nBernd\n\nClara');
   await page.getByRole('button', { name: 'Weiter' }).click();
   await page.getByRole('button', { name: 'Ziehen' }).click();
-  await expect(page.getByRole('heading', { name: /Runde für den/ })).toBeVisible();
+  await expect(page.locator('#round h1')).toBeVisible();
 });
 
 test('after setting a PIN the emergency view asks for it', async ({ page }) => {

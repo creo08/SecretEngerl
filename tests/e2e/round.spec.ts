@@ -20,6 +20,8 @@ test('a complete round makes no request outside the own origin', async ({ browse
   await page.goto('./');
   await page.getByRole('link', { name: /Engerl-Bengerl klassisch/ }).click();
   await expect(page.getByRole('heading', { name: 'Wer spielt mit?' })).toBeVisible();
+  await expect(page.getByLabel('Name der Runde')).toHaveValue(/^Engerl-Bengerl klassisch \d{4}$/);
+  await page.getByLabel('Name der Runde').fill('Familie Huber');
   await page.getByLabel('Namen, einer pro Zeile').fill('Anna\nBernd\n\nClara\nDavid\n\nEva');
   await expect(page.getByText('Gruppe Anna und Bernd')).toBeVisible();
   await page.getByLabel('Übergabetag').fill(exchangeDate());
@@ -30,7 +32,8 @@ test('a complete round makes no request outside the own origin', async ({ browse
   await page.getByLabel('Hinweis zu Clara').fill('keine Nüsse');
   await page.getByRole('button', { name: 'Ziehen' }).click();
 
-  await expect(page.getByRole('heading', { name: /Runde für den/ })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Familie Huber' })).toBeVisible();
+  await expect(page.getByText(/^Übergabe am /)).toBeVisible();
   await expect(page.getByText(/Eine von [\d.]+ möglichen Ziehungen/)).toBeVisible();
   await page.getByRole('button', { name: 'Verstanden' }).click();
   await page.getByRole('button', { name: 'Los an Anna senden' }).click();
@@ -52,6 +55,8 @@ test('a complete round makes no request outside the own origin', async ({ browse
   // The round survives a reload in IndexedDB.
   await page.reload();
   await expect(page.getByRole('heading', { name: 'Deine Runden auf diesem Gerät' })).toBeVisible();
+  await expect(page.getByText(/^Familie Huber, Übergabe am .+, 5 Personen$/)).toBeVisible();
+  await expect(page.getByText('1 von 5 gesendet')).toBeVisible();
   await page.getByRole('button', { name: 'Öffnen' }).click();
   await expect(page.locator('.sent-mark:visible')).toHaveCount(1);
 

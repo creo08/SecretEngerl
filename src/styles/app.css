@@ -119,6 +119,7 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
 .panel { border-top: var(--rule-hair) solid var(--color-rule); padding-top: var(--space-lg); }
 .panel-title { font-size: var(--text-title); }
 .round-list { list-style: none; margin: 0; padding: 0; }
+.round-item { display: flex; flex-direction: column; }
 .round-list li { display: flex; justify-content: space-between; align-items: center; gap: var(--space-sm); padding-block: var(--space-sm); border-bottom: var(--rule-hair) solid var(--color-rule); }
 #rounds { margin-top: var(--space-2xl); }
 #rounds h2 { font-size: var(--text-title); }
