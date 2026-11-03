@@ -71,7 +71,8 @@ export function draw(p: Problem, rng: Rng, options: DrawOptions = {}): DrawResul
   if (p.oneChain) {
     const order = [...Array(n).keys()];
     // Rejections caused by households or fixed must rules come from requiring one chain.
-    const reason = (rule: RuleRef): RuleRef => (rule.kind === 'household' || (rule.kind === 'must' && p.mustChoice.every((c) => c?.rule !== rule)) ? { kind: 'oneChain' } : rule);
+    const reason = (rule: RuleRef): RuleRef =>
+      rule.kind === 'household' || (rule.kind === 'must' && p.mustFixedRule.includes(rule.index)) ? { kind: 'oneChain' } : rule;
     for (let attempts = 1; ; attempts++) {
       let rejected: RuleRef | null = null;
       for (let i = n - 1; i >= 0 && !rejected; i--) {
