@@ -437,7 +437,8 @@ function stepRules(state: WizardState): void {
   ];
   const more: HTMLElement[] = [exclusionsBlock(state, people), mustBlock(state, people)];
   const themeField = field(t('wizard.rules.theme'), theme);
-  (template.fields.theme ? main : more).push(themeField);
+  // Advent rounds have a theme per week instead; a single theme field would be ignored.
+  if (!template.fields.weeklyThemes) (template.fields.theme ? main : more).push(themeField);
   (template.fields.hints ? main : more).push(hintsBlock(state, people));
   (template.fields.lastYear ? main : more).push(lastYearBlock(state, people));
   if (template.fields.address) main.push(addressesBlock(state, people));

@@ -9,6 +9,8 @@ test('an Advent-Engerl draw names the weekly themes and adds one event per Adven
   await page.getByLabel('Namen, einer pro Zeile').fill('Anna\n\nBernd\n\nClara');
   await page.getByLabel('Übergabetag').fill(`${year}-12-22`);
   await page.getByRole('button', { name: 'Weiter' }).click();
+  // Only the weekly themes are offered, not a single theme that would be ignored.
+  await expect(page.getByLabel('Motto', { exact: true })).toHaveCount(0);
   await page.getByLabel('Woche 1').fill('etwas Süßes');
   await page.getByLabel('Woche 3').fill('selbstgemacht');
   await page.getByRole('button', { name: 'Ziehen' }).click();
