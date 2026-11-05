@@ -38,6 +38,8 @@ test('old template addresses forward to the form pages without script', async ({
   await page.goto('vorlagen/schrottwichteln/');
   await expect(page.getByRole('heading', { level: 1, name: 'Schrottwichteln online auslosen' })).toBeVisible();
   expect(page.url()).toMatch(/\/SecretEngerl\/schrottwichteln\/$/);
+  // The page's one action is the primary button, not a plain link.
+  await expect(page.getByRole('link', { name: 'Mit dieser Vorlage starten' })).toHaveClass(/btn--ink/);
   await context.close();
 });
 

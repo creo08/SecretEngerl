@@ -89,6 +89,8 @@ export function renderPage(markdown: string, page: PageContext): string {
     },
   });
   const body = marked.parse(markdown, { async: false });
+  // A paragraph holding only a link into the app is the page's one action: set it as the primary button.
+  const html = body.replace(/<p><a href="([^"]*\?vorlage=[^"]*)">([^<]+)<\/a><\/p>/g, '<p class="start"><a class="btn btn--ink" href="$1">$2</a></p>');
   const description = /^# .+\n+([^\n#<].+)$/m.exec(markdown)?.[1]?.slice(0, 160) ?? '';
   return `<!doctype html>
 <html lang="de">
@@ -121,7 +123,7 @@ export function renderPage(markdown: string, page: PageContext): string {
     </header>
     <main id="main" class="container">
       <article class="doc">
-${body}
+${html}
       </article>
     </main>
     <footer class="site-footer">
