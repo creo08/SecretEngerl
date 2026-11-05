@@ -14,6 +14,12 @@ SecretEngerl runs entirely in the browser. The organizer enters the names, optio
 - [Advent-Engerl]({{app}}advent-engerl/): small secret joys every week of Advent, with an optional theme per week; the reveal is at the party.
 - [Post-Wichteln]({{app}}post-wichteln/): gifts sent by post; each address appears only in the draw of the person sending to it.
 
+## Party games
+
+Played on one phone at the table, with no draw in advance and no links. The game state stays on that phone and deletes itself after 24 hours.
+
+- [Räuberwichteln]({{app}}raeuberwichteln/): White Elephant; in turn, unwrap a new gift or steal an unwrapped one; a gift is locked after 3 steals. Start it directly with `{{app}}?spiel=raeuberwichteln`.
+
 ## Pre-fill link
 
 An assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can build a link that fills in the setup. The organizer sees a confirmation page and draws only after tapping; nothing is drawn by opening the link.

@@ -11,7 +11,7 @@ import { join, relative } from 'node:path';
 import { Marked, type Tokens } from 'marked';
 import type { Plugin } from 'vite';
 
-/** Help and form pages: source in docs/guide, URL path below the base. Form pages name their template. */
+/** Help and form pages: source in docs/guide, URL path below the base. Form pages name their template or party game. */
 export const PAGES = [
   { src: 'how-it-works', path: 'so-funktionierts/' },
   { src: 'security', path: 'sicherheit/' },
@@ -24,6 +24,7 @@ export const PAGES = [
   { src: 'form-buero-wichteln', path: 'buero-wichteln/', template: 'buero-wichteln' },
   { src: 'form-post-wichteln', path: 'post-wichteln/', template: 'post-wichteln' },
   { src: 'form-advent-engerl', path: 'advent-engerl/', template: 'advent-engerl' },
+  { src: 'form-raeuberwichteln', path: 'raeuberwichteln/', game: 'raeuberwichteln' },
 ] as const;
 
 /** Addresses of v0.1.0 and v0.2.0 that moved; each keeps a page that forwards without script. */
@@ -90,7 +91,7 @@ export function renderPage(markdown: string, page: PageContext): string {
   });
   const body = marked.parse(markdown, { async: false });
   // A paragraph holding only a link into the app is the page's one action: set it as the primary button.
-  const html = body.replace(/<p><a href="([^"]*\?vorlage=[^"]*)">([^<]+)<\/a><\/p>/g, '<p class="start"><a class="btn btn--ink" href="$1">$2</a></p>');
+  const html = body.replace(/<p><a href="([^"]*\?(?:vorlage|spiel)=[^"]*)">([^<]+)<\/a><\/p>/g, '<p class="start"><a class="btn btn--ink" href="$1">$2</a></p>');
   const description = /^# .+\n+([^\n#<].+)$/m.exec(markdown)?.[1]?.slice(0, 160) ?? '';
   return `<!doctype html>
 <html lang="de">
@@ -230,7 +231,7 @@ export function sitePlugin(root: string, origin: string): Plugin {
         const markdown = insertVariants(readFileSync(join(root, 'docs/guide', `${page.src}.de.md`), 'utf8'), variants);
         const url = absolute(page.path);
         const head =
-          'template' in page
+          'template' in page || 'game' in page
             ? jsonLd({
                 '@context': 'https://schema.org',
                 '@type': 'HowTo',
