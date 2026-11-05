@@ -35,3 +35,13 @@ The person taps the link. The app removes the draw from the address bar at once 
 - **Emergency:** "View assignment" shows one person at a time after you type "Ich spicke" or hold the button. Every view is logged.
 
 Fourteen days after the exchange the round deletes itself from your device, and the links show "Round expired".
+
+## Games at the table
+
+No draw in advance and no links: these games run on one phone at the party.
+
+- **[Räuberwichteln](app:raeuberwichteln/):** In turn, unwrap a gift or steal an unwrapped one. The app keeps track of who holds what and locks a gift after three steals.
+- **[Würfelwichteln](app:wuerfelwichteln/):** The app rolls the die, shows the rule for the number and keeps the time. Every rule can be changed; a drinking rule is optional.
+- **[Zufallswichteln](app:zufallswichteln/):** Everyone brings a gift; only at the party does the app draw who gets which one.
+
+Räuberwichteln and Würfelwichteln stay on the phone, so a reload does not end the game, and delete themselves after 24 hours. Zufallswichteln stores nothing.

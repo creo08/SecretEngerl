@@ -35,3 +35,13 @@ Die Person tippt auf den Link. Die App nimmt das Los sofort aus der Adresszeile 
 - **Notfall:** „Zuordnung ansehen“ zeigt immer nur eine Person, nachdem du „Ich spicke“ eintippst oder den Knopf gedrückt hältst. Jedes Ansehen kommt ins Protokoll.
 
 14 Tage nach der Übergabe löscht sich die Runde von deinem Gerät, und die Links zeigen „Runde abgelaufen“.
+
+## Spiele am Tisch
+
+Ohne Ziehung vorab und ohne Links: Diese Spiele laufen auf einem Handy bei der Feier.
+
+- **[Räuberwichteln](app:raeuberwichteln/):** Reihum ein Geschenk auspacken oder ein ausgepacktes klauen. Die App führt, wer was hat, und sperrt ein Geschenk nach drei Klauen.
+- **[Würfelwichteln](app:wuerfelwichteln/):** Die App würfelt, zeigt die Regel zur Zahl und führt die Uhr. Jede Regel ist änderbar, eine Trinkregel gibt es auf Wunsch.
+- **[Zufallswichteln](app:zufallswichteln/):** Alle bringen ein Geschenk mit; erst bei der Feier lost die App aus, wer welches bekommt.
+
+Räuber- und Würfelwichteln bleiben auf dem Handy, damit Neuladen das Spiel nicht beendet, und löschen sich nach 24 Stunden. Zufallswichteln speichert nichts.
