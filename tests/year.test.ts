@@ -57,7 +57,9 @@ describe("last year's round", () => {
     // A file from 0.4.0 or 0.5.0 with plain pairings.
     expect(await yearFromFileContent({ ...year })).toEqual({ ok: true, value: year });
     // A changed seal is rejected.
-    const broken = { ...content, sealedPairings: String(content.sealedPairings).slice(0, -2) + 'AA' };
+    const seal = String(content.sealedPairings);
+    const at = seal.length - 10;
+    const broken = { ...content, sealedPairings: seal.slice(0, at) + (seal[at] === 'A' ? 'B' : 'A') + seal.slice(at + 1) };
     expect((await yearFromFileContent(broken)).ok).toBe(false);
   });
 
