@@ -58,6 +58,7 @@ async function showRunningGame(): Promise<void> {
 async function startGame(id: string | null | undefined): Promise<boolean> {
   if (id === 'raeuberwichteln') (await import('./raeuber.ts')).showRaeuberSetup();
   else if (id === 'wuerfelwichteln') (await import('./wuerfel.ts')).showWuerfelSetup();
+  else if (id === 'zufallswichteln') (await import('./zufall.ts')).showZufallSetup();
   else return false;
   return true;
 }
