@@ -133,6 +133,7 @@
   "backup.restored": "Die Runde ist wiederhergestellt.",
   "round.during": "Während der Runde",
   "round.duringHint": "Absage, neu ziehen, Notfall, Runde löschen",
+  "round.duringHintStage": "Absage, neu ziehen, Notfall, Auflösung, Runde löschen",
   "round.seal": "Versiegeln und vergessen",
   "round.sealWarning": "Danach liegt nichts mehr auf diesem Gerät. Verlorene Links lassen sich nur durch eine neue Ziehung ersetzen.",
   "round.sealConfirm": "Versiegeln",

@@ -83,7 +83,9 @@ export async function showRound(id: string, options: { fresh?: boolean; message?
     if (Date.now() >= (round.expiresAt - 7 * 86_400) * 1000) {
       content.append(h('p', { class: 'notice' }, t('round.expiresSoon', { date: formatDate(new Date(round.expiresAt * 1000).toISOString().slice(0, 10)) })));
     }
-    content.append(sealSection(round), stageSection(round), yearSection(round), backupSection(round), duringRound(round));
+    // Before the exchange day the reveal sits with the emergency view; from then on it is up front.
+    const revealDay = todayIso() >= round.config.occasion.exchangeDate;
+    content.append(sealSection(round), revealDay ? stageSection(round) : '', yearSection(round), backupSection(round), duringRound(round, !revealDay));
   }
   const back = h('button', { type: 'button', class: 'btn btn--text' }, t('round.back'));
   back.addEventListener('click', () => void showHome());
@@ -136,8 +138,12 @@ function section(title: string, ...children: (Node | null)[]): HTMLElement {
   return h('section', { class: 'panel stack', 'aria-labelledby': id }, h('h2', { id, class: 'panel-title' }, title), ...children);
 }
 
-function duringRound(round: StoredRound): HTMLElement {
-  return disclosure(t('round.during'), t('round.duringHint'), h('div', { class: 'stack' }, removeSection(round), redrawSection(round), emergencySection(round), deleteSection(round)));
+function duringRound(round: StoredRound, withStage: boolean): HTMLElement {
+  return disclosure(
+    t('round.during'),
+    t(withStage ? 'round.duringHintStage' : 'round.duringHint'),
+    h('div', { class: 'stack' }, removeSection(round), redrawSection(round), emergencySection(round), withStage ? stageSection(round) : '', deleteSection(round)),
+  );
 }
 
 /** Draws again with `config` and stores it as the next draw of the round. */

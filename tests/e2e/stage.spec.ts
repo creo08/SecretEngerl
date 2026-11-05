@@ -10,10 +10,13 @@ test('the stage reveal shows every pair, with a logged hurdle before the exchang
   await page.getByRole('button', { name: 'Ziehen' }).click();
   await expect(page.locator('#round h1')).toBeVisible();
 
-  // Before the exchange day: "Ich spicke" and a log entry.
+  // Before the exchange day the reveal sits under "Während der Runde", with "Ich spicke" and a log entry.
+  await expect(page.locator('#round > div > details > summary').filter({ hasText: 'Auflösung starten' })).toHaveCount(0);
+  await page.getByText('Während der Runde').click();
   await page.getByText('Auflösung starten', { exact: true }).first().click();
   await expect(page.getByText(/Der Übergabetag ist noch nicht da\./)).toBeVisible();
-  await page.locator('details[open]').getByLabel('Tippe „Ich spicke“').fill('Ich spicke');
+  // The emergency view sits above the reveal inside "Während der Runde"; the reveal's field is the last one.
+  await page.getByLabel('Tippe „Ich spicke“').last().fill('Ich spicke');
   await page.getByRole('button', { name: 'Auflösung starten' }).click();
   await expect(page.getByText('Paar 1 von 3')).toBeVisible();
   const givers = new Set<string>();
@@ -23,6 +26,7 @@ test('the stage reveal shows every pair, with a logged hurdle before the exchang
   }
   expect(givers).toEqual(new Set(['Anna', 'Bernd', 'Clara']));
   await page.getByText('Während der Runde').click();
+  await page.getByText('Notfall: Zuordnung ansehen').scrollIntoViewIfNeeded();
   await expect(page.getByText(/^Auflösung vor dem Übergabetag gestartet am /)).toBeVisible();
 
   // On the exchange day: no hurdle.
