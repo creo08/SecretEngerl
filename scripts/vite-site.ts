@@ -25,6 +25,7 @@ export const PAGES = [
   { src: 'form-post-wichteln', path: 'post-wichteln/', template: 'post-wichteln' },
   { src: 'form-advent-engerl', path: 'advent-engerl/', template: 'advent-engerl' },
   { src: 'form-raeuberwichteln', path: 'raeuberwichteln/', game: 'raeuberwichteln' },
+  { src: 'form-wuerfelwichteln', path: 'wuerfelwichteln/', game: 'wuerfelwichteln' },
 ] as const;
 
 /** Addresses of v0.1.0 and v0.2.0 that moved; each keeps a page that forwards without script. */
