@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Until the exchange day, "Start reveal" sits under "During the round", after the emergency view; from the exchange day on it is up front.
 - The emergency view shows the result big on its own card and moves the focus there.
 - Names on the stage are bigger on phones.
+- On wide screens the templates sit three by three, and the form pages show "Mit dieser Vorlage starten" as a button.
 
 ### Security
 
