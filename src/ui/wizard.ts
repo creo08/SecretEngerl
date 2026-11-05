@@ -13,7 +13,7 @@ import { freeHintBytes, oversizedDraws } from '../link/payload.ts';
 import { indexedDbStore, indexedDbYears, requestPersistence } from '../store/db.ts';
 import { MAX_TITLE_CHARS, saveDraw } from '../store/rounds.ts';
 import { askWorker } from '../worker/client.ts';
-import { byId, disclosure, fill, h, showView, uid } from './dom.ts';
+import { byId, checkbox, disclosure, errorBox, field, fill, h, showErrors, showView, uid } from './dom.ts';
 import { showRound } from './round.ts';
 import { drawFailure, errorMessages, householdLabel } from './text.ts';
 
@@ -154,21 +154,8 @@ function frame(step: number, title: string, ...content: (Node | false)[]): HTMLE
   );
 }
 
-function field(label: string, control: HTMLElement, help?: string): HTMLElement {
-  const id = control.id || uid('f');
-  control.id = id;
-  const helpId = help ? `${id}-help` : undefined;
-  if (helpId) control.setAttribute('aria-describedby', helpId);
-  return h('div', { class: 'field' }, h('label', { for: id }, label), control, help ? h('p', { id: helpId, class: 'help' }, help) : null);
-}
 
-function errorBox(): HTMLElement {
-  return h('div', { class: 'errors', role: 'alert' });
-}
 
-function showErrors(box: HTMLElement, messages: string[]): void {
-  fill(box, ...(messages.length ? [h('ul', {}, ...messages.map((m) => h('li', {}, m)))] : []));
-}
 
 function stepWho(state: WizardState): void {
   const template = getTemplate(state.template);
@@ -275,14 +262,6 @@ function previousBlock(year: number, pairs: Pairing[]): HTMLElement {
   );
 }
 
-function checkbox(label: string, help: string, checked: boolean, onChange: (v: boolean) => void): HTMLElement {
-  const input = h('input', { type: 'checkbox', id: uid('c') });
-  input.checked = checked;
-  input.addEventListener('change', () => onChange(input.checked));
-  const helpId = `${input.id}-help`;
-  input.setAttribute('aria-describedby', helpId);
-  return h('div', { class: 'check' }, input, h('label', { for: input.id }, label), h('p', { id: helpId, class: 'help' }, help));
-}
 
 function personSelect(people: string[], value: string, empty?: string): HTMLSelectElement {
   const select = h('select', {}, ...(empty !== undefined ? [h('option', { value: '' }, empty)] : []), ...people.map((p) => h('option', { value: p }, p)));

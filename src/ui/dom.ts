@@ -87,3 +87,32 @@ export function confirmDialog(text: string, confirmLabel: string, cancelLabel: s
     cancel.focus();
   });
 }
+
+/** A labelled form field with an optional help line linked by aria-describedby. */
+export function field(label: string, control: HTMLElement, help?: string): HTMLElement {
+  const id = control.id || uid('f');
+  control.id = id;
+  const helpId = help ? `${id}-help` : undefined;
+  if (helpId) control.setAttribute('aria-describedby', helpId);
+  return h('div', { class: 'field' }, h('label', { for: id }, label), control, help ? h('p', { id: helpId, class: 'help' }, help) : null);
+}
+
+/** An empty box for validation messages, announced when filled. */
+export function errorBox(): HTMLElement {
+  return h('div', { class: 'errors', role: 'alert' });
+}
+
+/** Shows validation messages as a list, or clears the box. */
+export function showErrors(box: HTMLElement, messages: string[]): void {
+  fill(box, ...(messages.length ? [h('ul', {}, ...messages.map((m) => h('li', {}, m)))] : []));
+}
+
+/** A checkbox with its label and a help line. */
+export function checkbox(label: string, help: string, checked: boolean, onChange: (v: boolean) => void): HTMLElement {
+  const input = h('input', { type: 'checkbox', id: uid('c') });
+  input.checked = checked;
+  input.addEventListener('change', () => onChange(input.checked));
+  const helpId = `${input.id}-help`;
+  input.setAttribute('aria-describedby', helpId);
+  return h('div', { class: 'check' }, input, h('label', { for: input.id }, label), h('p', { id: helpId, class: 'help' }, help));
+}
