@@ -9,6 +9,7 @@ import { revealOrder } from '../losfee/reveal.ts';
 import { createCryptoRng } from '../random/rng.ts';
 import { askWorker } from '../worker/client.ts';
 import { byId, checkbox, errorBox, field, fill, h, showErrors, showView } from './dom.ts';
+import { showPairs } from './stage.ts';
 import { drawFailure, errorMessages, householdLabel } from './text.ts';
 import { todayIso } from './wizard.ts';
 
@@ -67,27 +68,14 @@ export function showZufallSetup(): void {
 
 /** Shows the pairs one at a time, then all of them; leaving forgets them. */
 function reveal(order: [string, string][]): void {
-  const view = byId('game');
   const home = async () => (await import('./home.ts')).showHome();
-  const render = (i: number) => {
-    if (i === order.length) {
-      const done = h('button', { type: 'button', class: 'btn btn--ink' }, t('stage.done'));
-      done.addEventListener('click', () => void home());
-      const list = h('ul', { class: 'round-list' }, ...order.map(([giver, receiver]) => h('li', {}, h('span', {}, t('zufall.pair', { giver, receiver })))));
-      const heading = h('h1', { class: 'step-title', tabindex: '-1' }, t('zufall.all'));
-      fill(view, h('div', { class: 'container narrow stack' }, heading, list, h('p', { class: 'help' }, t('zufall.forgotten')), h('div', { class: 'actions' }, done)));
-      heading.focus();
-      return;
-    }
-    const [giver, receiver] = order[i]!;
-    const next = h('button', { type: 'button', class: 'btn btn--ink' }, t(i === order.length - 1 ? 'zufall.showAll' : 'stage.next'));
-    next.addEventListener('click', () => render(i + 1));
-    const end = h('button', { type: 'button', class: 'btn btn--card' }, t('stage.end'));
-    end.addEventListener('click', () => void home());
-    const heading = h('h1', { class: 'stage-pair', tabindex: '-1' }, h('span', { class: 'stage-name' }, giver), h('span', { class: 'stage-verb' }, t('stage.gives')), h('span', { class: 'stage-name' }, receiver));
-    fill(view, h('div', { class: 'container narrow stage' }, h('p', { class: 'muted fig' }, t('stage.counter', { n: i + 1, count: order.length })), heading, h('div', { class: 'actions stage-actions' }, next, end)));
+  const all = () => {
+    const done = h('button', { type: 'button', class: 'btn btn--ink' }, t('stage.done'));
+    done.addEventListener('click', () => void home());
+    const list = h('ul', { class: 'round-list' }, ...order.map(([giver, receiver]) => h('li', {}, h('span', {}, t('zufall.pair', { giver, receiver })))));
+    const heading = h('h1', { class: 'step-title', tabindex: '-1' }, t('zufall.all'));
+    fill(byId('game'), h('div', { class: 'container narrow stack' }, heading, list, h('p', { class: 'help' }, t('zufall.forgotten')), h('div', { class: 'actions' }, done)));
     heading.focus();
   };
-  showView('game');
-  render(0);
+  showPairs('game', order, t('zufall.showAll'), all, () => void home());
 }
