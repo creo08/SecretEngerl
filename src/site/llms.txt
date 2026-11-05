@@ -16,10 +16,11 @@ SecretEngerl runs entirely in the browser. The organizer enters the names, optio
 
 ## Party games
 
-Played on one phone at the table, with no draw in advance and no links. The game state stays on that phone and deletes itself after 24 hours.
+Played on one phone at the table, with no draw in advance and no links. A running Räuberwichteln or Würfelwichteln stays on that phone and deletes itself after 24 hours; Zufallswichteln stores nothing.
 
 - [Räuberwichteln]({{app}}raeuberwichteln/): White Elephant; in turn, unwrap a new gift or steal an unwrapped one; a gift is locked after 3 steals. Start it directly with `{{app}}?spiel=raeuberwichteln`.
 - [Würfelwichteln]({{app}}wuerfelwichteln/): the gifts lie in the middle; a digital die and an editable rule table decide who takes, swaps or passes on, until a timer (15 minutes by default) runs out. Start it directly with `{{app}}?spiel=wuerfelwichteln`.
+- [Zufallswichteln]({{app}}zufallswichteln/): Random Wichteln; everyone brings a gift for someone not known yet, and only at the party one phone draws who gets whose gift, with groups kept apart. Nothing is stored. Start it directly with `{{app}}?spiel=zufallswichteln`.
 
 ## Pre-fill link
 
