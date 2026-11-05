@@ -23,6 +23,12 @@ describe('input validation', () => {
     if (!dup.ok) expect(dup.errors[0]!.code).toBe('name.duplicate');
   });
 
+  it('lets everyone play on their own when there is no blank line', () => {
+    expect(parseNameList('Anna\nBernd\nClara')).toEqual({ ok: true, value: [['Anna'], ['Bernd'], ['Clara']] });
+    expect(parseNameList('\nAnna\nBernd\n\n')).toEqual({ ok: true, value: [['Anna'], ['Bernd']] });
+    expect(parseNameList('Anna\nBernd\n\nClara')).toEqual({ ok: true, value: [['Anna', 'Bernd'], ['Clara']] });
+  });
+
   it('allows at most 50 people', () => {
     const names = (n: number) => Array.from({ length: n }, (_, i) => `P${i}`).join('\n');
     expect(parseNameList(names(50)).ok).toBe(true);

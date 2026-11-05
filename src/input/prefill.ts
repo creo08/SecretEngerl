@@ -5,7 +5,7 @@
  */
 import type { TemplateId } from '../config/types.ts';
 import { isTemplateId } from '../config/validate.ts';
-import { cleanText, fail, parseAmount, parseHouseholds, parseIsoDate, type Result, type ValidationError } from './validate.ts';
+import { cleanText, fail, parseAmount, parseHouseholds, parseIsoDate, withoutSingleGroup, type Result, type ValidationError } from './validate.ts';
 
 /** What a pre-fill link sets up. Nothing is drawn from it. */
 export interface Prefill {
@@ -41,7 +41,8 @@ export function parsePrefill(fragment: string): Result<Prefill> {
   const groups = (params.get('n') ?? '').split(';').map((g) => g.split(',').map(decode));
   if (groups.flat().some((n) => n === null)) return fail('prefill.invalid', 'n');
   const names = groups.map((g) => (g as string[]).filter((n) => cleanText(n) !== ''));
-  const households = parseHouseholds(names, 'n');
+  // Without ";" everyone plays on their own, as in the name list.
+  const households = parseHouseholds(withoutSingleGroup(names), 'n');
   if (!households.ok) errors.push(...households.errors);
   else if (households.value.flat().length === 0) errors.push({ code: 'prefill.noNames', path: 'n' });
 

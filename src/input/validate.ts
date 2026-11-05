@@ -87,17 +87,26 @@ export function parseHouseholds(raw: unknown, path: string): Result<string[][]> 
 }
 
 /**
- * Parses the name list as typed by the organizer: one name per line,
- * a blank line separates households.
+ * A single group of everyone would forbid every draw. A list without any
+ * separator therefore means that everyone plays on their own.
+ */
+export function withoutSingleGroup(groups: string[][]): string[][] {
+  const filled = groups.filter((g) => g.length > 0);
+  return filled.length === 1 ? filled[0]!.map((name) => [name]) : groups;
+}
+
+/**
+ * Parses the name list as typed by the organizer: one name per line, a blank
+ * line separates groups. Without any blank line, everyone plays on their own.
  */
 export function parseNameList(text: string): Result<string[][]> {
   const groups: string[][] = [[]];
   for (const line of text.split(/\r?\n/)) {
-    // A line that is empty after cleaning (also invisible spaces) separates households.
+    // A line that is empty after cleaning (also invisible spaces) separates groups.
     if (cleanText(line) === '') groups.push([]);
     else groups[groups.length - 1]!.push(line);
   }
-  return parseHouseholds(groups, 'names');
+  return parseHouseholds(withoutSingleGroup(groups), 'names');
 }
 
 /** Parses an amount: a decimal number from 0 to 9999 with at most two decimals, "," or ".". */

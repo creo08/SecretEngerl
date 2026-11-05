@@ -21,9 +21,14 @@ describe('pre-fill link v1', () => {
     });
   });
 
+  it('lets everyone play on their own when there is no ";"', () => {
+    const r = parsePrefill('v=1&f=engerl-bengerl&n=Anna,Bernd,Clara');
+    expect(r.ok && r.value.households).toEqual([['Anna'], ['Bernd'], ['Clara']]);
+  });
+
   it('cleans names: NFC, no control or bidi characters', () => {
     const r = parsePrefill('v=1&f=engerl-bengerl&n=Ann%E2%80%AEa,Rene%CC%81');
-    expect(r.ok && r.value.households).toEqual([['Anna', 'René']]);
+    expect(r.ok && r.value.households).toEqual([['Anna'], ['René']]);
   });
 
   it('rejects wrong versions, unknown templates and broken encoding', () => {
