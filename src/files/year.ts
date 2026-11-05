@@ -5,6 +5,7 @@
 import type { Pairing, TemplateId } from '../config/types.ts';
 import { isTemplateId, MAX_HINT_BYTES } from '../config/validate.ts';
 import { fail, nameKey, parseAmount, parseFreeText, parseHouseholds, parseName, type Result, type ValidationError } from '../input/validate.ts';
+import { fromBase64Url, toBase64Url } from '../link/base64url.ts';
 import { MAX_TITLE_CHARS, readAssignment } from '../store/rounds.ts';
 import type { StoredRound } from '../store/types.ts';
 
@@ -78,4 +79,51 @@ export function validateYear(raw: unknown): Result<YearData> {
     ok: true,
     value: { year, template: o.template, ...(title?.ok && title.value ? { title: title.value } : {}), households: households.value, pairings, budget, hints },
   };
+}
+
+const PAIRINGS_AAD = new TextEncoder().encode('secretengerl-year');
+
+/**
+ * Seals the pairings like a draw link: AES-GCM under a random 128-bit key that
+ * sits right next to the ciphertext, as `<key>.<iv ‖ ciphertext ‖ tag>`.
+ * Nobody reads them in passing; whoever takes the file apart on purpose can.
+ */
+export async function sealPairings(pairings: readonly Pairing[]): Promise<string> {
+  const raw = crypto.getRandomValues(new Uint8Array(16));
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const key = await crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt']);
+  const sealed = new Uint8Array(await crypto.subtle.encrypt({ name: 'AES-GCM', iv, additionalData: PAIRINGS_AAD }, key, new TextEncoder().encode(JSON.stringify(pairings))));
+  const body = new Uint8Array(iv.length + sealed.length);
+  body.set(iv);
+  body.set(sealed, iv.length);
+  return `${toBase64Url(raw)}.${toBase64Url(body)}`;
+}
+
+/** Opens sealed pairings; null if they are malformed or were changed. */
+export async function openPairings(sealed: string): Promise<unknown> {
+  const [rawKey, rawBody, extra] = sealed.split('.');
+  const key = fromBase64Url(rawKey ?? '');
+  const body = fromBase64Url(rawBody ?? '');
+  if (extra !== undefined || key?.length !== 16 || !body || body.length < 12 + 16) return null;
+  try {
+    const cryptoKey = await crypto.subtle.importKey('raw', key, 'AES-GCM', false, ['decrypt']);
+    const plain = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: body.subarray(0, 12), additionalData: PAIRINGS_AAD }, cryptoKey, body.subarray(12));
+    return JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(plain));
+  } catch {
+    return null;
+  }
+}
+
+/** The content of a yearly file: last year's data with the pairings sealed. */
+export async function yearFileContent(data: YearData): Promise<Record<string, unknown>> {
+  const { pairings, ...rest } = data;
+  return { ...rest, sealedPairings: await sealPairings(pairings) };
+}
+
+/** Reads a yearly file's content, sealed or (from earlier versions) with plain pairings. */
+export async function yearFromFileContent(content: Record<string, unknown>): Promise<Result<YearData>> {
+  if (typeof content.sealedPairings !== 'string') return validateYear(content);
+  const pairings = await openPairings(content.sealedPairings);
+  if (pairings === null) return fail('year.invalid', 'sealedPairings');
+  return validateYear({ ...content, pairings });
 }

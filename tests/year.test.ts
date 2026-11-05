@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { openFile, sealFile } from '../src/files/envelope.ts';
-import { validateYear, yearFileName, yearFromRound } from '../src/files/year.ts';
+import { validateYear, yearFileContent, yearFileName, yearFromFileContent, yearFromRound } from '../src/files/year.ts';
 import { compileRound } from '../src/losfee/index.ts';
 import { purgeExpired, saveDraw } from '../src/store/rounds.ts';
 import { memoryStore } from './helpers/memory-store.ts';
@@ -40,10 +40,25 @@ describe("last year's round", () => {
 
   it('survives a round trip through an encrypted yearly file', async () => {
     const year = await yearFromRound((await storedRound()).round);
-    const text = await sealFile('secretengerl-year', { ...year }, 'pw', 100_000);
+    const text = await sealFile('secretengerl-year', await yearFileContent(year), 'pw', 100_000);
     const opened = await openFile(text, 'pw');
     expect(opened.status).toBe('ok');
-    if (opened.status === 'ok') expect(validateYear(opened.content)).toEqual({ ok: true, value: year });
+    if (opened.status === 'ok') expect(await yearFromFileContent(opened.content)).toEqual({ ok: true, value: year });
+  });
+
+  it('seals the pairings even in a file without password, and still opens older files', async () => {
+    const year = await yearFromRound((await storedRound()).round);
+    const content = await yearFileContent(year);
+    expect(content).not.toHaveProperty('pairings');
+    expect(JSON.stringify(content)).not.toMatch(/receiver|giver/);
+    const opened = await openFile(await sealFile('secretengerl-year', content));
+    if (opened.status !== 'ok') throw new Error(opened.status);
+    expect(await yearFromFileContent(opened.content)).toEqual({ ok: true, value: year });
+    // A file from 0.4.0 or 0.5.0 with plain pairings.
+    expect(await yearFromFileContent({ ...year })).toEqual({ ok: true, value: year });
+    // A changed seal is rejected.
+    const broken = { ...content, sealedPairings: String(content.sealedPairings).slice(0, -2) + 'AA' };
+    expect((await yearFromFileContent(broken)).ok).toBe(false);
   });
 
   it('rejects pairings with unknown names and other broken data', () => {
