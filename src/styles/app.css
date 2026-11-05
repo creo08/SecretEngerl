@@ -4,7 +4,7 @@
 /* Hallmark · pre-emit critique: P4 H4 E4 S3 R4 V4 · weakest: S, the start page is a tool, so the desk and slip carry it and nothing else competes */
 /* waive: theme face General Sans → Hanken Grotesk, OFL and self-hosted; project rule: no third-party fonts or CDN */
 /* answered: 23 .hold-fill is a 48px button fill, not viewport scale · F4 .btn--card is the cotton secondary, .btn--ink the one primary · 26a/26b on index.html: its states live in this sheet */
-/* sweep: Floor 0 FAIL · Reflex 0 open · render tier not available (no puppeteer-core), checked by own screenshots at 1280 and 390 · finish-review: in-thread, 4 findings (focus ring on moved focus, spacing above views, tall hint fields, straight apostrophes), 4 resolved */
+/* sweep 2026-11-05 (whole app and help pages): Floor 0 FAIL · Reflex 0 open · render tier not available (no puppeteer-core), own screenshots at 1280 and 390 · fixed: F20 template grid 4+2 → 3+3, storage facts spacing, form pages start as the primary button · answered: F26 lead wraps "nur hier:" at 1280 (text-wrap pretty, copy stays) */
 @import url("./tokens.css");
 @import url("./base.css");
 @import url("./fonts.css");
@@ -52,6 +52,8 @@
 /* Templates */
 .section-title { font-size: var(--text-2xl); margin-block: var(--space-xl) var(--space-lg); }
 .templates { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-md); grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); }
+/* Six templates: three per row on wide screens, so no row is left half empty. */
+@media (min-width: 60rem) { .templates { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .template { display: flex; flex-direction: column; gap: var(--space-2xs); padding: var(--space-lg); text-decoration: none; height: 100%; transition: transform var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out); }
 .template:hover { transform: translateY(-1px); box-shadow: var(--edge-stock), var(--cast-stock-lift); }
 .template:active { transform: translateY(1px); }
@@ -62,7 +64,7 @@
 .facts { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-xs) var(--space-lg); margin: 0; }
 .facts dt { font-weight: 600; }
 .facts dd { margin: 0; }
-.facts--wide { max-width: 52rem; margin-bottom: var(--space-md); }
+.facts--wide { max-width: 52rem; margin-block: var(--space-md); }
 @media (max-width: 40rem) { .facts { grid-template-columns: 1fr; } .facts dd { margin-bottom: var(--space-xs); } }
 
 /* Controls: letterpress cards */
