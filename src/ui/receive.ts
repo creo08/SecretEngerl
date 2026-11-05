@@ -2,6 +2,7 @@
  * The receiving side: the fragment is already out of the address bar; the
  * draw is decrypted only after a tap, shown as text and never stored.
  */
+import { homeUrl } from './language.ts';
 import { adventSundays, calendarFile } from '../ics/ics.ts';
 import { formatDate } from '../i18n/format.ts';
 import { hasText, t } from '../i18n/i18n.ts';
@@ -14,7 +15,7 @@ import { icon } from './icons.ts';
 /** Shows the receiving view for a fragment taken from the address bar. */
 export function showReceiver(fragment: string): void {
   const view = byId('los');
-  const home = h('a', { href: import.meta.env.BASE_URL, class: 'link' }, t('los.home'));
+  const home = h('a', { href: homeUrl(), class: 'link' }, t('los.home'));
   const reveal = h('button', { type: 'button', class: 'btn btn--ink slip-reveal' }, t('los.reveal'));
   fill(view, h('div', { class: 'container narrow' }, h('h1', { class: 'visually-hidden' }, t('los.title')), h('div', { class: 'slip stock slip--folded' }, reveal), h('p', { class: 'muted' }, home)));
   showView('los');

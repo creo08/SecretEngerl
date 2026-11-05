@@ -2,6 +2,7 @@
  * Confirmation page for a pre-fill link. Nothing is drawn here: the organizer
  * checks the details and continues into the wizard, where everything stays editable.
  */
+import { homeUrl } from './language.ts';
 import { formatBudget, formatDate } from '../i18n/format.ts';
 import { t } from '../i18n/i18n.ts';
 import { parsePrefill } from '../input/prefill.ts';
@@ -14,7 +15,7 @@ import { wireTemplateLinks } from './home.ts';
 /** Shows what a pre-fill fragment would set up, or why it cannot be used. */
 export function showPrefill(fragment: string): void {
   const result = parsePrefill(fragment);
-  const home = h('a', { href: import.meta.env.BASE_URL, class: 'link' }, t('prefill.home'));
+  const home = h('a', { href: homeUrl(), class: 'link' }, t('prefill.home'));
   const content = h('div', { class: 'container narrow stack' }, h('h1', {}, t('prefill.title')));
   if (!result.ok) {
     content.append(h('p', { class: 'lead' }, t('prefill.failed')), h('ul', { class: 'errors' }, ...errorMessages(result.errors).map((m) => h('li', {}, m))), h('p', {}, home));
@@ -30,7 +31,7 @@ export function showPrefill(fragment: string): void {
     const accept = h('button', { type: 'button', class: 'btn btn--ink' }, t('prefill.accept'));
     accept.addEventListener('click', () => {
       // From here on this is the app at its own address: a reload shows the start page, not this link.
-      history.replaceState(null, '', import.meta.env.BASE_URL);
+      history.replaceState(null, '', homeUrl());
       wireTemplateLinks();
       startWizard(p.template, {
         namesText: p.households.map((g) => g.join('\n')).join('\n\n'),
@@ -38,7 +39,7 @@ export function showPrefill(fragment: string): void {
         ...(p.date ? { date: p.date } : {}),
       });
     });
-    const discard = h('a', { href: import.meta.env.BASE_URL, class: 'btn btn--card' }, t('prefill.discard'));
+    const discard = h('a', { href: homeUrl(), class: 'btn btn--card' }, t('prefill.discard'));
     content.append(
       h('p', { class: 'lead' }, t('prefill.intro')),
       h('dl', { class: 'facts' }, ...rows.flatMap(([k, v]) => [h('dt', {}, k), h('dd', {}, v)])),
