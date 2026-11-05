@@ -2,10 +2,9 @@
  * Räuberwichteln (White Elephant): turn order, unwrapping, stealing, lock and
  * the optional final swap. Pure state transitions, no DOM; the caller stores the state.
  */
-import { cleanText, parseName } from '../input/validate.ts';
+import { cleanText, MAX_PEOPLE, parseName } from '../input/validate.ts';
 import { randInt, type Rng } from '../random/rng.ts';
 
-export const MAX_PLAYERS = 50;
 export const MAX_LABEL_CHARS = 30;
 export const DEFAULT_LOCK_AFTER = 3;
 
@@ -115,7 +114,7 @@ export function isRaeuberState(raw: unknown): raw is RaeuberState {
     s.kind === 'raeuberwichteln' &&
     names &&
     n >= 2 &&
-    n <= MAX_PLAYERS &&
+    n <= MAX_PEOPLE &&
     Number.isSafeInteger(s.lockAfter) &&
     s.lockAfter! >= 1 &&
     s.lockAfter! <= 9 &&
@@ -127,6 +126,10 @@ export function isRaeuberState(raw: unknown): raw is RaeuberState {
     (s.current === null || index(s.current)) &&
     (s.blocked === null || (Number.isSafeInteger(s.blocked) && s.blocked! >= 1 && s.blocked! <= s.gifts!.length)) &&
     (s.phase === 'play' || s.phase === 'finalSwap' || s.phase === 'done') &&
-    typeof s.startedAt === 'number'
+    typeof s.startedAt === 'number' &&
+    // The parts must fit together: one gift per holder, a player on turn while playing, everyone served at the end.
+    new Set(s.gifts!.map((g) => g.holder)).size === s.gifts!.length &&
+    (s.phase === 'done' ? s.current === null && s.gifts!.length === n : s.current !== null) &&
+    (s.phase !== 'finalSwap' || s.gifts!.length === n)
   );
 }

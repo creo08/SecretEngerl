@@ -76,6 +76,10 @@ describe('Räuberwichteln', () => {
     expect(isRaeuberState({ ...s, gifts: [{ ...s.gifts[0]!, holder: 7 }] })).toBe(false);
     expect(isRaeuberState({ ...s, lockAfter: 0 })).toBe(false);
     expect(isRaeuberState(null)).toBe(false);
+    // Parts that do not fit together, as another site on the origin could write them.
+    expect(isRaeuberState({ ...s, phase: 'done', current: null })).toBe(false);
+    expect(isRaeuberState({ ...s, current: null })).toBe(false);
+    expect(isRaeuberState({ ...s, gifts: [s.gifts[0]!, { ...s.gifts[0]!, number: 2 }] })).toBe(false);
     expect(parseLabel(' Socken‮ ')).toBe('Socken');
     expect(parseLabel('x'.repeat(31))).toBeNull();
   });
