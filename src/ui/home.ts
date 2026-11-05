@@ -35,23 +35,30 @@ export async function showHome(message = ''): Promise<void> {
   showFileOpener(files);
 }
 
-/** A party game still running on this device, with "Weiterspielen". */
+/** Party games still running on this device, each with "Weiterspielen". */
 async function showRunningGame(): Promise<void> {
-  const { loadRaeuber, play } = await import('./raeuber.ts');
-  const game = await loadRaeuber().catch(() => undefined);
+  const [raeuber, wuerfel] = await Promise.all([import('./raeuber.ts'), import('./wuerfel.ts')]);
+  const items: HTMLElement[] = [];
+  const add = (game: string, people: number, resume: () => void) => {
+    const button = h('button', { type: 'button', class: 'btn btn--ink' }, t('game.resume'));
+    button.addEventListener('click', resume);
+    items.push(h('li', {}, h('span', { class: 'round-item' }, h('span', {}, t('game.runningItem', { game, people: t('people.summary', { count: people }) }))), button));
+  };
+  const r = await raeuber.loadRaeuber().catch(() => undefined);
+  if (r) add(t('raeuber.title'), r.players.length, () => raeuber.play(r));
+  const w = await wuerfel.loadWuerfel().catch(() => undefined);
+  // The tap on "Weiterspielen" is what allows the sound at the end.
+  if (w) add(t('wuerfel.title'), w.players.length, () => (wuerfel.prepareAudio(), wuerfel.play(w)));
   const box = byId('game-running');
-  box.hidden = !game;
-  if (!game) return;
-  const resume = h('button', { type: 'button', class: 'btn btn--ink' }, t('game.resume'));
-  resume.addEventListener('click', () => void play(game));
-  fill(box, h('h2', {}, t('game.running')), h('p', {}, t('game.runningItem', { game: t('raeuber.title'), people: t('people.summary', { count: game.players.length }) })), h('div', { class: 'actions' }, resume));
+  box.hidden = items.length === 0;
+  fill(box, h('h2', {}, t('game.running')), h('ul', { class: 'round-list' }, ...items));
 }
 
 /** Starts the setup of a party game by its id; false if there is no such game. */
 async function startGame(id: string | null | undefined): Promise<boolean> {
-  if (id !== 'raeuberwichteln') return false;
-  const { showRaeuberSetup } = await import('./raeuber.ts');
-  showRaeuberSetup();
+  if (id === 'raeuberwichteln') (await import('./raeuber.ts')).showRaeuberSetup();
+  else if (id === 'wuerfelwichteln') (await import('./wuerfel.ts')).showWuerfelSetup();
+  else return false;
   return true;
 }
 

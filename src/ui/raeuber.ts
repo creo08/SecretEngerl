@@ -79,7 +79,7 @@ function view(state: RaeuberState, go: (next: RaeuberState) => void): GameScreen
       go(unwrap(state, value));
     });
     return {
-      title: t('raeuber.turn', { name }),
+      title: t('game.turn', { name }),
       over: false,
       body: [
         h('p', { class: 'muted fig' }, t('raeuber.wrapped', { count: wrappedCount(state) })),
