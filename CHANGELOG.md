@@ -6,11 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-11-06
+
 ### Added
 
 - Party game "Räuberwichteln" with its page /raeuberwichteln/: played on one phone at the table, without links. Turn order random or as typed, a gift locks after 3 steals (adjustable), the robbed player goes next and may not steal back, an optional final swap, undo. The game survives a reload and deletes itself after 24 hours.
 - Party game "Würfelwichteln" with its page /wuerfelwichteln/: an unbiased digital die, an editable rule table, a direction switch, a timer (15 minutes by default) that keeps the screen on and ends with a tone and a vibration, and an optional drinking rule that is off by default.
 - Party game "Zufallswichteln" with its page /zufallswichteln/: everyone brings a gift for someone not known yet, and only at the party one phone draws who gets whose gift with the matching engine, groups kept apart, and shows the pairs one at a time. Nothing is stored.
+
+### Changed
+
+- The start page has a section "Spiele am Tisch"; the help page, the security page and the privacy notice cover the games, and say that a running game stays on the device for at most 24 hours.
 
 ## [0.6.0] - 2026-11-05
 
