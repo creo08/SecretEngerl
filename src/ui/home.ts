@@ -28,10 +28,31 @@ export async function showHome(message = ''): Promise<void> {
     list.append(h('li', {}, h('span', { class: 'round-item' }, h('span', {}, name), h('span', { class: 'muted small' }, sent)), open));
   }
   fill(box, h('h2', {}, t('rounds.title')), list);
+  await showRunningGame();
   await showYears();
   const files = byId('files');
   files.hidden = false;
   showFileOpener(files);
+}
+
+/** A party game still running on this device, with "Weiterspielen". */
+async function showRunningGame(): Promise<void> {
+  const { loadRaeuber, play } = await import('./raeuber.ts');
+  const game = await loadRaeuber().catch(() => undefined);
+  const box = byId('game-running');
+  box.hidden = !game;
+  if (!game) return;
+  const resume = h('button', { type: 'button', class: 'btn btn--ink' }, t('game.resume'));
+  resume.addEventListener('click', () => void play(game));
+  fill(box, h('h2', {}, t('game.running')), h('p', {}, t('game.runningItem', { game: t('raeuber.title'), people: t('people.summary', { count: game.players.length }) })), h('div', { class: 'actions' }, resume));
+}
+
+/** Starts the setup of a party game by its id; false if there is no such game. */
+async function startGame(id: string | null | undefined): Promise<boolean> {
+  if (id !== 'raeuberwichteln') return false;
+  const { showRaeuberSetup } = await import('./raeuber.ts');
+  showRaeuberSetup();
+  return true;
 }
 
 /** Last year's rounds kept on this device, with "start from it" and "forget". */
@@ -68,9 +89,20 @@ export function wireTemplateLinks(): void {
   }
 }
 
+/** With JavaScript, the game cards start the game setup instead of opening their help page. */
+function wireGameLinks(): void {
+  for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-game]')) {
+    link.addEventListener('click', (event) => {
+      event.preventDefault();
+      void startGame(link.dataset.game);
+    });
+  }
+}
+
 /** Starts the app on the start page: template cards, expiry clean-up, a requested template or the overview. */
 export async function startApp(): Promise<void> {
   wireTemplateLinks();
+  wireGameLinks();
   // An ended round is kept as last year's round before it deletes itself.
   await purgeExpired(store, Date.now(), async (round) => indexedDbYears.put(round.id, await yearFromRound(round))).catch(() => undefined);
   const requested = new URLSearchParams(location.search).get('vorlage');
@@ -79,5 +111,8 @@ export async function startApp(): Promise<void> {
     startWizard(requested);
     return;
   }
+  const game = new URLSearchParams(location.search).get('spiel');
+  if (game) history.replaceState(null, '', location.pathname);
+  if (await startGame(game)) return;
   await showHome();
 }
