@@ -3,7 +3,7 @@
  * the optional final swap. Pure state transitions, no DOM; the caller stores the state.
  */
 import { cleanText, MAX_PEOPLE, parseName } from '../input/validate.ts';
-import { randInt, type Rng } from '../random/rng.ts';
+import { shuffled, type Rng } from '../random/rng.ts';
 
 export const MAX_LABEL_CHARS = 30;
 export const DEFAULT_LOCK_AFTER = 3;
@@ -43,13 +43,7 @@ export interface RaeuberSetup {
 
 /** Starts a game; with `random`, the turn order is shuffled with Fisher-Yates from `rng`. */
 export function startRaeuber(setup: RaeuberSetup, rng: Rng, now: number): RaeuberState {
-  const players = [...setup.players];
-  if (setup.random) {
-    for (let i = players.length - 1; i > 0; i--) {
-      const j = randInt(rng, i + 1);
-      [players[i], players[j]] = [players[j]!, players[i]!];
-    }
-  }
+  const players = setup.random ? shuffled(setup.players, rng) : [...setup.players];
   return { kind: 'raeuberwichteln', players, lockAfter: setup.lockAfter, finalSwap: setup.finalSwap, gifts: [], nextTurn: 1, current: 0, blocked: null, phase: 'play', startedAt: now };
 }
 

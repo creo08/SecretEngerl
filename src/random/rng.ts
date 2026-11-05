@@ -49,3 +49,13 @@ export function randBigInt(rng: Rng, n: bigint): bigint {
   } while (x >= limit);
   return x % n;
 }
+
+/** A copy of `items` in uniformly random order (Fisher-Yates). */
+export function shuffled<T>(items: readonly T[], rng: Rng): T[] {
+  const out = [...items];
+  for (let i = out.length - 1; i > 0; i--) {
+    const j = randInt(rng, i + 1);
+    [out[i], out[j]] = [out[j]!, out[i]!];
+  }
+  return out;
+}
