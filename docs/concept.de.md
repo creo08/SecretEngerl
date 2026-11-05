@@ -77,7 +77,7 @@ Beispiel: 10 Personen, Übergabe am Familienabend.
 
 ### 1. Einrichten
 
-Die organisierende Person wählt die Vorlage „Engerl-Bengerl klassisch“ und gibt die Namen ein, einen pro Zeile. Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team; wer in derselben Gruppe ist, zieht sich nicht. Dazu kommen Budget und Übergabetag. Optional sind Ort, Motto, ein Hinweis pro Person (Wünsche, No-Gos), die Art der Auflösung und die Angabe, ob die organisierende Person mitspielt. Der Hinweis ist Freitext; darunter sagt die App, dass nur hineingehört, was das Engerl wissen muss, und dass keine Diagnosen nötig sind („keine Nüsse“ reicht).
+Die organisierende Person wählt die Vorlage „Engerl-Bengerl klassisch“ und gibt die Namen ein, einen pro Zeile. Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team; wer in derselben Gruppe ist, zieht sich nicht. Ohne Leerzeile spielt jede Person für sich. Dazu kommen Budget und Übergabetag. Optional sind Ort, Motto, ein Hinweis pro Person (Wünsche, No-Gos), die Art der Auflösung und die Angabe, ob die organisierende Person mitspielt. Der Hinweis ist Freitext; darunter sagt die App, dass nur hineingehört, was das Engerl wissen muss, und dass keine Diagnosen nötig sind („keine Nüsse“ reicht).
 
 Gruppen heißen nach ihren Mitgliedern: „Gruppe Anna und Bernd“, bei größeren „Gruppe Anna, Bernd und 2 weitere“. Mitspielen können bis zu 50 Personen.
 
@@ -249,7 +249,7 @@ https://creo08.github.io/SecretEngerl/neu#v=1&f=engerl-bengerl&n=Anna,Bernd;Clar
 
 `f` ist die Vorlage, `n` die Namen mit `,` innerhalb und `;` zwischen Gruppen, `b` das Budget und `d` der Übergabetag. Die App füllt damit den Wizard aus und zeigt eine Bestätigungsseite; gezogen wird erst nach einem Tipp der organisierenden Person. So kann jemand eine fertige Einladung zum Einrichten weitergeben, und ein KI-Assistent, den man um „mach Engerl-Bengerl für Anna, Bernd und Clara“ bittet, kann direkt einen passenden Link bauen. Die Namen gehen dabei nicht an den Hoster, Namen, die man einem KI-Assistenten nennt, aber an dessen Anbieter.
 
-Der Link ist nicht vertrauenswürdige Eingabe. Version 1 akzeptiert: `f` nur aus der Liste der Vorlagen; höchstens 50 Namen mit je 1 bis 40 Zeichen nach NFC-Normalisierung, ohne Steuer- und Bidi-Zeichen (Unicode Cc und Cf), Leerraum getrimmt, keine Dubletten; `b` als Dezimalzahl von 0 bis 9999; `d` als ISO-Datum. Unbekannte Schlüssel werden ignoriert. Ein Name, der `,`, `;`, `&`, `=` oder `%` enthält, wird prozent-kodiert, etwa `%2C`. Fehler zeigen eine freundliche Meldung, nie einen Stacktrace. Der Vorbelegungs-Link kommt in Phase 5.
+Der Link ist nicht vertrauenswürdige Eingabe. Version 1 akzeptiert: `f` nur aus der Liste der Vorlagen; höchstens 50 Namen mit je 1 bis 40 Zeichen nach NFC-Normalisierung, ohne Steuer- und Bidi-Zeichen (Unicode Cc und Cf), Leerraum getrimmt, keine Dubletten; `b` als Dezimalzahl von 0 bis 9999; `d` als ISO-Datum. Unbekannte Schlüssel werden ignoriert. Ein Name, der `,`, `;`, `&`, `=` oder `%` enthält, wird prozent-kodiert, etwa `%2C`. Eine Liste ohne `;` heißt: Jede Person spielt für sich. Fehler zeigen eine freundliche Meldung, nie einen Stacktrace. Der Vorbelegungs-Link kommt in Phase 5.
 
 ## Doku in der App
 

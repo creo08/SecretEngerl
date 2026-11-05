@@ -77,7 +77,7 @@ Example: 10 people, gifts exchanged at a family evening.
 
 ### 1. Set up
 
-The organizer picks the template "Engerl-Bengerl classic" and enters the names, one per line. A blank line separates groups, such as a household, a couple, a family or a team; people in the same group do not draw each other. Budget and exchange date follow. Optional: place, theme, a hint per person (wishes, no-gos), how the reveal works and whether the organizer takes part. The hint is free text; below it the app says that only what the Engerl needs to know belongs there, and that no diagnoses are needed ("no nuts" is enough).
+The organizer picks the template "Engerl-Bengerl classic" and enters the names, one per line. A blank line separates groups, such as a household, a couple, a family or a team; people in the same group do not draw each other. Without any blank line, everyone plays on their own. Budget and exchange date follow. Optional: place, theme, a hint per person (wishes, no-gos), how the reveal works and whether the organizer takes part. The hint is free text; below it the app says that only what the Engerl needs to know belongs there, and that no diagnoses are needed ("no nuts" is enough).
 
 Groups are named after their members: "Group Anna and Bernd", or "Group Anna, Bernd and 2 more" for larger ones. Up to 50 people can take part.
 
@@ -249,7 +249,7 @@ https://creo08.github.io/SecretEngerl/neu#v=1&f=engerl-bengerl&n=Anna,Bernd;Clar
 
 `f` is the template, `n` the names with `,` within and `;` between groups, `b` the budget and `d` the exchange date. The app fills in the wizard with it and shows a confirmation page; the draw happens only after the organizer taps. Someone can pass on a ready invitation to set up a round, and an AI assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can build a matching link directly. The names do not reach the host, but names given to an AI assistant do reach the assistant's provider.
 
-The link is untrusted input. Version 1 accepts: `f` only from the list of templates; at most 50 names, each 1 to 40 characters after NFC normalisation, with control and bidi characters (Unicode Cc and Cf) removed, whitespace trimmed and no duplicates; `b` as a decimal number from 0 to 9999; `d` as an ISO date. Unknown keys are ignored. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, for example `%2C`. Errors show a friendly message, never a stack trace. The pre-fill link comes in phase 5.
+The link is untrusted input. Version 1 accepts: `f` only from the list of templates; at most 50 names, each 1 to 40 characters after NFC normalisation, with control and bidi characters (Unicode Cc and Cf) removed, whitespace trimmed and no duplicates; `b` as a decimal number from 0 to 9999; `d` as an ISO date. Unknown keys are ignored. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, for example `%2C`. A list without `;` means everyone plays on their own. Errors show a friendly message, never a stack trace. The pre-fill link comes in phase 5.
 
 ## Documentation inside the app
 
