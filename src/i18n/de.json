@@ -30,7 +30,7 @@
   "wizard.who.roundTitleHelp": "Nur für deine Übersicht auf diesem Gerät. Der Name kommt in kein Los.",
   "wizard.who.defaultTitle": "{template} {year}",
   "wizard.who.names": "Namen, einer pro Zeile",
-  "wizard.who.namesHelp": "Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team. Wer in derselben Gruppe ist, zieht sich nicht.",
+  "wizard.who.namesHelp": "Eine Leerzeile trennt Gruppen, etwa Haushalt, Paar, Familie oder Team. Wer in derselben Gruppe ist, zieht sich nicht. Ohne Leerzeile spielt jede Person für sich.",
   "wizard.who.date": "Übergabetag",
   "wizard.who.budget": "Budget in Euro",
   "wizard.rules.title": "Regeln",

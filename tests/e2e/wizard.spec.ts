@@ -51,3 +51,13 @@ test('the suggested round name follows the year of the exchange', async ({ page 
   await page.getByRole('button', { name: 'Ziehen' }).click();
   await expect(page.getByRole('heading', { name: `Büro-Wichteln ${next}` })).toBeVisible();
 });
+
+test('names without any blank line can be drawn: everyone plays on their own', async ({ page }) => {
+  await page.goto('./?vorlage=engerl-bengerl');
+  await page.getByLabel('Namen, einer pro Zeile').fill('Anna\nBernd\nClara\nDavid');
+  await expect(page.getByText('Gruppe Anna', { exact: false })).toHaveCount(0);
+  await page.getByLabel('Übergabetag').fill(new Date(Date.now() + 30 * 86_400_000).toISOString().slice(0, 10));
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await page.getByRole('button', { name: 'Ziehen' }).click();
+  await expect(page.locator('#round h1')).toBeVisible();
+});

@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- A name list without any blank line no longer puts everyone into one group, which made every draw impossible; everyone now plays on their own. The same holds for a pre-fill link without `;`.
+
 ## [0.5.0] - 2026-11-03
 
 ### Added

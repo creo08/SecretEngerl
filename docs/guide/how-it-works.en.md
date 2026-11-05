@@ -8,7 +8,7 @@ Choose how your group plays: [Engerl-Bengerl classic](app:engerl-bengerl/), [Sch
 
 ## 2. Who plays
 
-Enter the names, one per line. A blank line separates groups, such as a household, a couple, a family or a team: people in the same group never draw each other. Add the exchange date and, if your template has one, the budget. Up to 50 people can take part. If you organize several rounds, give each one a name; it is only for your own overview and never goes into a draw.
+Enter the names, one per line. A blank line separates groups, such as a household, a couple, a family or a team: people in the same group never draw each other. Without any blank line, everyone plays on their own. Add the exchange date and, if your template has one, the budget. Up to 50 people can take part. If you organize several rounds, give each one a name; it is only for your own overview and never goes into a draw.
 
 ## 3. Rules, if you want them
 

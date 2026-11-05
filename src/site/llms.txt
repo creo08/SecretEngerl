@@ -24,7 +24,7 @@ An assistant asked to "make an Engerl-Bengerl for Anna, Bernd and Clara" can bui
 
 - `v`: format version, always `1`.
 - `f`: template, one of `engerl-bengerl`, `schrottwichteln`, `familien-wichteln`, `buero-wichteln`, `post-wichteln`, `advent-engerl`. Addresses are never part of a pre-fill link; the organizer enters them in the app.
-- `n`: names, `,` between people of one group and `;` between groups. People in the same group never draw each other. At most 50 names of 1 to 40 characters, no duplicates. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, e.g. `%2C`.
+- `n`: names, `,` between people of one group and `;` between groups. People in the same group never draw each other; without `;`, everyone plays on their own. At most 50 names of 1 to 40 characters, no duplicates. A name that contains `,`, `;`, `&`, `=` or `%` is percent-encoded, e.g. `%2C`.
 - `b`: budget in euros, a number from 0 to 9999 (optional; ignored for Schrottwichteln).
 - `d`: exchange date as `YYYY-MM-DD` (optional).
 
