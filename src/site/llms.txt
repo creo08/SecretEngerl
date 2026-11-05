@@ -1,6 +1,6 @@
 # SecretEngerl
 
-> Engerl-Bengerl, the Austrian Secret Santa: Wichteln and Secret Santa without a server. SecretEngerl draws names fairly in the browser and gives every person their draw as a private, encrypted link. No account, no server, no tracking. The app is in German.
+> Engerl-Bengerl, the Austrian Secret Santa: Wichteln and Secret Santa without a server. SecretEngerl draws names fairly in the browser and gives every person their draw as a private, encrypted link. No account, no server, no tracking. The app is in German and English ({{app}}en/); the English texts are AI translations.
 
 SecretEngerl runs entirely in the browser. The organizer enters the names, optionally separated into groups (household, couple, family, team) who never draw each other, and taps "Ziehen". Every valid draw is exactly equally likely. Each person then gets one link, sent in a one-to-one chat; the draw is encrypted with AES-GCM and the key sits after the `#`, which browsers never send to a server. Up to 50 people can take part.
 
@@ -40,7 +40,8 @@ Everything sits after the `#`, so the names do not reach the server that hosts t
 
 ## Help
 
-- [How it works (German)]({{app}}so-funktionierts/)
-- [Privacy and threat model (German)]({{app}}sicherheit/)
-- [FAQ (German)]({{app}}faq/)
+- How it works: [English]({{app}}en/how-it-works/), [German]({{app}}so-funktionierts/)
+- Privacy and threat model: [English]({{app}}en/security/), [German]({{app}}sicherheit/)
+- FAQ: [English]({{app}}en/faq/), [German]({{app}}faq/)
+- Every form page above also exists in English under {{app}}en/, e.g. [Secret Santa]({{app}}en/secret-santa/) and [White Elephant]({{app}}en/white-elephant/).
 - [Source code](https://github.com/creo08/SecretEngerl)

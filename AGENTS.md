@@ -19,13 +19,13 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 | `src/store/` | IndexedDB storage of rounds, of last year's rounds and of a running party game on the organizer's device |
 | `src/files/` | File envelope (plain or password-encrypted) and last year's data for the yearly file |
 | `src/worker/` | Web Worker that runs `losfee` |
-| `src/i18n/` | Language files and `Intl` formatting; no user-facing text in code |
+| `src/i18n/` | Language files (`de.json`, `en.json`, same keys) and `Intl` formatting per language; no user-facing text in code |
 | `src/share/`, `src/ics/` | Share sheet with clipboard fallback; calendar file without names |
 | `src/ui/` | DOM code |
 | `src/sw/` | Service worker with a versioned precache, filled by `scripts/vite-site.ts` |
 | `src/styles/` | Design tokens (Hallmark theme Coral), self-hosted OFL fonts, the stylesheet |
-| `docs/guide/` | Help and form pages shown in the app, rendered to static HTML at build time (`form-*` pages carry HowTo data from their first ordered list) |
-| `src/site/` | `llms.txt` source; `{{app}}` becomes the app URL at build time |
+| `docs/guide/` | Help and form pages per language (`<id>.<lang>.md`), rendered to static HTML at build time (`form-*` pages carry HowTo data from their first ordered list); links write German paths as `app:<path>`, the build points them at each language |
+| `src/site/` | `pages.ts`, the path of every page in every language, shared by build and app; `llms.txt` source, where `{{app}}` becomes the app URL at build time |
 | `public/` | Manifest and icons |
 | `scripts/` | Repository checks and build helpers |
 | `tests/` | Vitest tests; `tests/e2e/` holds Playwright tests |

@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- English: the app, the start page and every help and form page under /en/ (for example /en/secret-santa/, /en/white-elephant/), marked as AI translations with a link for corrections. German proper names of the forms get an English subtitle.
+- The language follows the address. A first visit to the German start page moves to the browser's language once; the footer offers the languages, and the choice is remembered on the device under `secretengerl-lang`. A draw opens in the browser's language without leaving its address.
+
+### Changed
+
+- Outside German, a budget shows the plain amount without a currency.
+
 ## [0.7.0] - 2026-11-06
 
 ### Added
