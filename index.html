@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="referrer" content="no-referrer">
-    <title>SecretEngerl: Engerl-Bengerl, Wichteln und Secret Santa ohne Server</title>
-    <meta name="description" content="Engerl-Bengerl, Wichteln und Secret Santa fair auslosen. Jede Person bekommt ihr Los als privaten, verschlüsselten Link. Ohne Server, ohne Konto.">
+    <title data-t="page.title">SecretEngerl: Engerl-Bengerl, Wichteln und Secret Santa ohne Server</title>
+    <meta name="description" content="Engerl-Bengerl, Wichteln und Secret Santa fair auslosen. Jede Person bekommt ihr Los als privaten, verschlüsselten Link. Ohne Server, ohne Konto." data-t-attr="content:page.description">
     <meta property="og:title" content="SecretEngerl">
-    <meta property="og:description" content="Engerl-Bengerl, Wichteln und Secret Santa ohne Server.">
+    <meta property="og:description" content="Engerl-Bengerl, Wichteln und Secret Santa ohne Server." data-t-attr="content:page.ogDescription">
     <meta property="og:type" content="website">
     <meta name="theme-color" content="#f6f3f1">
     <link rel="manifest" href="/manifest.webmanifest">
@@ -17,18 +17,19 @@
     <script type="module" src="/src/main.ts"></script>
   </head>
   <body>
-    <a class="skip" href="#main">Zum Inhalt</a>
+    <a class="skip" href="#main" data-t="page.skip">Zum Inhalt</a>
     <header class="masthead">
       <div class="container masthead-row">
-        <a class="wordmark" href="%BASE_URL%" aria-label="SecretEngerl, Startseite">SecretEngerl</a>
-        <nav aria-label="Hilfe">
+        <a class="wordmark" href="%BASE_URL%" data-page="home" aria-label="SecretEngerl, Startseite" data-t-attr="aria-label:page.homeLabel">SecretEngerl</a>
+        <nav aria-label="Hilfe" data-t-attr="aria-label:page.help">
           <ul class="nav">
-            <li><a href="%BASE_URL%so-funktionierts/">So funktioniert’s</a></li>
-            <li><a href="%BASE_URL%sicherheit/">Sicherheit</a></li>
-            <li><a href="%BASE_URL%faq/">FAQ</a></li>
+            <li><a href="%BASE_URL%so-funktionierts/" data-page="how-it-works" data-t="page.howItWorks">So funktioniert’s</a></li>
+            <li><a href="%BASE_URL%sicherheit/" data-page="security" data-t="page.security">Sicherheit</a></li>
+            <li><a href="%BASE_URL%faq/" data-page="faq" data-t="page.faq">FAQ</a></li>
           </ul>
         </nav>
       </div>
+      <p class="container ai-note" data-ai-note hidden><span data-t="page.aiNote"></span> <a href="https://github.com/creo08/SecretEngerl/issues" data-t="page.aiFix"></a></p>
     </header>
 
     <main id="main">
@@ -36,61 +37,61 @@
         <div class="desk">
           <div class="container hero">
             <div class="hero-text">
-              <h1>Engerl-Bengerl auslosen, ganz ohne Server.</h1>
-              <p class="lead">Namen eintragen, fair ziehen, jedem sein Los privat schicken.</p>
+              <h1 data-t="home.headline">Engerl-Bengerl auslosen, ganz ohne Server.</h1>
+              <p class="lead" data-t="home.lead">Namen eintragen, fair ziehen, jedem sein Los privat schicken.</p>
               <p id="home-status" class="status" role="status"></p>
-              <noscript><p class="notice">Zum Ziehen braucht die App JavaScript. Die Erklärungen lesen sich auch ohne.</p></noscript>
+              <noscript><p class="notice" data-t="page.noscript">Zum Ziehen braucht die App JavaScript. Die Erklärungen lesen sich auch ohne.</p></noscript>
             </div>
             <div class="hero-slip" aria-hidden="true">
               <div class="slip stock slip--demo">
-                <p class="slip-label">Du bist das Engerl von</p>
+                <p class="slip-label" data-t="los.youAre">Du bist das Engerl von</p>
                 <p class="slip-name slip-name--hidden">Bernd</p>
-                <p class="slip-number fig">Ziehung Nr. 1</p>
-                <p class="pressed">geheim</p>
+                <p class="slip-number fig" data-t="home.demoNumber">Ziehung Nr. 1</p>
+                <p class="pressed" data-t="home.demoStamp">geheim</p>
               </div>
             </div>
           </div>
         </div>
 
         <div class="container">
-          <h2 class="section-title">Womit fangen wir an?</h2>
+          <h2 class="section-title" data-t="home.templates">Womit fangen wir an?</h2>
           <ul class="templates">
-            <li><a class="template stock" href="%BASE_URL%engerl-bengerl/" data-template="engerl-bengerl"><span class="template-title">Engerl-Bengerl klassisch</span><span class="template-text">Mit Budget und Übergabetag. Wer in derselben Gruppe ist, zieht sich nicht.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%schrottwichteln/" data-template="schrottwichteln"><span class="template-title">Schrottwichteln</span><span class="template-text">Nichts kaufen, nur verschenken, was man schon hat.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%familien-wichteln/" data-template="familien-wichteln"><span class="template-title">Familien-Wichteln</span><span class="template-text">Mit Hinweisen pro Person und ohne die Paarungen vom letzten Jahr.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%buero-wichteln/" data-template="buero-wichteln"><span class="template-title">Büro-Wichteln</span><span class="template-text">Kleines Budget, auf Wunsch mit Motto.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%post-wichteln/" data-template="post-wichteln"><span class="template-title">Post-Wichteln</span><span class="template-text">Geschenke per Post. Jede Adresse steht nur im Los des Engerls.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%advent-engerl/" data-template="advent-engerl"><span class="template-title">Advent-Engerl</span><span class="template-text">Jede Adventwoche heimlich eine kleine Freude, auf Wunsch mit Motto.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%engerl-bengerl/" data-page="form-engerl-bengerl" data-template="engerl-bengerl"><span class="template-title" data-t="template.engerl-bengerl">Engerl-Bengerl klassisch</span><span class="template-sub" data-t="sub.engerl-bengerl"></span><span class="template-text" data-t="card.engerl-bengerl">Mit Budget und Übergabetag. Wer in derselben Gruppe ist, zieht sich nicht.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%schrottwichteln/" data-page="form-schrottwichteln" data-template="schrottwichteln"><span class="template-title" data-t="template.schrottwichteln">Schrottwichteln</span><span class="template-sub" data-t="sub.schrottwichteln"></span><span class="template-text" data-t="card.schrottwichteln">Nichts kaufen, nur verschenken, was man schon hat.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%familien-wichteln/" data-page="form-familien-wichteln" data-template="familien-wichteln"><span class="template-title" data-t="template.familien-wichteln">Familien-Wichteln</span><span class="template-sub" data-t="sub.familien-wichteln"></span><span class="template-text" data-t="card.familien-wichteln">Mit Hinweisen pro Person und ohne die Paarungen vom letzten Jahr.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%buero-wichteln/" data-page="form-buero-wichteln" data-template="buero-wichteln"><span class="template-title" data-t="template.buero-wichteln">Büro-Wichteln</span><span class="template-sub" data-t="sub.buero-wichteln"></span><span class="template-text" data-t="card.buero-wichteln">Kleines Budget, auf Wunsch mit Motto.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%post-wichteln/" data-page="form-post-wichteln" data-template="post-wichteln"><span class="template-title" data-t="template.post-wichteln">Post-Wichteln</span><span class="template-sub" data-t="sub.post-wichteln"></span><span class="template-text" data-t="card.post-wichteln">Geschenke per Post. Jede Adresse steht nur im Los des Engerls.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%advent-engerl/" data-page="form-advent-engerl" data-template="advent-engerl"><span class="template-title" data-t="template.advent-engerl">Advent-Engerl</span><span class="template-sub" data-t="sub.advent-engerl"></span><span class="template-text" data-t="card.advent-engerl">Jede Adventwoche heimlich eine kleine Freude, auf Wunsch mit Motto.</span></a></li>
           </ul>
 
           <div id="rounds" class="panel stack" hidden></div>
           <div id="years" class="panel stack" hidden></div>
           <div id="files" class="stack" hidden></div>
 
-          <h2 class="section-title">Spiele am Tisch</h2>
-          <p class="muted section-lead">Ohne Ziehung vorab und ohne Links: Das Spiel läuft auf einem Handy bei der Feier.</p>
+          <h2 class="section-title" data-t="home.games">Spiele am Tisch</h2>
+          <p class="muted section-lead" data-t="home.gamesLead">Ohne Ziehung vorab und ohne Links: Das Spiel läuft auf einem Handy bei der Feier.</p>
           <ul class="templates">
-            <li><a class="template stock" href="%BASE_URL%raeuberwichteln/" data-game="raeuberwichteln"><span class="template-title">Räuberwichteln</span><span class="template-text">Reihum auspacken oder klauen. Nach drei Klauen ist ein Geschenk gesperrt.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%wuerfelwichteln/" data-game="wuerfelwichteln"><span class="template-title">Würfelwichteln</span><span class="template-text">Reihum würfeln, die Zahl entscheidet über Nehmen und Tauschen. Mit Timer.</span></a></li>
-            <li><a class="template stock" href="%BASE_URL%zufallswichteln/" data-game="zufallswichteln"><span class="template-title">Zufallswichteln</span><span class="template-text">Alle bringen ein Geschenk mit. Wer welches bekommt, lost das Handy erst bei der Feier aus.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%raeuberwichteln/" data-page="form-raeuberwichteln" data-game="raeuberwichteln"><span class="template-title" data-t="raeuber.title">Räuberwichteln</span><span class="template-sub" data-t="sub.raeuberwichteln"></span><span class="template-text" data-t="card.raeuberwichteln">Reihum auspacken oder klauen. Nach drei Klauen ist ein Geschenk gesperrt.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%wuerfelwichteln/" data-page="form-wuerfelwichteln" data-game="wuerfelwichteln"><span class="template-title" data-t="wuerfel.title">Würfelwichteln</span><span class="template-sub" data-t="sub.wuerfelwichteln"></span><span class="template-text" data-t="card.wuerfelwichteln">Reihum würfeln, die Zahl entscheidet über Nehmen und Tauschen. Mit Timer.</span></a></li>
+            <li><a class="template stock" href="%BASE_URL%zufallswichteln/" data-page="form-zufallswichteln" data-game="zufallswichteln"><span class="template-title" data-t="zufall.title">Zufallswichteln</span><span class="template-sub" data-t="sub.zufallswichteln"></span><span class="template-text" data-t="card.zufallswichteln">Alle bringen ein Geschenk mit. Wer welches bekommt, lost das Handy erst bei der Feier aus.</span></a></li>
           </ul>
 
           <div id="game-running" class="panel stack" hidden></div>
 
           <section class="promise" aria-labelledby="promise-title">
-            <h2 id="promise-title" class="section-title">Wo was gespeichert wird</h2>
-            <p class="lead">Namen, Hinweise und Lose bleiben bei euch. Gespeichert wird nur hier:</p>
+            <h2 id="promise-title" class="section-title" data-t="home.promise">Wo was gespeichert wird</h2>
+            <p class="lead" data-t="home.promiseLead">Namen, Hinweise und Lose bleiben bei euch. Gespeichert wird nur hier:</p>
             <dl class="facts facts--wide">
-              <dt>Auf einem Server</dt>
-              <dd>Nichts. Es gibt keinen Server; die App läuft ganz in deinem Browser.</dd>
-              <dt>Auf deinem Gerät</dt>
-              <dd>Die Runde mit Namen und Links, damit du einen Link erneut senden kannst. 14 Tage nach der Übergabe löscht sie sich selbst, auf Wunsch auch sofort. Ein Spiel am Tisch bleibt höchstens 24 Stunden.</dd>
-              <dt>Im Chat</dt>
-              <dd>Jeder Link mit dem verschlüsselten Los, so lange der Chat ihn aufbewahrt.</dd>
-              <dt>Beim Öffnen eines Loses</dt>
-              <dd>Nichts. Das Los wird nur angezeigt, nicht gespeichert.</dd>
+              <dt data-t="home.server">Auf einem Server</dt>
+              <dd data-t="home.serverText">Nichts. Es gibt keinen Server; die App läuft ganz in deinem Browser.</dd>
+              <dt data-t="home.device">Auf deinem Gerät</dt>
+              <dd data-t="home.deviceText">Die Runde mit Namen und Links, damit du einen Link erneut senden kannst. 14 Tage nach der Übergabe löscht sie sich selbst, auf Wunsch auch sofort. Ein Spiel am Tisch bleibt höchstens 24 Stunden.</dd>
+              <dt data-t="home.chat">Im Chat</dt>
+              <dd data-t="home.chatText">Jeder Link mit dem verschlüsselten Los, so lange der Chat ihn aufbewahrt.</dd>
+              <dt data-t="home.open">Beim Öffnen eines Loses</dt>
+              <dd data-t="home.openText">Nichts. Das Los wird nur angezeigt, nicht gespeichert.</dd>
             </dl>
-            <p><a href="%BASE_URL%sicherheit/">Mehr zu Datenschutz und Grenzen</a></p>
+            <p><a href="%BASE_URL%sicherheit/" data-page="security" data-t="home.promiseMore">Mehr zu Datenschutz und Grenzen</a></p>
           </section>
         </div>
       </section>
@@ -105,13 +106,17 @@
       <div class="container footer-row">
         <p class="wordmark">SecretEngerl</p>
         <ul class="footer-links">
-          <li><a href="%BASE_URL%so-funktionierts/">So funktioniert’s</a></li>
-          <li><a href="%BASE_URL%sicherheit/">Datenschutz und Sicherheit</a></li>
-          <li><a href="%BASE_URL%faq/">FAQ</a></li>
-          <li><a href="%BASE_URL%datenschutz/">Datenschutzhinweis</a></li>
-          <li><a href="https://github.com/creo08/SecretEngerl">Quellcode auf GitHub</a></li>
+          <li><a href="%BASE_URL%so-funktionierts/" data-page="how-it-works" data-t="page.howItWorks">So funktioniert’s</a></li>
+          <li><a href="%BASE_URL%sicherheit/" data-page="security" data-t="page.securityLong">Datenschutz und Sicherheit</a></li>
+          <li><a href="%BASE_URL%faq/" data-page="faq" data-t="page.faq">FAQ</a></li>
+          <li><a href="%BASE_URL%datenschutz/" data-page="privacy-notice" data-t="page.privacy">Datenschutzhinweis</a></li>
+          <li><a href="https://github.com/creo08/SecretEngerl" data-t="page.source">Quellcode auf GitHub</a></li>
         </ul>
-        <p class="muted small">Open Source unter MIT. Alle Texte sind maschinell erstellt.</p>
+        <ul class="footer-links lang-links" aria-label="Sprache" data-t-attr="aria-label:page.language">
+          <li><a href="%BASE_URL%?sprache=de" lang="de" hreflang="de" data-lang="de">Deutsch</a></li>
+          <li><a href="%BASE_URL%en/?sprache=en" lang="en" hreflang="en" data-lang="en">English</a></li>
+        </ul>
+        <p class="muted small" data-t="page.license">Open Source unter MIT. Alle Texte sind maschinell erstellt.</p>
       </div>
     </footer>
   </body>

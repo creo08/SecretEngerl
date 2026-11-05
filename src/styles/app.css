@@ -189,3 +189,8 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
 .die-rules { padding-left: var(--space-lg); }
 .btn--big { min-height: 4rem; padding-inline: var(--space-2xl); font-size: var(--text-lg); }
 .section-lead { margin-bottom: var(--space-md); }
+
+/* Languages: subtitles under German proper names, the AI translation note */
+.template-sub { color: var(--color-muted); font-size: var(--text-sm); }
+.template-sub:empty { display: none; }
+.ai-note { font-size: var(--text-sm); color: var(--color-muted); padding-block: var(--space-2xs) var(--space-xs); margin: 0; }
