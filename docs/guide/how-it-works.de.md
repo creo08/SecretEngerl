@@ -31,7 +31,7 @@ Die Person tippt auf den Link. Die App nimmt das Los sofort aus der Adresszeile 
 - **Erneut senden:** Hat jemand den Link verloren, öffnest du die Runde auf deinem Gerät und schickst ihn noch einmal.
 - **Jemand sagt ab:** Das Engerl dieser Person übernimmt deren Bengerl, und genau eine Person bekommt einen neuen Link. Bricht das eine Regel, sagt die App es dir und bietet eine neue Ziehung an.
 - **Neu ziehen:** Alle bekommen einen neuen Link, und die Nummer der Ziehung steigt. Alte Links öffnen sich weiter; sag der Gruppe also, welche Ziehung gilt.
-- **Bühne:** Bei der Feier zeigt „Auflösung starten“ auf deinem Gerät ein Paar nach dem anderen, entlang der Kette. Vor dem Übergabetag braucht das „Ich spicke“ und kommt ins Protokoll.
+- **Bühne:** Bei der Feier zeigt „Auflösung starten“ auf deinem Gerät ein Paar nach dem anderen, entlang der Kette. Bis zum Übergabetag steht sie unter „Während der Runde“, braucht „Ich spicke“ und kommt ins Protokoll.
 - **Notfall:** „Zuordnung ansehen“ zeigt immer nur eine Person, nachdem du „Ich spicke“ eintippst oder den Knopf gedrückt hältst. Jedes Ansehen kommt ins Protokoll.
 
 14 Tage nach der Übergabe löscht sich die Runde von deinem Gerät, und die Links zeigen „Runde abgelaufen“.
