@@ -1,9 +1,40 @@
-/** Texts come from language files; nothing user-facing is hard-coded. German first. */
+/** Texts come from language files; nothing user-facing is hard-coded. German first, others load on demand. */
 import de from './de.json';
 
 type Texts = Record<string, string | Partial<Record<Intl.LDMLPluralRule, string>>>;
-const texts: Texts = de;
-const plural = new Intl.PluralRules('de-AT');
+
+/** The languages the app is translated into, in the order of the concept. */
+export const LANGUAGES = ['de', 'en'] as const;
+export type Language = (typeof LANGUAGES)[number];
+
+const LOCALES: Record<Language, string> = { de: 'de-AT', en: 'en-GB' };
+const LOADERS: Record<Exclude<Language, 'de'>, () => Promise<{ default: Texts }>> = { en: () => import('./en.json') };
+
+let current: Language = 'de';
+let texts: Texts = de;
+let plural = new Intl.PluralRules(LOCALES.de);
+
+/** True if `raw` is one of the app's languages. */
+export function isLanguage(raw: unknown): raw is Language {
+  return LANGUAGES.includes(raw as Language);
+}
+
+/** Switches all texts and formats to `lang`; German needs no loading. */
+export async function setLanguage(lang: Language): Promise<void> {
+  texts = lang === 'de' ? de : (await LOADERS[lang]()).default;
+  current = lang;
+  plural = new Intl.PluralRules(LOCALES[lang]);
+}
+
+/** The language texts currently come from. */
+export function language(): Language {
+  return current;
+}
+
+/** The locale for `Intl` formatting in the current language. */
+export function locale(): string {
+  return LOCALES[current];
+}
 
 /** True if the language file has `key`. */
 export function hasText(key: string): boolean {
