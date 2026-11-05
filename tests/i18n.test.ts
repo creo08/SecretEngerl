@@ -1,8 +1,8 @@
 import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import de from '../src/i18n/de.json';
-import en from '../src/i18n/en.json';
+import de from '../src/i18n/de.json' with { type: 'json' };
+import en from '../src/i18n/en.json' with { type: 'json' };
 import { formatBudget, formatDate } from '../src/i18n/format.ts';
 import { language, setLanguage, t } from '../src/i18n/i18n.ts';
 import { TEMPLATE_IDS } from '../src/config/types.ts';
@@ -48,5 +48,27 @@ describe('language switching', () => {
       await setLanguage('de');
     }
     expect(t('wizard.who.title')).toBe('Wer spielt mit?');
+  });
+});
+
+describe('start page', () => {
+  const html = readFileSync('index.html', 'utf8');
+
+  it('takes every text from the language file, word for word', () => {
+    const marked = [...html.matchAll(/<(\w+)\b[^>]*\sdata-t="([\w.-]+)"[^>]*>([^<]*)<\/\1>/g)];
+    expect(marked.length).toBeGreaterThan(30);
+    for (const [, , key, content] of marked) expect(content, key).toBe((de as Record<string, unknown>)[key!]);
+    for (const [, key] of html.matchAll(/data-t-attr="[\w-]+:([\w.-]+)"/g)) expect(key! in de, key).toBe(true);
+  });
+
+  it('has no visible text outside the markers, except names', () => {
+    const body = html.slice(html.indexOf('<body>'));
+    const rest = body
+      .replace(/(<(\w+)\b[^>]*\sdata-t="[\w.-]+"[^>]*>)[^<]*(<\/\2>)/g, '$1$3')
+      .replace(/<[^>]+>/g, '\n')
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean);
+    expect(new Set(rest)).toEqual(new Set(['SecretEngerl', 'Bernd', 'Deutsch', 'English']));
   });
 });

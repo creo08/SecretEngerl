@@ -10,8 +10,8 @@ import { readdirSync, readFileSync } from 'node:fs';
 import { join, relative } from 'node:path';
 import { Marked, type Tokens } from 'marked';
 import type { Plugin } from 'vite';
-import de from '../src/i18n/de.json';
-import en from '../src/i18n/en.json';
+import de from '../src/i18n/de.json' with { type: 'json' };
+import en from '../src/i18n/en.json' with { type: 'json' };
 import { LANGUAGES, type Language } from '../src/i18n/i18n.ts';
 import { PAGE_PATHS, pageFromGermanPath, type PageId } from '../src/site/pages.ts';
 

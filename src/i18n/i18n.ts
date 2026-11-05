@@ -1,5 +1,5 @@
 /** Texts come from language files; nothing user-facing is hard-coded. German first, others load on demand. */
-import de from './de.json';
+import de from './de.json' with { type: 'json' };
 
 type Texts = Record<string, string | Partial<Record<Intl.LDMLPluralRule, string>>>;
 
@@ -8,7 +8,7 @@ export const LANGUAGES = ['de', 'en'] as const;
 export type Language = (typeof LANGUAGES)[number];
 
 const LOCALES: Record<Language, string> = { de: 'de-AT', en: 'en-GB' };
-const LOADERS: Record<Exclude<Language, 'de'>, () => Promise<{ default: Texts }>> = { en: () => import('./en.json') };
+const LOADERS: Record<Exclude<Language, 'de'>, () => Promise<{ default: Texts }>> = { en: () => import('./en.json', { with: { type: 'json' } }) };
 
 let current: Language = 'de';
 let texts: Texts = de;
