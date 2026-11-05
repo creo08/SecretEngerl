@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-11-06
+
 ### Added
 
 - English: the app, the start page and every help and form page under /en/ (for example /en/secret-santa/, /en/white-elephant/), marked as AI translations with a link for corrections. German proper names of the forms get an English subtitle.
