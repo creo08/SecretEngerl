@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Party game "Räuberwichteln" with its page /raeuberwichteln/: played on one phone at the table, without links. Turn order random or as typed, a gift locks after 3 steals (adjustable), the robbed player goes next and may not steal back, an optional final swap, undo. The game survives a reload and deletes itself after 24 hours.
+
 ## [0.6.0] - 2026-11-05
 
 ### Changed
