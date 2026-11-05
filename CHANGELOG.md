@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Security
 
-- The yearly file seals last year's pairings like a draw (AES-GCM with a random key next to them), so nobody reads them in passing even without a password. Older yearly files still open.
+- The yearly file seals last year's pairings like a draw (AES-GCM with a random key next to them), so nobody reads them in passing even without a password. Older yearly files still open; app versions before this one reject the new files until they update.
 
 ### Fixed
 
