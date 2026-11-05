@@ -8,7 +8,7 @@ The app is served by GitHub Pages. GitHub logs the IP address of every page requ
 
 ## Where your data stays
 
-What you enter into a round stays on the devices of those taking part and in the chats the links go through. On the organizer's device the round is kept in the browser until 14 days after the exchange, or until "Delete round now". The receiving side stores nothing.
+What you enter into a round stays on the devices of those taking part and in the chats the links go through. On the organizer's device the round is kept in the browser until 14 days after the exchange, or until "Delete round now". The receiving side stores nothing. A game at the table such as Räuberwichteln stays with its names on that one device until "End game", or at most 24 hours after it started.
 
 ## Contact
 

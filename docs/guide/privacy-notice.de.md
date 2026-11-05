@@ -8,7 +8,7 @@ Die App wird von GitHub Pages ausgeliefert. GitHub protokolliert beim Seitenaufr
 
 ## Wo deine Daten bleiben
 
-Was man in eine Runde einträgt, bleibt auf den Geräten der Beteiligten und in den Chats, über die die Links gehen. Auf dem Gerät der organisierenden Person bleibt die Runde im Browser, bis 14 Tage nach der Übergabe oder bis „Runde jetzt löschen“. Wer ein Los öffnet, speichert nichts.
+Was man in eine Runde einträgt, bleibt auf den Geräten der Beteiligten und in den Chats, über die die Links gehen. Auf dem Gerät der organisierenden Person bleibt die Runde im Browser, bis 14 Tage nach der Übergabe oder bis „Runde jetzt löschen“. Wer ein Los öffnet, speichert nichts. Ein Spiel am Tisch wie Räuberwichteln bleibt mit den Namen auf dem einen Gerät, bis „Spiel beenden“ oder spätestens 24 Stunden nach dem Start.
 
 ## Kontakt
 

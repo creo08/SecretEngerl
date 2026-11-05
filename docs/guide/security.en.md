@@ -24,6 +24,7 @@ The app protects the draw from a passive host, from server logs, from link previ
 - PIN and log of the emergency view are barriers in the app, not encryption. Clearing the site data removes both. The app relies on fair play here.
 - Before the app removes it from the address bar, a link can land in the browser history, in browser sync, in a messenger's in-app browser or in the clipboard history. The full link also stays in the chat history and in chat backups.
 - Last year's round on the device holds who gave to whom and the hints in plain text; it stays until a new round starts from it or "Forget last year" removes it. The yearly file seals the pairings like a draw, so nobody reads them in passing, but anyone who takes the file apart can; without a password its names and hints are readable.
+- A running game at the table keeps its names and gift words in plain text on the device until "End game", or at most 24 hours after it started.
 - The expiry date is enforced by the app, not by the cryptography. Someone who decrypts a link by hand ignores it.
 
 ## Randomness

@@ -24,6 +24,7 @@ Die App schützt das Los vor einem passiven Hoster, vor Server-Logs, vor Link-Vo
 - PIN und Protokoll des Notfalls sind Hürden in der App, keine Verschlüsselung. Wer die Website-Daten löscht, entfernt beide. Die App setzt hier auf Fairness.
 - Bevor die App ihn aus der Adresszeile entfernt, kann ein Link im Browserverlauf, in der Browser-Synchronisierung, im In-App-Browser eines Messengers oder im Zwischenablage-Verlauf landen. Der vollständige Link bleibt außerdem im Chatverlauf und in Chat-Backups.
 - Die Vorjahresrunde auf dem Gerät enthält im Klartext, wer wen beschenkt hat, und die Hinweise; sie bleibt, bis eine neue Runde daraus startet oder „Vorjahr vergessen“ sie entfernt. Die Jahresdatei versiegelt die Paarungen wie ein Los, beim bloßen Hineinschauen liest sie also niemand, wer die Datei zerlegt, aber schon; ohne Passwort sind Namen und Hinweise darin lesbar.
+- Ein laufendes Spiel am Tisch liegt mit Namen und Geschenk-Stichworten im Klartext auf dem Gerät, bis „Spiel beenden“ oder spätestens 24 Stunden nach dem Start.
 - Das Ablaufdatum setzt die App durch, nicht die Kryptografie. Wer einen Link von Hand entschlüsselt, ignoriert es.
 
 ## Zufall
