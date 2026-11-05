@@ -54,26 +54,33 @@ export function showRaeuberSetup(): void {
 }
 
 /** Plays from `state` on; every move is stored so a reload does not end the game. */
-export async function play(state: RaeuberState): Promise<void> {
+export function play(state: RaeuberState): void {
   const history: RaeuberState[] = [];
-  const go = async (next: RaeuberState) => {
+  // Saves run one after another, so an older state never overwrites a newer one.
+  let saving = Promise.resolve();
+  const persist = () => {
+    const snapshot = state;
+    saving = saving.then(() => saveGame(snapshot)).catch(() => undefined);
+  };
+  const go = (next: RaeuberState) => {
     if (next === state) return;
     history.push(state);
     state = next;
-    await saveGame(state).catch(() => undefined);
     render();
+    persist();
   };
   const undo = h('button', { type: 'button', class: 'btn btn--card' }, t('game.undo'));
-  undo.addEventListener('click', async () => {
+  undo.addEventListener('click', () => {
     const previous = history.pop();
     if (!previous) return;
     state = previous;
-    await saveGame(state).catch(() => undefined);
     render();
+    persist();
   });
   const end = h('button', { type: 'button', class: 'btn btn--text' }, t('game.end'));
   end.addEventListener('click', async () => {
     if (state.phase !== 'done' && !(await confirmDialog(t('game.endWarning'), t('game.end'), t('round.cancel')))) return;
+    await saving;
     await deleteGame(KIND);
     const { showHome } = await import('./home.ts');
     await showHome(t('game.ended'));
@@ -109,7 +116,7 @@ export async function play(state: RaeuberState): Promise<void> {
         event.preventDefault();
         const value = parseLabel(label.value);
         if (value === null) return showErrors(errors, [t('raeuber.labelTooLong', { max: MAX_LABEL_CHARS })]);
-        void go(unwrap(state, value));
+        go(unwrap(state, value));
       });
       body.push(
         h('p', { class: 'muted fig' }, t('raeuber.wrapped', { count: wrappedCount(state) })),
@@ -117,14 +124,14 @@ export async function play(state: RaeuberState): Promise<void> {
         h('p', {}, t('raeuber.choice')),
         form,
         state.gifts.length ? h('h2', { class: 'panel-title' }, t('raeuber.unwrapped')) : null,
-        state.gifts.length ? giftList(t('raeuber.steal'), (n) => void go(steal(state, n))) : null,
+        state.gifts.length ? giftList(t('raeuber.steal'), (n) => go(steal(state, n))) : null,
         state.nextTurn < state.players.length ? h('p', { class: 'muted small' }, t('raeuber.next', { name: state.players[state.nextTurn]! })) : null,
       );
     } else if (state.phase === 'finalSwap') {
       heading.textContent = t('raeuber.finalTurn', { name: state.players[0]! });
       const keep = h('button', { type: 'button', class: 'btn btn--ink' }, t('raeuber.keep'));
-      keep.addEventListener('click', () => void go(finalSwap(state, null)));
-      body.push(h('p', {}, t('raeuber.finalHelp')), giftList(t('raeuber.swap'), (n) => void go(finalSwap(state, n))), h('div', { class: 'actions' }, keep));
+      keep.addEventListener('click', () => go(finalSwap(state, null)));
+      body.push(h('p', {}, t('raeuber.finalHelp')), giftList(t('raeuber.swap'), (n) => go(finalSwap(state, n))), h('div', { class: 'actions' }, keep));
     } else {
       heading.textContent = t('raeuber.done');
       const byPlayer = state.players.map((name, i) => {
@@ -133,10 +140,13 @@ export async function play(state: RaeuberState): Promise<void> {
       });
       body.push(h('ul', { class: 'round-list' }, ...byPlayer));
     }
-    fill(byId('game'), h('div', { class: 'container narrow stack' }, heading, ...body, h('div', { class: 'actions game-actions' }, state.phase === 'done' ? null : undo, end)));
+    // A double tap at the table must not play the next person's turn too: the new screen takes taps a moment later.
+    const screen = h('div', { class: 'container narrow stack settling' }, heading, ...body, h('div', { class: 'actions game-actions' }, state.phase === 'done' ? null : undo, end));
+    fill(byId('game'), screen);
+    setTimeout(() => screen.classList.remove('settling'), 400);
     heading.focus();
   };
-  await saveGame(state).catch(() => undefined);
+  persist();
   showView('game');
   render();
 }

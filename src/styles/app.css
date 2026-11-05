@@ -182,3 +182,4 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
 
 /* Party games: whose turn it is, readable from across the table */
 .game-turn { font-size: clamp(2.75rem, 12vw, 4.5rem); overflow-wrap: anywhere; }
+.settling { pointer-events: none; }

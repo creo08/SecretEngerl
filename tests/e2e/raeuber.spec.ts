@@ -13,7 +13,12 @@ test('Räuberwichteln runs on one phone: steal, lock, reload, undo and the end',
   await expect(page.getByRole('heading', { name: 'Anna ist dran' })).toBeFocused();
   await expect(page.getByText('Noch 3 Geschenke verpackt')).toBeVisible();
   await page.getByLabel('Was ist drin? (freiwillig)').fill('Socken');
-  await page.getByRole('button', { name: 'Neues Geschenk auspacken' }).click();
+  // A double tap unwraps one gift, not a second one for the next person.
+  await expect(page.locator('.settling')).toHaveCount(0);
+  const box = (await page.getByRole('button', { name: 'Neues Geschenk auspacken' }).boundingBox())!;
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
+  await expect(page.getByText('Noch 2 Geschenke verpackt')).toBeVisible();
 
   await expect(page.getByRole('heading', { name: 'Bernd ist dran' })).toBeVisible();
   await page.getByRole('button', { name: 'Klauen' }).click();
