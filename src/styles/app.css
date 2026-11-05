@@ -188,3 +188,4 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
 .die-rule { font-weight: 600; }
 .die-rules { padding-left: var(--space-lg); }
 .btn--big { min-height: 4rem; padding-inline: var(--space-2xl); font-size: var(--text-lg); }
+.section-lead { margin-bottom: var(--space-md); }
