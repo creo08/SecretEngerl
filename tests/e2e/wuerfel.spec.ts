@@ -48,3 +48,34 @@ test('Würfelwichteln rolls, shows the rule, turns around, pauses and ends when 
   await page.getByRole('button', { name: 'Spiel beenden' }).click();
   await expect(page.getByText('Das Spiel ist beendet und gelöscht.')).toBeVisible();
 });
+
+test('the screen stays on while the timer runs, also after coming back to the tab', async ({ page }) => {
+  // A stand-in wake lock that counts requests and can be released like the browser does when a tab is hidden.
+  await page.addInitScript(() => {
+    const w = window as unknown as { locks: EventTarget[] };
+    w.locks = [];
+    Object.defineProperty(navigator, 'wakeLock', {
+      value: {
+        request: async () => {
+          const lock = new EventTarget() as EventTarget & { release: () => Promise<void> };
+          lock.release = async () => void lock.dispatchEvent(new Event('release'));
+          w.locks.push(lock);
+          return lock;
+        },
+      },
+    });
+  });
+  await page.goto('./?spiel=wuerfelwichteln');
+  await page.getByLabel('Namen, einer pro Zeile').fill('Anna\nBernd');
+  await page.getByRole('button', { name: 'Spiel starten' }).click();
+  await expect.poll(() => page.evaluate(() => (window as unknown as { locks: unknown[] }).locks.length)).toBe(1);
+  // The browser drops the lock; on return to the tab the game asks again.
+  await page.evaluate(() => {
+    const w = window as unknown as { locks: (EventTarget & { release: () => Promise<void> })[] };
+    void w.locks[0]!.release();
+    document.dispatchEvent(new Event('visibilitychange'));
+  });
+  await expect.poll(() => page.evaluate(() => (window as unknown as { locks: unknown[] }).locks.length)).toBe(2);
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await expect(page.getByRole('timer')).toHaveText(/^Pause/);
+});
