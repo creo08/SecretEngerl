@@ -23,7 +23,7 @@ Die App schützt das Los vor einem passiven Hoster, vor Server-Logs, vor Link-Vo
 - Das Gerät der organisierenden Person enthält die Zuordnung. Die gespeicherten Links enthalten ihre Schlüssel; wer das Gerät und die Entwicklerwerkzeuge hat, kann lesen, wer wen gezogen hat.
 - PIN und Protokoll des Notfalls sind Hürden in der App, keine Verschlüsselung. Wer die Website-Daten löscht, entfernt beide. Die App setzt hier auf Fairness.
 - Bevor die App ihn aus der Adresszeile entfernt, kann ein Link im Browserverlauf, in der Browser-Synchronisierung, im In-App-Browser eines Messengers oder im Zwischenablage-Verlauf landen. Der vollständige Link bleibt außerdem im Chatverlauf und in Chat-Backups.
-- Die Vorjahresrunde, in der Jahresdatei und auf dem Gerät, enthält im Klartext, wer wen beschenkt hat, und die Hinweise, außer die Datei hat ein Passwort. Auf dem Gerät bleibt sie, bis eine neue Runde daraus startet oder „Vorjahr vergessen“ sie entfernt.
+- Die Vorjahresrunde auf dem Gerät enthält im Klartext, wer wen beschenkt hat, und die Hinweise; sie bleibt, bis eine neue Runde daraus startet oder „Vorjahr vergessen“ sie entfernt. Die Jahresdatei versiegelt die Paarungen wie ein Los, beim bloßen Hineinschauen liest sie also niemand, wer die Datei zerlegt, aber schon; ohne Passwort sind Namen und Hinweise darin lesbar.
 - Das Ablaufdatum setzt die App durch, nicht die Kryptografie. Wer einen Link von Hand entschlüsselt, ignoriert es.
 
 ## Zufall
