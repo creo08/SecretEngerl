@@ -180,7 +180,7 @@
   "emergency.pin": "PIN",
   "emergency.wrongPhrase": "Bitte genau „Ich spicke“ eintippen oder den Knopf gedrückt halten.",
   "emergency.wrongPin": "Die PIN stimmt nicht.",
-  "emergency.result": "{giver} beschenkt {receiver}.",
+  "emergency.resultLabel": "{giver} beschenkt",
   "emergency.log": "Protokoll",
   "emergency.logEntry": "Zuordnung von {name} angesehen am {date}",
   "emergency.logEmpty": "Noch nichts angesehen.",

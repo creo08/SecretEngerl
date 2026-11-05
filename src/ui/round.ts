@@ -267,7 +267,7 @@ function emergencySection(round: StoredRound): HTMLElement {
   const who = h('select', { id: uid('f') }, ...round.links.map((l) => h('option', { value: l.name }, l.name)));
   const phrase = h('input', { type: 'text', id: uid('f'), autocomplete: 'off', spellcheck: 'false' });
   const pin = h('input', { type: 'password', id: uid('f'), inputmode: 'numeric', autocomplete: 'off' });
-  const result = h('p', { class: 'result', 'aria-live': 'polite' });
+  const result = h('div', { class: 'result', 'aria-live': 'polite' });
   const log = h('ul', { class: 'log' });
   const renderLog = (views: StoredRound['views']) =>
     fill(log, ...(views.length ? views.map((v) => h('li', {}, v.name ? t('emergency.logEntry', { name: v.name, date: formatDateTime(v.at) }) : t('stage.logEntry', { date: formatDateTime(v.at) }))) : [h('li', {}, t('emergency.logEmpty'))]));
@@ -277,7 +277,11 @@ function emergencySection(round: StoredRound): HTMLElement {
     const current = await loadRound(store, round.id);
     if (!(await checkPin(current, pin.value))) return void (result.textContent = t('emergency.wrongPin'));
     const { round: next, receiver } = await viewAssignment(store, round.id, who.value, Date.now());
-    result.textContent = t('emergency.result', { giver: who.value, receiver });
+    // Set big on its own card, and focused, so the name cannot be missed.
+    const card = h('div', { class: 'slip stock reveal-result', tabindex: '-1' }, h('p', { class: 'slip-label' }, t('emergency.resultLabel', { giver: who.value })), h('p', { class: 'slip-name' }, receiver));
+    fill(result, card);
+    card.focus();
+    card.scrollIntoView({ block: 'center' });
     renderLog(next.views);
   };
   const show = h('button', { type: 'button', class: 'btn btn--card' }, t('emergency.show'));

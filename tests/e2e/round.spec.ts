@@ -63,9 +63,10 @@ test('a complete round makes no request outside the own origin', async ({ browse
   // Emergency view of one person, logged.
   await page.getByText('Während der Runde').click();
   await page.getByLabel('Wen beschenkt …?').selectOption('Anna');
-  await page.getByLabel('Tippe „Ich spicke“').last().fill('ich spicke');
+  await page.getByLabel('Tippe „Ich spicke“').filter({ visible: true }).fill('ich spicke');
   await page.getByRole('button', { name: 'Ansehen' }).click();
-  await expect(page.getByText(`Anna beschenkt ${bengerl}.`)).toBeVisible();
+  await expect(page.locator('.reveal-result')).toHaveText(`Anna beschenkt${bengerl}`);
+  await expect(page.locator('.reveal-result')).toBeFocused();
   await expect(page.getByText(/Zuordnung von Anna angesehen am/)).toBeVisible();
 
   // Drop-out: exactly one person gets a new link.

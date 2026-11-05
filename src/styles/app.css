@@ -176,3 +176,4 @@ summary:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2
 .stage-name { font-size: var(--text-display-s); overflow-wrap: anywhere; }
 .stage-verb { font-size: var(--text-title); font-weight: 500; color: var(--color-muted); letter-spacing: 0; }
 .stage-actions { justify-content: center; }
+.reveal-result { margin-top: var(--space-sm); padding: var(--space-lg); }
