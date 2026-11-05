@@ -105,7 +105,11 @@ export function play(state: WuerfelState): void {
   let lock: WakeLockSentinel | null = null;
   const keepAwake = async (on: boolean) => {
     try {
-      if (on && !lock && document.visibilityState === 'visible') lock = (await navigator.wakeLock?.request('screen')) ?? null;
+      if (on && !lock && document.visibilityState === 'visible') {
+        lock = (await navigator.wakeLock?.request('screen')) ?? null;
+        // The browser drops the lock when the tab is hidden; forget it so it is asked for again on return.
+        lock?.addEventListener('release', () => (lock = null));
+      }
       if (!on && lock) {
         await lock.release();
         lock = null;
