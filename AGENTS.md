@@ -14,7 +14,7 @@ SecretEngerl is a static web app (PWA) for Engerl-Bengerl, Wichteln and Secret S
 | `src/config/` | Configuration model for categories A to K, templates as JSON, validation |
 | `src/input/` | Validation of names, amounts and dates from URL, file and form, and the pre-fill link parser |
 | `src/losfee/` | Matching engine: rules, feasibility (Hopcroft-Karp, Hall), uniform draw, drop-out repair. No DOM. Gets its RNG from outside |
-| `src/games/` | Party games on one device (Räuberwichteln, Würfelwichteln): pure state transitions, no DOM. Gets its RNG from outside |
+| `src/games/` | Party games on one device (Räuberwichteln, Würfelwichteln; Zufallswichteln uses `losfee`): pure state transitions, no DOM. Gets its RNG from outside |
 | `src/link/` | Link format v1: AES-GCM, 256-byte padding, expiry |
 | `src/store/` | IndexedDB storage of rounds, of last year's rounds and of a running party game on the organizer's device |
 | `src/files/` | File envelope (plain or password-encrypted) and last year's data for the yearly file |
