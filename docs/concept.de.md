@@ -268,7 +268,15 @@ Wer eine Suchmaschine oder einen KI-Assistenten nach „Engerl-Bengerl online au
 
 ## Partyspiele
 
-Das Partyspiel-Modul läuft auf einem Gerät am Tisch, offline und ohne Links. Es bietet Zugreihenfolge, digitalen Würfel mit änderbarer Regeltabelle, Timer und einen Klau-Zähler mit Sperre. Es kommt nach dem Zuordnungs-Wichteln.
+Das Partyspiel-Modul läuft auf einem Gerät am Tisch, offline und ohne Links. Vorab wird nichts gezogen, und niemand bekommt einen Link. Es kommt nach dem Zuordnungs-Wichteln und bietet drei Spiele, jedes mit Vorlage und Formseite (`/raeuberwichteln/`, `/wuerfelwichteln/`, `/zufallswichteln/`). Auf der Startseite stehen sie in einem eigenen Abschnitt „Spiele am Tisch“ unter den Vorlagen. Die Namen kommen wie bei einer gezogenen Runde hinein, einer pro Zeile. Die Zugreihenfolge ist zufällig (aus `crypto.getRandomValues`) oder wie eingetippt; „die Jüngste zuerst“ heißt, die Namen in dieser Reihenfolge einzutippen.
+
+**Räuberwichteln** (White Elephant, Yankee Swap, Dirty Santa). Alle bringen ein verpacktes Geschenk mit. Reihum packt eine Person entweder ein neues Geschenk aus oder klaut ein bereits ausgepacktes. Ein Geschenk bekommt beim Auspacken eine Nummer und auf Wunsch ein kurzes Stichwort („Socken“); die App führt, wer welches Geschenk hält. Nach 3 Klauen ist ein Geschenk gesperrt; die Zahl ist änderbar. Wer beklaut wird, ist als Nächstes dran und darf das gerade verlorene Geschenk nicht zurückklauen. Auf Wunsch darf die erste Person am Ende noch einmal tauschen. Das Spiel endet, wenn alle Geschenke ausgepackt sind.
+
+**Würfelwichteln.** Die Geschenke liegen in der Mitte. Die App würfelt digital (aus `crypto.getRandomValues`, ohne Verzerrung), zeigt, wer dran ist und welche Regel zur Zahl gilt, und führt einen Timer, standardmäßig 15 Minuten. Wer welches Geschenk hält, führt sie nicht; das sieht der Tisch. Jede Zeile der Regeltabelle ist änderbar. Der Standard: Eine 6 nimmt ein Geschenk aus der Mitte, eine 1 tauscht mit irgendwem, eine 2 gibt alle Geschenke im Uhrzeigersinn weiter, eine 3 tauscht mit links, eine 4 mit rechts, und eine 5 wählt zwei Personen, die tauschen. Ein Schalter kehrt die Richtung um. Eine Trinkregel ist optional und standardmäßig aus; eingeschaltet kommt eine änderbare Zeile dazu, standardmäßig „wer eine 1 würfelt, trinkt zusätzlich einen Schluck“.
+
+**Zufallswichteln.** Alle bringen ein Geschenk für eine Person mit, die noch niemand kennt. Wer wessen Geschenk bekommt, wird erst am Übergabetag ausgelost, auf dem einen Gerät bei der Feier. Die Ziehung nutzt die Zuordnungs-Engine: Niemand bekommt das eigene Geschenk, eine Leerzeile in der Namensliste hält Gruppen auseinander, und „Keine Gegenseitigkeit“ ist wie in jeder Vorlage an. Die Paare erscheinen nacheinander wie bei der Bühne. Gespeichert wird nichts, Links gibt es keine.
+
+Der Spielstand von Räuberwichteln und Würfelwichteln liegt in IndexedDB (`secretengerl-games`), damit ein versehentliches Neuladen das Spiel nicht beendet. „Spiel beenden“ löscht ihn, sonst löscht er sich nach 24 Stunden selbst. Solange ein Timer läuft, bleibt der Bildschirm an, wo der Browser eine Wake-Lock-Sperre anbietet. Am Ende vibriert das Gerät und spielt einen kurzen Ton aus Web Audio, ohne Audiodatei. Der Ton ist abschaltbar und standardmäßig an.
 
 ## Härtung und Nachprüfbarkeit
 
@@ -291,7 +299,7 @@ Das Partyspiel-Modul läuft auf einem Gerät am Tisch, offline und ohne Links. E
 | 4 | Oberfläche auf Deutsch mit den Vorlagen „Engerl-Bengerl klassisch“, „Schrottwichteln“, „Familien-Wichteln“, „Büro-Wichteln“; Doku in der App; `/datenschutz/`; PWA | Runde einrichten in unter zwei Minuten ohne Hilfe, getestet mit Personen ohne Technikbezug; keine Anfragen außer an die eigene Herkunft |
 | 5 | Auffindbarkeit: Seiten pro Form, `llms.txt`, JSON-LD, Sitemap, Vorbelegungs-Link | Seiten ohne JavaScript lesbar |
 | 6 | Vorjahr (Jahresdatei und Gedächtnis auf dem Gerät), Sicherungsdatei, Auflösung „Bühne“, „Post-Wichteln“ mit Adresse im Los, Advent-Engerl; der Adventskalender folgt erst auf Wunsch | |
-| 7 | Partyspiele | Spielbar auf einem Handy am Tisch |
+| 7 | Partyspiele: Räuberwichteln, Würfelwichteln, Zufallswichteln mit ihren Formseiten | Spielbar auf einem Handy am Tisch |
 | 8 | Weitere Sprachen in der Reihenfolge Englisch, Schwedisch, Spanisch, Portugiesisch, Niederländisch, Polnisch, Ukrainisch, Filipino; alle als KI-Übersetzung gekennzeichnet | Keine fest verdrahteten Texte im Code |
 | 9 | Härtung, Barrierefreiheit, Release mit `SHA256SUMS` und Attestierung | Lighthouse 95 oder besser, externe Durchsicht der Kryptografie |
 

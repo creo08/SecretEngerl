@@ -268,7 +268,15 @@ Anyone who asks a search engine or an AI assistant "Engerl-Bengerl online auslos
 
 ## Party games
 
-The party game module runs on one device at the table, offline and without links. It offers turn order, a digital die with an editable rule table, a timer and a steal counter with a lock. It comes after the drawn forms.
+The party game module runs on one device at the table, offline and without links. Nothing is drawn in advance and nobody gets a link. It comes after the drawn forms and offers three games, each with a template and a form page (`/raeuberwichteln/`, `/wuerfelwichteln/`, `/zufallswichteln/`). On the start page they sit in their own section "Spiele am Tisch" below the templates. Names are entered as in a drawn round, one per line. The turn order is random (from `crypto.getRandomValues`) or as typed; "youngest first" means typing the names in that order.
+
+**Räuberwichteln** (White Elephant, Yankee Swap, Dirty Santa). Everyone brings one wrapped gift. In turn, a player either unwraps a new gift or steals one that is already unwrapped. A gift gets a number when it is unwrapped, and optionally a short word ("socks"); the app keeps track of who holds which gift. A gift is locked after 3 steals; the number can be changed. Whoever is robbed goes next and may not steal back the gift they just lost. As an option, the first player may swap once more at the end. The game ends when every gift is unwrapped.
+
+**Würfelwichteln.** The gifts lie in the middle. The app rolls a digital die (from `crypto.getRandomValues`, without bias), shows whose turn it is and the rule for the number, and runs a timer, 15 minutes by default. It does not track who holds which gift; the table sees that. Every line of the rule table can be edited. The default: a 6 takes a gift from the middle, a 1 swaps with anyone, a 2 passes all gifts clockwise, a 3 swaps with the left neighbour, a 4 with the right neighbour, and a 5 picks two people who swap. A switch reverses the direction. A drinking rule is optional and off by default; turned on, it adds an editable line, by default "whoever rolls a 1 also takes a sip".
+
+**Zufallswichteln** (Random Wichteln). Everyone brings one gift for a person nobody knows yet. Who gets whose gift is drawn only on the exchange day, on the one device at the party. The draw uses the matching engine: nobody gets their own gift, a blank line in the name list keeps groups apart, and "no mutual pairs" is on as in every template. The pairs appear one at a time as in the stage reveal. Nothing is stored and no links are made.
+
+The state of Räuberwichteln and Würfelwichteln is kept in IndexedDB (`secretengerl-games`), so that an accidental reload does not end the game. "End game" deletes it; otherwise it deletes itself after 24 hours. While a timer runs, the screen stays on where the browser offers a wake lock. When it ends, the device vibrates and plays a short tone made with Web Audio, without an audio file. The tone can be turned off and is on by default.
 
 ## Hardening and verifiability
 
@@ -291,7 +299,7 @@ The party game module runs on one device at the table, offline and without links
 | 4 | German UI with the templates "Engerl-Bengerl classic", "Schrottwichteln", "Family Wichteln", "Office Wichteln"; documentation in the app; `/datenschutz/`; PWA | setting up a round takes under two minutes without help, tested with non-technical people; no requests except to the app's own origin |
 | 5 | Findability: pages per form, `llms.txt`, JSON-LD, sitemap, pre-fill link | pages readable without JavaScript |
 | 6 | Last year's data (yearly file and memory on the device), backup file, stage reveal, "Postal Wichteln" with the address in the draw, Advent-Engerl; the Advent calendar follows only when requested | |
-| 7 | Party games | playable on one phone at the table |
+| 7 | Party games: Räuberwichteln, Würfelwichteln, Zufallswichteln with their form pages | playable on one phone at the table |
 | 8 | Further languages in the order English, Swedish, Spanish, Portuguese, Dutch, Polish, Ukrainian, Filipino; all marked as AI translations | no hard-coded strings in the code |
 | 9 | Hardening, accessibility, release with `SHA256SUMS` and attestation | Lighthouse 95 or better, external review of the cryptography |
 
