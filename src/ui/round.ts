@@ -15,7 +15,7 @@ import type { StoredRound } from '../store/types.ts';
 import { askWorker } from '../worker/client.ts';
 import { byId, disclosure, confirmDialog, downloadFile, fill, h, showView, uid } from './dom.ts';
 import { sealFile } from '../files/envelope.ts';
-import { yearFileName, yearFromRound } from '../files/year.ts';
+import { yearFileContent, yearFileName, yearFromRound } from '../files/year.ts';
 import { backupContent, backupFileName } from '../files/backup.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
@@ -316,7 +316,7 @@ function yearSection(round: StoredRound): HTMLElement {
     'click',
     safely(async () => {
       const data = await yearFromRound(await loadRound(store, round.id));
-      downloadFile(yearFileName(data.year), await sealFile('secretengerl-year', { ...data }, password.value), 'application/json');
+      downloadFile(yearFileName(data.year), await sealFile('secretengerl-year', await yearFileContent(data), password.value), 'application/json');
       status.textContent = t('year.saved');
     }),
   );

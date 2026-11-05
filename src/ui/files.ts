@@ -1,6 +1,6 @@
 /** Opening files on the start page. Files are untrusted input and are checked like any other. */
 import { MAX_FILE_BYTES, openFile } from '../files/envelope.ts';
-import { validateYear } from '../files/year.ts';
+import { yearFromFileContent } from '../files/year.ts';
 import { mergeForRestore, roundFromBackup } from '../files/backup.ts';
 import { indexedDbStore as store } from '../store/db.ts';
 import { showRound } from './round.ts';
@@ -28,7 +28,7 @@ export function fileOpener(): HTMLElement {
     }
     if (opened.status === 'invalid') return void (status.textContent = t('file.invalid'));
     if (opened.format === 'secretengerl-year') {
-      const year = validateYear(opened.content);
+      const year = await yearFromFileContent(opened.content);
       if (!year.ok) return void (status.textContent = t('file.invalid'));
       return startWizardFromYear(year.value);
     }

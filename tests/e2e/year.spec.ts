@@ -36,7 +36,8 @@ test('a yearly file starts next year without last year\'s pairings, with renamed
   const path = await saveYearFile(page);
   const content = JSON.parse(await readFile(path, 'utf8'));
   expect(content).toMatchObject({ format: 'secretengerl-year', version: 1, hints: { Clara: 'keine Nüsse' } });
-  expect(content.pairings).toHaveLength(5);
+  expect(content.pairings).toBeUndefined();
+  expect(content.sealedPairings).toMatch(/^[\w-]{22}\.[\w-]+$/);
 
   await openYearFile(page, path);
   await expect(page.getByLabel('Namen, einer pro Zeile')).toHaveValue('Anna\nBernd\n\nClara\n\nDavid\n\nEva');
