@@ -30,6 +30,7 @@ The person taps the link. The app removes the draw from the address bar at once 
 
 - **Send again:** if someone loses their link, open the round on your device and send it again.
 - **Someone drops out:** the Engerl of that person takes over their Bengerl, and exactly one person gets a new link. If that breaks a rule, the app tells you and offers a new draw.
+- **Edit round:** opens the setup with everything filled in. Change names, add someone, adjust the budget or the exchange date, then draw: everyone gets a new link and the draw number goes up. Hints and addresses stay with names that did not change.
 - **Draw again:** everyone gets a new link and the draw number goes up. Old links still open, so tell the group which draw counts.
 - **Stage reveal:** at the party, "Start reveal" shows one pair at a time on your device, following the chain. Until the exchange day it sits under "During the round", needs "Ich spicke" and is logged.
 - **Emergency:** "View assignment" shows one person at a time after you type "Ich spicke" or hold the button. Every view is logged.
