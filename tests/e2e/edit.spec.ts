@@ -64,3 +64,20 @@ test('"Zurück" while editing returns to the round', async ({ page }) => {
   await page.getByRole('button', { name: 'Zurück' }).click();
   await expect(page.locator('#round').getByText('Ziehung Nr. 1', { exact: true })).toBeVisible();
 });
+
+test('editing keeps last year\'s pairings hidden behind "Ich spicke"', async ({ page }) => {
+  await page.goto('./?vorlage=familien-wichteln');
+  await page.getByLabel('Namen, einer pro Zeile').fill('Anna\n\nBernd\n\nClara');
+  await page.getByLabel('Übergabetag').fill(inDays(30));
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await page.getByLabel('Anna hat beschenkt').selectOption('Bernd');
+  await page.getByLabel('Keine Gegenseitigkeit').uncheck();
+  await page.getByRole('button', { name: 'Ziehen' }).click();
+  await page.getByText('Während der Runde').click();
+  await page.getByRole('button', { name: 'Runde bearbeiten' }).click();
+  await page.getByRole('button', { name: 'Weiter' }).click();
+  await expect(page.getByLabel('Anna hat beschenkt')).toHaveValue('');
+  await expect(page.getByText(/^1 Paarung aus \d{4} wird ausgeschlossen\.$/)).toBeVisible();
+  await page.getByRole('button', { name: 'Ziehen' }).click();
+  await expect(page.locator('#round').getByText('Ziehung Nr. 2', { exact: true })).toBeVisible();
+});

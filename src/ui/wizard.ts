@@ -108,7 +108,10 @@ export function startWizardFromRound(round: StoredRound): void {
     weekThemes: weekly ? [0, 1, 2, 3].map((i) => weeks[i] ?? '') : ['', '', '', ''],
     hints: { ...config.gifts.hints },
     addresses: { ...config.addresses },
-    lastYear: Object.fromEntries(config.rules.lastYear.map((p) => [p.giver, p.receiver])),
+    // Last year's pairings stay hidden behind "Ich spicke", as when they came from the yearly file.
+    ...(config.rules.lastYear.length
+      ? { previous: { year: Number(config.occasion.exchangeDate.slice(0, 4)) - 1, names: config.participants.households.flat(), pairings: config.rules.lastYear.map((p) => ({ ...p })) }, mapped: true }
+      : {}),
     exclusions: config.rules.exclusions.map((e) => ({ ...e })),
     must: config.rules.must.map((m) => ({ ...m, choices: [...m.choices] })),
     noMutual: config.structure.noMutual,
