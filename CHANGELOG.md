@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-11-10
+
+### Changed
+
+- CI lets Dependabot's pull requests pass the hygiene check on its own branches, so they show whether an update passes the tests. Its commits still never reach the public repository: updates are taken over as the maintainer's own commits.
+
 ## [0.8.1] - 2026-11-10
 
 ### Added
