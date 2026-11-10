@@ -1,6 +1,6 @@
 {
   "name": "secretengerl",
-  "version": "0.8.2",
+  "version": "0.8.3",
   "private": true,
   "description": "Engerl-Bengerl, the Austrian Secret Santa: Wichteln and Secret Santa without a server.",
   "license": "MIT",

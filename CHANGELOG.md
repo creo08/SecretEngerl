@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-11-10
+
+### Changed
+
+- Development tools updated: `@playwright/test` 1.65.0 and `vite` 8.3.6, taken over from Dependabot's pull requests as own commits.
+
 ## [0.8.2] - 2026-11-10
 
 ### Changed
