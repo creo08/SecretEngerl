@@ -5,12 +5,20 @@
 # messages carry no tool trailers or session URLs, and no added line in any
 # file contains those strings or an email address other than the maintainer's.
 #
+# With HYGIENE_ALLOW_DEPENDABOT=1, commits made by Dependabot (its author and
+# GitHub as committer) pass the identity check; the other rules still apply.
+# CI sets it only on Dependabot's own branches. Those commits are never merged
+# or promoted as they are: the pre-push hook and the promote workflow stay strict.
+#
 # Usage:
 #   scripts/check-hygiene.sh <git rev-list arguments>   e.g. HEAD, origin/main..HEAD
 #   scripts/check-hygiene.sh --commit-msg <file>         used by .githooks/commit-msg
 set -euo pipefail
 
 IDENT='creo08 <285598642+creo08@users.noreply.github.com>'
+BOT_AUTHOR='dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>'
+# Split so the address does not count as an added email address in this file.
+BOT_COMMITTER='GitHub <noreply''@github.com>'
 ALLOWED_EMAIL='285598642+creo08@users.noreply.github.com'
 # Split into pieces so this file does not match its own patterns.
 FORBIDDEN='Co-Authored''-By:|Claude-Session'':|claude''\.ai/code'
@@ -61,8 +69,14 @@ git rev-list "$@" >/dev/null # fail closed on a bad revision; mapfile below woul
 mapfile -t commits < <(git rev-list "$@")
 for c in "${commits[@]}"; do
   short=${c:0:12}
-  check_ident "$short author" "$(git log -1 --format='%an <%ae>' "$c")"
-  check_ident "$short committer" "$(git log -1 --format='%cn <%ce>' "$c")"
+  author=$(git log -1 --format='%an <%ae>' "$c")
+  committer=$(git log -1 --format='%cn <%ce>' "$c")
+  if [[ ${HYGIENE_ALLOW_DEPENDABOT:-} == 1 && $author == "$BOT_AUTHOR" && $committer == "$BOT_COMMITTER" ]]; then
+    echo "hygiene: $short by Dependabot, allowed on its own branch"
+  else
+    check_ident "$short author" "$author"
+    check_ident "$short committer" "$committer"
+  fi
   check_text "$short message" < <(git log -1 --format=%B "$c")
   check_text "$short files" emails < <(git diff-tree -p -r --root --no-commit-id --no-color --no-ext-diff "$c" | added_lines)
 done

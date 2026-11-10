@@ -16,6 +16,10 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - name: Check every commit from the root to the tip
+        env:
+          # Dependabot's pull requests carry its identity. They are a check and a
+          # notice only: never merged or promoted as they are (see dependabot.yml).
+          HYGIENE_ALLOW_DEPENDABOT: ${{ github.actor == 'dependabot[bot]' && startsWith(github.ref, 'refs/heads/dependabot/') && '1' || '' }}
         run: scripts/check-hygiene.sh HEAD
 
   test:

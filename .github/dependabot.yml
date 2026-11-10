@@ -1,6 +1,11 @@
-# Dependabot commits do not pass the hygiene check (wrong author). Treat its
-# pull requests as notices: apply updates in the private repository as own
-# commits, and close the pull requests. Never merge them on GitHub.
+# Dependabot's pull requests run CI with its identity allowed on its own
+# branches (see ci.yml), so the tests show whether an update works. Its commits
+# never pass the strict hygiene check of the pre-push hook and of promote.yml.
+# To take an update, re-commit it as the maintainer and close the pull request:
+#   git fetch origin <dependabot-branch>
+#   git cherry-pick <sha>
+#   git commit --amend --reset-author -m "chore: bump <package> to <version>"
+# Never merge the pull request on GitHub.
 version: 2
 updates:
   - package-ecosystem: npm
