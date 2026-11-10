@@ -18,6 +18,8 @@ test('a complete round makes no request outside the own origin', async ({ browse
   const page = await context.newPage();
 
   await page.goto('./');
+  // Before the script has wired the cards, a tap opens the form page instead, as without script.
+  await expect(page.locator('a[data-template][data-wired]')).toHaveCount(6);
   await page.getByRole('link', { name: /Engerl-Bengerl klassisch/ }).click();
   await expect(page.getByRole('heading', { name: 'Wer spielt mit?' })).toBeVisible();
   await expect(page.getByLabel('Name der Runde')).toHaveValue(/^Engerl-Bengerl klassisch \d{4}$/);
