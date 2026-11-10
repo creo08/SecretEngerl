@@ -90,7 +90,6 @@ export function startWizard(
   showView('wizard');
 }
 
-/** Starts a new round from last year's round: names, groups, budget and hints filled in, pairings excluded. */
 /**
  * Opens the wizard with everything of a running round filled in. "Ziehen" then
  * stores the next draw of the same round, as "Neu ziehen" does.
@@ -121,6 +120,7 @@ export function startWizardFromRound(round: StoredRound): void {
   });
 }
 
+/** Starts a new round from last year's round: names, groups, budget and hints filled in, pairings excluded. */
 export function startWizardFromYear(data: YearData, yearId?: string): void {
   const withBudget = getTemplate(data.template).fields.budget && data.budget !== null;
   startWizard(data.template, {
