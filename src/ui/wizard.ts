@@ -12,6 +12,7 @@ import { cleanText, nameKey, parseAmount, parseNameList, type Result } from '../
 import { freeHintBytes, oversizedDraws } from '../link/payload.ts';
 import { indexedDbStore, indexedDbYears, requestPersistence } from '../store/db.ts';
 import { MAX_TITLE_CHARS, saveDraw } from '../store/rounds.ts';
+import type { StoredRound } from '../store/types.ts';
 import { askWorker } from '../worker/client.ts';
 import { byId, checkbox, disclosure, errorBox, field, fill, h, showErrors, showView, uid } from './dom.ts';
 import { showRound } from './round.ts';
@@ -38,6 +39,10 @@ interface WizardState {
   /** Last year's names that are spelled differently now: old name → new name. */
   renames: Record<string, string>;
   mapped: boolean;
+  /** The round being edited; its next draw is stored under the same round. */
+  editing?: string;
+  /** Number of the draw this wizard makes; it can be one digit longer than 1 and must still fit. */
+  drawNumber?: number;
 }
 
 /** Today's date on this device as YYYY-MM-DD. */
@@ -59,7 +64,7 @@ export function appBase(): string {
 /** Starts the wizard with a template, optionally pre-filled (from a pre-fill link). */
 export function startWizard(
   template: TemplateId,
-  initial: Partial<Pick<WizardState, 'namesText' | 'budget' | 'date' | 'hints' | 'previous'>> = {},
+  initial: Partial<Omit<WizardState, 'template'>> = {},
 ): void {
   const t0 = getTemplate(template);
   const state: WizardState = {
@@ -86,6 +91,33 @@ export function startWizard(
 }
 
 /** Starts a new round from last year's round: names, groups, budget and hints filled in, pairings excluded. */
+/**
+ * Opens the wizard with everything of a running round filled in. "Ziehen" then
+ * stores the next draw of the same round, as "Neu ziehen" does.
+ */
+export function startWizardFromRound(round: StoredRound): void {
+  const { config } = round;
+  const weekly = getTemplate(config.template).fields.weeklyThemes;
+  const weeks = config.gifts.theme.split('|');
+  startWizard(config.template, {
+    title: round.title ?? '',
+    namesText: config.participants.households.map((g) => g.join('\n')).join('\n\n'),
+    date: config.occasion.exchangeDate,
+    budget: config.gifts.budget ? String(config.gifts.budget.amount) : '',
+    theme: weekly ? '' : config.gifts.theme,
+    weekThemes: weekly ? [0, 1, 2, 3].map((i) => weeks[i] ?? '') : ['', '', '', ''],
+    hints: { ...config.gifts.hints },
+    addresses: { ...config.addresses },
+    lastYear: Object.fromEntries(config.rules.lastYear.map((p) => [p.giver, p.receiver])),
+    exclusions: config.rules.exclusions.map((e) => ({ ...e })),
+    must: config.rules.must.map((m) => ({ ...m, choices: [...m.choices] })),
+    noMutual: config.structure.noMutual,
+    oneChain: config.structure.oneChain,
+    editing: round.id,
+    drawNumber: round.drawNumber + 1,
+  });
+}
+
 export function startWizardFromYear(data: YearData, yearId?: string): void {
   const withBudget = getTemplate(data.template).fields.budget && data.budget !== null;
   startWizard(data.template, {
@@ -177,7 +209,7 @@ function stepWho(state: WizardState): void {
   names.addEventListener('input', updatePreview);
   updatePreview();
   const back = h('button', { type: 'button', class: 'btn btn--card' }, t('wizard.back'));
-  back.addEventListener('click', () => showView('home'));
+  back.addEventListener('click', () => (state.editing ? void showRound(state.editing) : showView('home')));
   const next = h('button', { type: 'submit', class: 'btn btn--ink' }, t('wizard.next'));
   const form = h(
     'form',
@@ -283,7 +315,7 @@ function perPersonBlock(state: WizardState, people: string[], texts: Record<stri
       texts[name] = area.value;
       const built = buildConfig(state);
       if (!built.ok) return fill(counter);
-      const free = freeHintBytes(built.value, name, 1);
+      const free = freeHintBytes(built.value, name, state.drawNumber ?? 1);
       counter.classList.toggle('over', free < 0);
       // Shown as characters; each byte is one character for plain letters.
       counter.textContent = free >= 0 ? t('wizard.rules.free', { count: free }) : t('wizard.rules.over', { count: -free });
@@ -445,7 +477,7 @@ function stepRules(state: WizardState): void {
     const built = buildConfig(state);
     if (!built.ok) return showErrors(errors, errorMessages(built.errors));
     const config = built.value;
-    const tooLong = oversizedDraws(config, 1);
+    const tooLong = oversizedDraws(config, state.drawNumber ?? 1);
     if (tooLong.length) {
       const count = Math.max(...tooLong.map((x) => x.overBy));
       return showErrors(errors, [t('draw.tooLong', { names: tooLong.map((x) => x.name).join(', '), count })]);
@@ -458,11 +490,11 @@ function stepRules(state: WizardState): void {
       if (response.type === 'invalid') return showErrors(errors, errorMessages(response.errors));
       if (response.type !== 'draw') throw new Error('unexpected worker response');
       if (!response.result.ok) return showErrors(errors, [drawFailure(config, response.names, response.result)]);
-      const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase(), ...(state.title ? { title: state.title } : {}) });
+      const round = await saveDraw(indexedDbStore, { config, names: response.names, assignment: response.result.assignment, base: appBase(), ...(state.title ? { title: state.title } : {}), ...(state.editing ? { previousId: state.editing } : {}) });
       // A round started from last year's round on this device uses it up, but only once the new round is safely stored.
       if (state.previous?.yearId) await indexedDbYears.delete(state.previous.yearId).catch(() => undefined);
       void requestPersistence();
-      await showRound(round.id, { fresh: true });
+      await showRound(round.id, state.editing ? { message: t('round.edited', { n: round.drawNumber }) } : { fresh: true });
     } catch {
       showErrors(errors, [t('draw.failed')]);
     } finally {

@@ -19,7 +19,7 @@ import { yearFileContent, yearFileName, yearFromRound } from '../files/year.ts';
 import { backupContent, backupFileName } from '../files/backup.ts';
 import { icon } from './icons.ts';
 import { drawFailure, errorMessages } from './text.ts';
-import { appBase, todayIso } from './wizard.ts';
+import { appBase, startWizardFromRound, todayIso } from './wizard.ts';
 import { showStage } from './stage.ts';
 import { showHome } from './home.ts';
 
@@ -142,7 +142,7 @@ function duringRound(round: StoredRound, withStage: boolean): HTMLElement {
   return disclosure(
     t('round.during'),
     t(withStage ? 'round.duringHintStage' : 'round.duringHint'),
-    h('div', { class: 'stack' }, removeSection(round), redrawSection(round), emergencySection(round), withStage ? stageSection(round) : '', deleteSection(round)),
+    h('div', { class: 'stack' }, removeSection(round), editSection(round), redrawSection(round), emergencySection(round), withStage ? stageSection(round) : '', deleteSection(round)),
   );
 }
 
@@ -190,6 +190,12 @@ function removeSection(round: StoredRound): HTMLElement {
     );
   }));
   return section(t('round.remove'), h('div', { class: 'field' }, h('label', { for: select.id }, t('round.removeWho')), select), h('div', { class: 'actions' }, check), result);
+}
+
+function editSection(round: StoredRound): HTMLElement {
+  const button = h('button', { type: 'button', class: 'btn btn--card' }, t('round.edit'));
+  button.addEventListener('click', () => startWizardFromRound(round));
+  return section(t('round.edit'), h('p', { class: 'help' }, t('round.editHelp', { n: round.drawNumber + 1 })), h('div', { class: 'actions' }, button));
 }
 
 function redrawSection(round: StoredRound): HTMLElement {
