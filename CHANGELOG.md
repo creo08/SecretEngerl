@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-11-10
+
 ### Added
 
 - "Edit round" under "During the round" opens the setup with the round filled in (names, groups, date, budget, theme, hints, addresses, rules). Drawing then makes the next draw of the same round, so nobody types all names again. Hints and addresses stay with unchanged names.
