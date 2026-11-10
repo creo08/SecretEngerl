@@ -100,6 +100,7 @@ export function wireTemplateLinks(): void {
 /** With JavaScript, the game cards start the game setup instead of opening their help page. */
 function wireGameLinks(): void {
   for (const link of document.querySelectorAll<HTMLAnchorElement>('a[data-game]')) {
+    link.dataset.wired = '1';
     link.addEventListener('click', (event) => {
       event.preventDefault();
       void startGame(link.dataset.game);

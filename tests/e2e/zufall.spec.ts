@@ -4,6 +4,8 @@ test.use({ viewport: { width: 390, height: 844 } });
 
 test('Zufallswichteln draws at the party, keeps groups apart and stores nothing', async ({ page }) => {
   await page.goto('./');
+  // Before the script has wired the cards, a tap opens the form page instead, as without script.
+  await expect(page.locator('a[data-game][data-wired]')).toHaveCount(3);
   await page.getByRole('link', { name: /Zufallswichteln/ }).click();
   await page.getByLabel('Namen, einer pro Zeile').fill('Anna\nBernd\n\nClara\nDavid');
   await expect(page.getByText('Gruppe Anna und Bernd')).toBeVisible();
