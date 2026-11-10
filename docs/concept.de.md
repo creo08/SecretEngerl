@@ -117,6 +117,8 @@ Sagt jemand ab, ändert „Person entfernen“ nur das Nötigste: Das Engerl der
 
 Diese Reparatur kann eine Regel brechen: Das neue Paar kann im selben Haushalt sein, ausgeschlossen sein, das Vorjahr wiederholen oder eine Muss-Regel verletzen, und war die ausgefallene Person in einem Dreierkreis, beschenken sich danach zwei gegenseitig. Dann sagt die App: „Die Regeln gelten danach nicht mehr vollständig. Garantiert sind sie nur mit einer neuen Ziehung.“ und bietet „Trotzdem so“ und „Neu ziehen“ an. Haben sich die ausgefallene Person und ihr Engerl gegenseitig beschenkt (nur möglich, wenn Gegenseitigkeit erlaubt ist), würde das Engerl sich selbst ziehen; dann gibt es nur „Neu ziehen“.
 
+Um die Runde zu ändern, etwa einen Namen zu korrigieren, jemanden dazuzunehmen oder das Budget anzupassen, öffnet „Runde bearbeiten“ die Einrichtung mit allem schon ausgefüllt: Namen und Gruppen, Übergabetag, Budget, Motto, Hinweise, Adressen und Regeln. Ein Hinweis oder eine Adresse bleibt bei einem Namen, der sich nicht geändert hat. „Ziehen“ macht dann die nächste Ziehung derselben Runde: Alle bekommen einen neuen Link, und die Nummer der Ziehung steigt, wie bei „Neu ziehen“, und die App sagt, welche Ziehung gilt. Alte Links öffnen sich weiter.
+
 Für echte Notfälle gibt es „Zuordnung ansehen“ (siehe Ablage).
 
 ### 6. Übergabe und Auflösung

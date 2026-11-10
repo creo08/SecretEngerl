@@ -117,6 +117,8 @@ If someone drops out, "Remove person" changes as little as possible: the Engerl 
 
 This repair can break a rule: the new pair may share a household, be excluded, repeat last year or break a must rule, and if the person who left was in a circle of three, two people now give to each other. In that case the app says: "The rules no longer hold completely. They are only guaranteed with a new draw." and offers "Keep it anyway" and "Draw again". If the person who left and their Engerl gave to each other (possible only when mutual pairs are allowed), the Engerl would draw themselves; then only "Draw again" is offered.
 
+To change the round, for example to correct a name, add someone or change the budget, "Edit round" opens the setup with everything filled in: names and groups, exchange date, budget, theme, hints, addresses and rules. A hint or address stays with a name that did not change. "Draw" then makes the next draw of the same round: everyone gets a new link and the draw number goes up, as with "Draw again", and the app says which draw counts. Old links keep opening.
+
 For real emergencies there is "View assignment" (see storage).
 
 ### 6. Exchange and reveal
